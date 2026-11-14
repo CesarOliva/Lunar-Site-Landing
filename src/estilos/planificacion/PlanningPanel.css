@@ -1,0 +1,17 @@
+.planning-placeholder { padding: 21px 30px 28px; }
+.planning-placeholder > p { max-width: 340px; font-size: 11px; line-height: 1.7; color: #00FF66; margin: 0 0 23px; }
+.planning-placeholder { padding-top: 50px; }
+.planning-placeholder h2 { margin-top: 22px; }
+.placeholder-card { display: flex; align-items: center; gap: 14px; border: 1px solid #39FF8817; padding: 17px; margin: 27px 0 20px; color: #00FF66; }
+.placeholder-card strong { display: block; }
+.placeholder-card small { display: block; }
+.placeholder-card strong { color: #39FF88; font-size: 11px; margin-bottom: 6px; }
+.placeholder-card small { color: #00FF66; font-size: 9px; }
+
+@media (max-width: 560px) {
+  .planning-placeholder { padding-left: 23px; padding-right: 23px; } }
+.planning-placeholder > p { color: var(--muted-green); }
+.placeholder-card small { color: var(--muted-green); }
+.placeholder-card { color: var(--terminal-green); }
+.placeholder-card { border-color: var(--dark-forest); }
+.placeholder-card strong { color: var(--neon-green); }

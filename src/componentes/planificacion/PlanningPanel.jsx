@@ -1,4 +1,5 @@
 import { ArrowLeft, Compass } from 'lucide-react'
+import '../../estilos/planificacion/PlanningPanel.css'
 
 function PlanningPanel({ onHome }) {
   return (

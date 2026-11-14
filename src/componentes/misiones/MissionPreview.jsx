@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react'
+import '../../estilos/misiones/MissionPreview.css'
 
 function MissionPreview({ mission, slide, onSlide, onExplore }) {
   return (

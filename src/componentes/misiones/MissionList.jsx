@@ -1,4 +1,5 @@
 import { ArrowUpRight, Sparkles } from 'lucide-react'
+import '../../estilos/misiones/MissionList.css'
 
 function MissionList({ missions, onSelect }) {
   return (

@@ -1,4 +1,5 @@
 import { ArrowLeft, Home, X } from 'lucide-react'
+import '../../estilos/compartidos/PanelActions.css'
 
 function PanelActions({ onBack, onHome, onClose }) {
   return (

@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Rocket } from 'lucide-react'
+import '../../estilos/inicio/TransitionScreen.css'
 
 function TransitionScreen() {
   return (

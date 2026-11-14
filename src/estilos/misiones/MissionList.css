@@ -1,0 +1,33 @@
+.panel-footnote {
+  font-family: var(--mono); letter-spacing: .12em;
+}
+.mission-list-content { padding: 21px 30px 28px; }
+.panel-description { max-width: 340px; font-size: 11px; line-height: 1.7; color: #00FF66; margin: 0 0 23px; }
+.mission-list { display: grid; }
+.mission-list-item { min-height: 75px; padding: 10px 0; display: grid; grid-template-columns: 56px 1fr 18px; align-items: center; gap: 13px; color: #39FF88; text-align: left; background: transparent; border: 0; border-top: 1px solid #39FF8812; cursor: pointer; }
+.mission-list-item:hover .mission-list-copy strong { color: #00FF66; }
+.mission-list-item > svg { color: #477A5C; }
+.mission-thumb { width: 56px; height: 52px; position: relative; overflow: hidden; display: grid; place-items: center; color: #39FF88; background: radial-gradient(circle at 55% 40%, var(--mission-accent), #10231A 66%, #0D1511); }
+.mission-thumb::before { content: ''; position: absolute; inset: 0; background: url('https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&w=180&q=60') center/cover; opacity: .28; mix-blend-mode: screen; }
+.mission-thumb span { z-index: 1; font: 11px var(--mono); }
+.mission-list-copy small { display: block; }
+.mission-list-copy strong { display: block; }
+.mission-list-copy em { display: block; }
+.mission-list-copy small { color: #477A5C; font: 7px var(--mono); letter-spacing: .08em; margin-bottom: 4px; }
+.mission-list-copy strong { font-size: 12px; font-weight: 600; transition: color .2s; }
+.mission-list-copy em { color: #00FF66; font-size: 9px; font-style: normal; margin-top: 4px; }
+.panel-footnote { display: flex; align-items: center; gap: 8px; color: #477A5C; font-size: 7px; margin: 19px 0 3px; }
+.panel-footnote svg { color: #00FF66; }
+
+@media (max-width: 560px) {
+  .mission-list-content { padding-left: 23px; padding-right: 23px; }
+}
+.panel-description { color: var(--muted-green); }
+.mission-list-copy small { color: var(--muted-green); }
+.mission-list-copy em { color: var(--muted-green); }
+.panel-footnote { color: var(--muted-green); }
+.panel-footnote svg { color: var(--terminal-green); }
+.mission-list-item > svg { color: var(--muted-green); }
+.mission-list-item { color: var(--neon-green); border-top-color: var(--dark-forest); }
+.mission-list-item:hover .mission-list-copy strong { color: var(--matrix-green); }
+.mission-thumb { color: var(--neon-green); background: radial-gradient(circle at 55% 40%, var(--muted-green), var(--dark-forest) 66%, var(--panel-black)); }

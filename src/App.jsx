@@ -9,6 +9,7 @@ import MissionPreview from './componentes/misiones/MissionPreview.jsx'
 import TimelineScreen from './componentes/misiones/TimelineScreen.jsx'
 import PlanningPanel from './componentes/planificacion/PlanningPanel.jsx'
 import PanelActions from './componentes/compartidos/PanelActions.jsx'
+import './estilos/compartidos/App.css'
 
 function App() {
   const [screen, setScreen] = useState('intro')

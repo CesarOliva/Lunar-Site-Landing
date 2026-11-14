@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { ArrowLeft, Home } from 'lucide-react'
+import '../../estilos/misiones/TimelineScreen.css'
 
 function TimelineScreen({ mission, onBack, onHome }) {
   return (

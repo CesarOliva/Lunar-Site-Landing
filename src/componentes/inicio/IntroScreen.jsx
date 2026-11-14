@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { ArrowDown, ArrowUpRight, Rocket } from 'lucide-react'
+import '../../estilos/inicio/IntroScreen.css'
 
 function IntroScreen({ onStart }) {
   return (

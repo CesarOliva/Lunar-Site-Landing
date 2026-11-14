@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { ArrowRight, Compass, Orbit } from 'lucide-react'
+import '../../estilos/inicio/HomeScreen.css'
 
 function HomeScreen({ missions, selectedMission, onShowMission, onOpenMissions, onOpenPlanning }) {
   return (

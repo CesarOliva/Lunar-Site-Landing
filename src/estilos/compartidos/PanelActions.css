@@ -1,0 +1,14 @@
+.panel-top-actions { position: sticky; z-index: 5; top: 0; height: 63px; display: flex; align-items: center; gap: 12px; padding: 0 25px; background: linear-gradient(#080D0B 78%, #080D0B00); }
+.panel-top-actions .text-button { margin-right: auto; }
+.icon-button { display: grid; place-items: center; width: 31px; height: 31px; background: transparent; color: #00FF66; border: 1px solid #39FF8819; cursor: pointer; transition: color .2s, border .2s; }
+.icon-button:hover { color: #39FF88; border-color: #00FF66; }
+.text-button { display: inline-flex; align-items: center; gap: 9px; color: #00FF66; border: 0; padding: 8px 0; background: transparent; font-size: 10px; cursor: pointer; }
+.text-button:hover { color: #39FF88; }
+
+@media (max-width: 560px) {
+  .panel-top-actions { padding: 0 20px; } }
+.panel-top-actions { background: linear-gradient(var(--panel-black) 78%, transparent); }
+.icon-button { color: var(--muted-green); border-color: var(--dark-forest); }
+.icon-button:hover { color: var(--neon-green); border-color: var(--matrix-green); }
+.text-button:hover { color: var(--neon-green); border-color: var(--matrix-green); }
+.text-button { color: var(--muted-green); }
