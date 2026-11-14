@@ -1,0 +1,38 @@
+{
+  "object": "sun",
+  "time_utc": "2026-12-10T14:00:00Z",
+  "visible_site": "shackleton-site04-bearing-090-1km",
+  "visible_sample": {
+    "site_id": "shackleton-site04-bearing-090-1km",
+    "time_utc": "2026-12-10T14:00:00Z",
+    "object": "sun",
+    "azimuth_deg": 327.136277,
+    "object_elevation_deg": 1.62215,
+    "terrain_horizon_deg": -0.9965227655543071,
+    "difference_deg": 2.618672765554307,
+    "state": "visible",
+    "horizon_profile_azimuths_deg": [
+      327,
+      328
+    ],
+    "horizons_source": "data\\visibility\\sites\\shackleton-site04-bearing-090-1km\\horizons\\shackleton-site04-bearing-090-1km-hourly-10.json"
+  },
+  "hidden_site": "shackleton-site04-bearing-270-1km",
+  "hidden_sample": {
+    "site_id": "shackleton-site04-bearing-270-1km",
+    "time_utc": "2026-12-10T14:00:00Z",
+    "object": "sun",
+    "azimuth_deg": 343.236075,
+    "object_elevation_deg": 1.64983,
+    "terrain_horizon_deg": 4.219791112194091,
+    "difference_deg": -2.5699611121940915,
+    "state": "oculto",
+    "horizon_profile_azimuths_deg": [
+      343,
+      344
+    ],
+    "horizons_source": "data\\visibility\\sites\\shackleton-site04-bearing-270-1km\\horizons\\shackleton-site04-bearing-270-1km-hourly-10.json"
+  },
+  "minimum_separation_margin_deg": 2.5699611121940915,
+  "rule": "elevation - terrain_horizon; positive visible, negative occluded"
+}

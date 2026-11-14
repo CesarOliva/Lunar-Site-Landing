@@ -45,3 +45,71 @@ La prueba debe determinar si el relieve bloquea la vista del Sol o la Tierra des
 | Datos reales | Un punto polar, un modelo LOLA identificado y una serie de Horizons para el Sol y la Tierra | CSV reproducible con las fuentes y parámetros registrados. Verificación manual de ejemplos a partir de los ángulos y una transición visible u oculta comprobada con un paso temporal menor. Si el rango inicial carece de transiciones, ampliarlo o elegir otro periodo. |
 
 Los cuatro primeros casos son datos de prueba. El quinto evalúa la integración con fuentes reales. El resultado describe visibilidad geométrica del centro de cada objeto y sirve para estimar oportunidades de iluminación y de comunicación directa. El cálculo de potencia eléctrica y de calidad del enlace corresponde a modelos posteriores.
+
+# Lunar Landing Site Navigator — Etapas 3 y 4
+
+El catálogo histórico y la prueba de visibilidad con LOLA y JPL Horizons ya están implementados. Las etapas 3 y 4 reutilizan ese cálculo para analizar tres puntos del polo sur lunar y comparar escenarios desde consola. Los entregables son datos estructurados, reportes textuales y casos reproducibles.
+
+## Etapa 3. Ampliar el análisis a tres sitios
+
+**Objetivo.** Generar resultados comparables para el punto polar ya probado y dos puntos adicionales con cobertura LOLA. Al menos dos de los tres puntos deben estar lo bastante cerca como para explorar el efecto del relieve local.
+
+### Tareas
+
+1. **Registrar los sitios.** Asignar un ID estable a cada punto y documentar nombre, latitud, longitud, marco de referencia y origen de las coordenadas. Identificar los puntos como sitios de análisis y conservar el catálogo histórico de alunizajes como referencia independiente.
+2. **Fijar la configuración común.** Usar el mismo periodo de análisis, paso temporal inicial y altura del observador sobre el terreno. Registrar por sitio el modelo LOLA, su resolución, el radio analizado y la cobertura angular. Si hay diferencias de cobertura o resolución, hacerlas visibles en el resultado.
+3. **Reutilizar el cálculo de la etapa 2.** Generar el perfil de horizonte por sitio y obtener las series del Sol y la Tierra desde ese mismo punto. Conservar los parámetros y respuestas de Horizons. Usar la misma regla de visibilidad y el mismo método de refinamiento de cruces para todos los sitios.
+4. **Exportar resultados con un formato común.** Guardar por sitio un JSON con la configuración, la procedencia, las muestras y los intervalos por objeto. Reutilizar el CSV de la etapa 2 para revisar los valores individuales.
+5. **Preparar un caso de comparación.** Buscar un instante en que el Sol esté visible desde un punto y oculto por el relieve desde otro. Guardar para ambos sitios la hora, el azimut, la elevación del Sol y el ángulo del horizonte en esa dirección.
+
+### Datos mínimos
+
+| Bloque | Campos |
+|---|---|
+| Sitio | ID, nombre, coordenadas, marco de referencia y fuente. |
+| Configuración | Inicio y fin, escala temporal, paso inicial, altura del observador, modelo LOLA, radio, resolución y método de refinamiento. |
+| Muestra | Fecha y hora, objeto, azimut, elevación, ángulo del horizonte, diferencia angular y estado. |
+| Intervalo | Objeto, estado, inicio y fin estimados, y precisión temporal disponible. |
+| Procedencia | Referencia al perfil de horizonte, producto de terreno y parámetros o respuesta original de Horizons. |
+
+**Criterios de aceptación**
+
+- Un comando procesa los tres sitios con una configuración común y genera resultados reproducibles a partir de los insumos registrados.
+- Es posible rastrear una muestra de cualquier sitio hasta el perfil de horizonte y la consulta de Horizons que la originaron.
+- La cobertura insuficiente se reporta como estado indeterminado. El caso de contraste entre dos sitios queda respaldado por ángulos y fuentes.
+
+## Etapa 4. Comparar sitios y fechas desde consola
+
+**Objetivo.** Responder cuánto cambia la visibilidad estimada al mover el sitio o cambiar la fecha de una misión.
+
+### Modos de comparación
+
+| Modo | Escenario A | Escenario B |
+|---|---|---|
+| Comparar sitios | Sitio A durante el periodo seleccionado | Sitio B durante ese mismo periodo |
+| Comparar fechas | Un sitio durante el periodo A | El mismo sitio durante un periodo B de igual duración |
+
+### Métricas del reporte
+
+| Métrica | Cálculo |
+|---|---|
+| Horas con el Sol visible | Suma de los intervalos de visibilidad solar dentro del periodo. |
+| Horas con la Tierra visible | Suma de los intervalos de visibilidad de la Tierra dentro del periodo. |
+| Mayor interrupción continua | Duración máxima de un intervalo oculto, por separado para el Sol y la Tierra. |
+| Horas con visibilidad simultánea | Duración de la intersección de las ventanas visibles del Sol y la Tierra. |
+| Tiempo indeterminado | Duración con datos insuficientes, por objeto y escenario. |
+
+### Tareas y reglas
+
+1. Aceptar IDs de sitio y rangos de fechas. Validar que existan datos para el rango pedido y que los periodos comparados tengan la misma duración. Si el rango excede la cobertura temporal disponible, devolver un error que indique qué fechas se pueden consultar.
+2. Recortar los intervalos a los límites del periodo antes de sumar duraciones. Contabilizar por separado los tramos indeterminados dentro del rango y evitar unir interrupciones a través de esos tramos. Conservar el estado de contacto con el horizonte de la etapa 2.
+3. Generar un resumen lado a lado en texto y una salida JSON con ambos escenarios, valores, diferencia B − A, cobertura y fuentes. Indicar cuándo una interrupción toca el inicio o fin del rango, ya que su duración total puede extenderse fuera del periodo analizado.
+4. Verificar el comparador con intervalos conocidos para cubrir recortes, visibilidad simultánea y huecos. Repetir la verificación con las series reales de la etapa 3.
+
+**Criterios de aceptación**
+
+- Se reproducen dos casos con datos reales. En uno cambia el resultado al cambiar de sitio. En el otro cambia al mover la fecha en un mismo sitio.
+- Los totales del reporte coinciden con los intervalos recortados. El tiempo indeterminado aparece por separado y el solapamiento se cuenta una sola vez.
+- El reporte identifica sitio, rango, fuentes y cobertura de cada escenario. Las métricas se presentan como visibilidad geométrica del centro del Sol y de la Tierra.
+
+**Orden de implementación.** Procesar primero el segundo punto con el mismo periodo del punto original, verificar el contraste entre ambos y agregar el tercer punto. Después implementar los dos modos de comparación y guardar un ejemplo reproducible de cada uno.

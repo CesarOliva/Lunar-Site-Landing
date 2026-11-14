@@ -1,0 +1,38 @@
+{
+  "common_config": "data/visibility-site.json",
+  "sites": [
+    {
+      "id": "shackleton-site04-center",
+      "name": "Centro documentado de Site 04, borde de Shackleton",
+      "latitude_deg": -89.7668,
+      "longitude_east_deg": 188.13,
+      "coordinate_frame": "MEAN_ME, positivo este, grados",
+      "coordinate_source": "https://ntrs.nasa.gov/api/citations/20250002845/downloads/M2M-30044%20Lunar%20Surface%20Data%20Book%20Baseline_Final.pdf",
+      "coordinate_note": "Punto de análisis documentado para Site04 (Shackleton Rim); la fuente publica longitud -171.87°, normalizada a 188.13° este.",
+      "offset_from_base_m": 0,
+      "bearing_from_base_deg": null
+    },
+    {
+      "id": "shackleton-site04-bearing-270-1km",
+      "name": "Site 04, punto de análisis a 1 km rumbo 270°",
+      "latitude_deg": -89.76447977799349,
+      "longitude_east_deg": 180.08088936865812,
+      "coordinate_frame": "MEAN_ME, positivo este, grados",
+      "coordinate_source": "https://ntrs.nasa.gov/api/citations/20250002845/downloads/M2M-30044%20Lunar%20Surface%20Data%20Book%20Baseline_Final.pdf",
+      "coordinate_note": "Coordenada derivada desde el centro publicado de Site04 con geodésica esférica de radio 1.737.400 m; offset local de 1.000 m en rumbo 270° (oeste desde el norte local). Punto de análisis, no ubicación oficial de aterrizaje.",
+      "offset_from_base_m": 1000,
+      "bearing_from_base_deg": 270
+    },
+    {
+      "id": "shackleton-site04-bearing-090-1km",
+      "name": "Site 04, punto de análisis a 1 km rumbo 090°",
+      "latitude_deg": -89.76447977799349,
+      "longitude_east_deg": 196.17911063134187,
+      "coordinate_frame": "MEAN_ME, positivo este, grados",
+      "coordinate_source": "https://ntrs.nasa.gov/api/citations/20250002845/downloads/M2M-30044%20Lunar%20Surface%20Data%20Book%20Baseline_Final.pdf",
+      "coordinate_note": "Coordenada derivada desde el centro publicado de Site04 con geodésica esférica de radio 1.737.400 m; offset local de 1.000 m en rumbo 090° (este desde el norte local). Punto de análisis, no ubicación oficial de aterrizaje.",
+      "offset_from_base_m": 1000,
+      "bearing_from_base_deg": 90
+    }
+  ]
+}

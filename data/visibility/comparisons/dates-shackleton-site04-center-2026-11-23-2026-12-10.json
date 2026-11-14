@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "mode": "dates",
+  "scenarios": {
+    "A": {
+      "label": "A",
+      "site_id": "shackleton-site04-center",
+      "site_name": "Centro documentado de Site 04, borde de Shackleton",
+      "site_coordinates": {
+        "latitude_deg": -89.7668,
+        "longitude_east_deg": 188.13,
+        "coordinate_frame": "MEAN_ME, positivo este, grados",
+        "coordinate_source": "https://ntrs.nasa.gov/api/citations/20250002845/downloads/M2M-30044%20Lunar%20Surface%20Data%20Book%20Baseline_Final.pdf"
+      },
+      "range_utc": {
+        "start_inclusive": "2026-11-23T00:00:00Z",
+        "end_exclusive": "2026-11-24T00:00:00Z",
+        "duration_hours": 24.0
+      },
+      "metrics": {
+        "sun": {
+          "hours_visible": 11.583333,
+          "maximum_continuous_occluded_hours": 12.333333,
+          "longest_occluded_interval": {
+            "start_utc": "2026-11-23T11:40:00Z",
+            "end_utc": "2026-11-24T00:00:00Z",
+            "touches_period_start": false,
+            "touches_period_end": true,
+            "stage3_boundary_limited_start": false,
+            "stage3_boundary_limited_end": false,
+            "start_precision_minutes": 5,
+            "end_precision_minutes": 5
+          },
+          "hours_indeterminate": 0,
+          "contact_events": 0
+        },
+        "earth": {
+          "hours_visible": 0,
+          "maximum_continuous_occluded_hours": 24.0,
+          "longest_occluded_interval": {
+            "start_utc": "2026-11-23T00:00:00Z",
+            "end_utc": "2026-11-24T00:00:00Z",
+            "touches_period_start": true,
+            "touches_period_end": true,
+            "stage3_boundary_limited_start": true,
+            "stage3_boundary_limited_end": true,
+            "start_precision_minutes": 0,
+            "end_precision_minutes": 0
+          },
+          "hours_indeterminate": 0,
+          "contact_events": 0
+        },
+        "hours_simultaneously_visible": 0.0
+      },
+      "coverage": {
+        "available_start_utc": "2026-11-14T00:00:00",
+        "available_end_utc": "2027-02-12T00:00:00",
+        "terrain_sectors_without_complete_profile": 0,
+        "terrain_analysis_radius_m": 5000,
+        "terrain_resolution_m": [
+          5.0,
+          5.0
+        ],
+        "terrain_projection": "South polar stereographic, coordenadas X/Y en metros; marco MOON_ME, efeméride DE421 (según NASA/GSFC PGDA)",
+        "terrain_vertical_reference": "El producto define Z como altura superficial en metros; el GeoTIFF no declara otro datum vertical explícito. Para Horizons se asume Z relativo al radio medio lunar de 1.737.400 m.",
+        "inferred_missing_sample_hours": {
+          "sun": 0.0,
+          "earth": 0.0
+        },
+        "dem_file": "Site04_final_adj_5mpp_surf.tif",
+        "dem_source": "https://pgda.gsfc.nasa.gov/products/78",
+        "horizons_documentation": "https://ssd-api.jpl.nasa.gov/doc/horizons.html",
+        "analysis_json": "data\\visibility\\sites\\shackleton-site04-center\\analysis.json",
+        "horizons_raw_responses": [
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-hourly-10.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-hourly-399.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-001-10.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-001-399.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-002-10.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-002-399.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-003-10.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-003-399.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-004-10.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-004-399.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-005-10.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-005-399.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-006-10.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-006-399.json"
+        ]
+      }
+    },
+    "B": {
+      "label": "B",
+      "site_id": "shackleton-site04-center",
+      "site_name": "Centro documentado de Site 04, borde de Shackleton",
+      "site_coordinates": {
+        "latitude_deg": -89.7668,
+        "longitude_east_deg": 188.13,
+        "coordinate_frame": "MEAN_ME, positivo este, grados",
+        "coordinate_source": "https://ntrs.nasa.gov/api/citations/20250002845/downloads/M2M-30044%20Lunar%20Surface%20Data%20Book%20Baseline_Final.pdf"
+      },
+      "range_utc": {
+        "start_inclusive": "2026-12-10T00:00:00Z",
+        "end_exclusive": "2026-12-11T00:00:00Z",
+        "duration_hours": 24.0
+      },
+      "metrics": {
+        "sun": {
+          "hours_visible": 10.166667,
+          "maximum_continuous_occluded_hours": 13.75,
+          "longest_occluded_interval": {
+            "start_utc": "2026-12-10T00:00:00Z",
+            "end_utc": "2026-12-10T13:45:00Z",
+            "touches_period_start": true,
+            "touches_period_end": false,
+            "stage3_boundary_limited_start": false,
+            "stage3_boundary_limited_end": false,
+            "start_precision_minutes": 5,
+            "end_precision_minutes": 5
+          },
+          "hours_indeterminate": 0,
+          "contact_events": 0
+        },
+        "earth": {
+          "hours_visible": 0,
+          "maximum_continuous_occluded_hours": 24.0,
+          "longest_occluded_interval": {
+            "start_utc": "2026-12-10T00:00:00Z",
+            "end_utc": "2026-12-11T00:00:00Z",
+            "touches_period_start": true,
+            "touches_period_end": true,
+            "stage3_boundary_limited_start": true,
+            "stage3_boundary_limited_end": true,
+            "start_precision_minutes": 0,
+            "end_precision_minutes": 0
+          },
+          "hours_indeterminate": 0,
+          "contact_events": 0
+        },
+        "hours_simultaneously_visible": 0.0
+      },
+      "coverage": {
+        "available_start_utc": "2026-11-14T00:00:00",
+        "available_end_utc": "2027-02-12T00:00:00",
+        "terrain_sectors_without_complete_profile": 0,
+        "terrain_analysis_radius_m": 5000,
+        "terrain_resolution_m": [
+          5.0,
+          5.0
+        ],
+        "terrain_projection": "South polar stereographic, coordenadas X/Y en metros; marco MOON_ME, efeméride DE421 (según NASA/GSFC PGDA)",
+        "terrain_vertical_reference": "El producto define Z como altura superficial en metros; el GeoTIFF no declara otro datum vertical explícito. Para Horizons se asume Z relativo al radio medio lunar de 1.737.400 m.",
+        "inferred_missing_sample_hours": {
+          "sun": 0.0,
+          "earth": 0.0
+        },
+        "dem_file": "Site04_final_adj_5mpp_surf.tif",
+        "dem_source": "https://pgda.gsfc.nasa.gov/products/78",
+        "horizons_documentation": "https://ssd-api.jpl.nasa.gov/doc/horizons.html",
+        "analysis_json": "data\\visibility\\sites\\shackleton-site04-center\\analysis.json",
+        "horizons_raw_responses": [
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-hourly-10.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-hourly-399.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-001-10.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-001-399.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-002-10.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-002-399.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-003-10.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-003-399.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-004-10.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-004-399.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-005-10.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-005-399.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-006-10.json",
+          "data\\visibility\\sites\\shackleton-site04-center\\horizons\\shackleton-site04-center-refined-006-399.json"
+        ]
+      }
+    }
+  },
+  "difference_b_minus_a": {
+    "sun.hours_visible": -1.416666,
+    "sun.maximum_continuous_occluded_hours": 1.416667,
+    "sun.hours_indeterminate": 0,
+    "sun.contact_events": 0,
+    "earth.hours_visible": 0,
+    "earth.maximum_continuous_occluded_hours": 0.0,
+    "earth.hours_indeterminate": 0,
+    "earth.contact_events": 0,
+    "hours_simultaneously_visible": 0.0
+  },
+  "text_report": "data\\visibility\\comparisons\\dates-shackleton-site04-center-2026-11-23-2026-12-10.md"
+}

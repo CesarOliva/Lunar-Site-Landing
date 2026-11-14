@@ -24,7 +24,7 @@ def read_site():
         return json.load(file)
 
 
-def api_request(target, site, dem_altitude_m, start, stop, step, label):
+def api_request(target, site, dem_altitude_m, start, stop, step, label, raw_dir=None):
     params = {
         "format": "json", "COMMAND": target, "OBJ_DATA": "NO", "MAKE_EPHEM": "YES",
         "EPHEM_TYPE": "OBSERVER", "CENTER": "coord@301", "COORD_TYPE": "GEODETIC",
@@ -63,7 +63,7 @@ def api_request(target, site, dem_altitude_m, start, stop, step, label):
             abs(altitude_km * 1000 - dem_altitude_m) > 0.01):
         raise RuntimeError("Horizons cambió las coordenadas o altura del observador configuradas.")
 
-    raw_dir = OUTPUT / "horizons"
+    raw_dir = raw_dir or OUTPUT / "horizons"
     raw_dir.mkdir(parents=True, exist_ok=True)
     (raw_dir / f"{label}-{target}.json").write_text(
         json.dumps({"request_parameters": params, "response": payload}, ensure_ascii=False, indent=2),
