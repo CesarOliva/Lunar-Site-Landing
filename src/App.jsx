@@ -94,7 +94,7 @@ function App() {
               exit={{ x: '-105%', opacity: 0.6 }}
               transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
             >
-              <PanelActions onBack={goBack} onHome={goHome} onClose={() => setPanel(null)} />
+              <PanelActions onBack={goBack} onHome={goHome} />
 
               {panel === 'list' && (
                 <MissionList missions={missions} onSelect={showMission} />
@@ -110,7 +110,7 @@ function App() {
               )}
 
               {panel === 'planning' && (
-                <PlanningPanel onHome={goHome} />
+                <PlanningPanel />
               )}
             </motion.aside>
           )}

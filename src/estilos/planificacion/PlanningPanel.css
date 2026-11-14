@@ -1,7 +1,7 @@
 .planning-placeholder { padding: 21px 30px 28px; }
 .planning-placeholder > p { max-width: 340px; font-size: 11px; line-height: 1.7; color: #00FF66; margin: 0 0 23px; }
 .planning-placeholder { padding-top: 50px; }
-.planning-placeholder h2 { margin-top: 22px; }
+.planning-placeholder h2 { margin-top: 0; }
 .placeholder-card { display: flex; align-items: center; gap: 14px; border: 1px solid #39FF8817; padding: 17px; margin: 27px 0 20px; color: #00FF66; }
 .placeholder-card strong { display: block; }
 .placeholder-card small { display: block; }
