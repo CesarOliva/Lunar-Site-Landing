@@ -19,11 +19,11 @@ button { font: inherit; }
 button:focus-visible { outline: 1px solid #39FF88; outline-offset: 4px; }
 :root {
   color-scheme: dark;
-  --void-black: #030605;
+  --void-black: #081910;
   --deep-space: #080D0B;
   --panel-black: #0D1511;
   --dark-forest: #10231A;
-  --matrix-green: #00FF66;
+  --matrix-green: #34CD3F;
   --neon-green: #39FF88;
   --terminal-green: #00B85C;
   --muted-green: #477A5C;
