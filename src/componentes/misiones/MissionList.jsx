@@ -10,7 +10,7 @@ function MissionList({ missions, onSelect }) {
         {missions.map((mission) => (
           <button className="mission-list-item" key={mission.id} onClick={() => onSelect(mission)}>
             <span className="mission-thumb" style={{ '--mission-accent': mission.accent }}><span>{mission.number}</span></span>
-            <span className="mission-list-copy"><small>APOLLO · {mission.landingDate.split(',')[0].toUpperCase()}</small><strong>{mission.name}</strong><em>{mission.site}</em></span>
+            <span className="mission-list-copy"><small>APOLLO · {mission.landingDate.toUpperCase()}</small><strong>{mission.name}</strong><em>{mission.site}</em></span>
             <ArrowUpRight size={16} />
           </button>
         ))}
