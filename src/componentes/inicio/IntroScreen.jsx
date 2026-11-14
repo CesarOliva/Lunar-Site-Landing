@@ -12,7 +12,6 @@ function IntroScreen({ onStart }) {
       transition={{ duration: 0.8 }}
     >
       <div className="intro-copy">
-        <span className="eyebrow"><span className="live-dot" /> NASA SPACE APPS CHALLENGE 2026</span>
         <h1>La próxima<br /><em>frontera</em> lunar.</h1>
         <p>
           Explora las misiones que nos trajeron hasta aquí. Imagina los sitios
@@ -21,7 +20,6 @@ function IntroScreen({ onStart }) {
         <button className="primary-button launch-button" onClick={onStart}>
           Iniciar exploración <ArrowUpRight size={17} />
         </button>
-        <div className="intro-footnote"><span>01</span> UN VIAJE A TRAVÉS DE LA HISTORIA Y EL FUTURO</div>
       </div>
       <motion.div
         className="intro-moon"
@@ -39,7 +37,6 @@ function IntroScreen({ onStart }) {
         <span className="craft-glow" />
       </motion.div>
       <div className="intro-coordinate">29° 58′ 31″ N<br />31° 07′ 52″ E</div>
-      <div className="scroll-cue"><span>DESCUBRIR</span><ArrowDown size={14} /></div>
     </motion.section>
   )
 }
