@@ -273,7 +273,7 @@ export function SiteStep({ form, update, updateCoordinate, coordinatesValid, alt
         }}>
           <span className="site-option-icon"><MapPin size={18} /></span>
           <strong>Shackleton · Site 04</strong>
-          <small>Referencia cartográfica; no es un sitio aprobado.</small>
+          <small>Referencia cartográfica; sus coordenadas están establecidas y bloqueadas.</small>
           <code>{visibilitySite.latitude_deg}° · {visibilitySite.longitude_east_deg}° E</code>
           <span className="site-data-badge"><Check size={12} /> Modelo LOLA disponible</span>
         </button>
@@ -287,13 +287,18 @@ export function SiteStep({ form, update, updateCoordinate, coordinatesValid, alt
       <div className="planning-coordinate-grid">
         <label className="planning-label">
           Latitud planetocéntrica (°)
-          <input type="number" min="-90" max="90" step="0.0001" value={form.latitude} onChange={(event) => updateCoordinate('latitude', event.target.value)} aria-invalid={!coordinatesValid} />
+          <input type="number" min="-90" max="90" step="0.0001" value={form.latitude} onChange={(event) => updateCoordinate('latitude', event.target.value)} disabled={form.site !== 'custom'} aria-describedby="site-coordinate-status" aria-invalid={!coordinatesValid} />
         </label>
         <label className="planning-label">
           Longitud este (°)
-          <input type="number" min="0" max="360" step="0.0001" value={form.longitude} onChange={(event) => updateCoordinate('longitude', event.target.value)} aria-invalid={!coordinatesValid} />
+          <input type="number" min="0" max="360" step="0.0001" value={form.longitude} onChange={(event) => updateCoordinate('longitude', event.target.value)} disabled={form.site !== 'custom'} aria-describedby="site-coordinate-status" aria-invalid={!coordinatesValid} />
         </label>
       </div>
+      <p className="site-coordinate-status" id="site-coordinate-status" role="status">
+        {form.site === 'custom'
+          ? 'Coordenadas personalizadas.'
+          : 'Coordenadas de referencia para Shackleton · Site 04.'}
+      </p>
       <div className="planning-form-grid site-constraints">
         <label className="planning-label">
           Altitud sobre el radio lunar medio (m)

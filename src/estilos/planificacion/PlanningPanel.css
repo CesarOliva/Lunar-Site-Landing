@@ -197,6 +197,11 @@
 .planning-label input:focus,
 .planning-select-shell select:focus { border-color: var(--matrix-green); }
 .planning-label input[aria-invalid="true"] { border-color: #ff9a76; }
+.planning-coordinate-grid .planning-label input:disabled {
+  border-style: dashed;
+  opacity: .62;
+  cursor: not-allowed;
+}
 .planning-select-shell select { cursor: pointer; }
 .planning-select-shell option { background: var(--panel-black); }
 
@@ -230,6 +235,13 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
   margin-top: 20px;
+}
+
+.site-coordinate-status {
+  margin: 8px 0 0;
+  color: var(--muted-green);
+  font-size: 11px;
+  line-height: 1.5;
 }
 
 .site-option-grid {
@@ -514,4 +526,113 @@
 @media (max-width: 640px) {
   .mission-type-option { grid-template-columns: 26px minmax(0, 1fr) 18px; }
   .mission-type-photo { grid-column: 1 / -1; width: 100%; height: 180px; }
+}
+
+.planning-wizard.is-glitching .planning-content {
+  position: relative;
+  animation: planning-screen-glitch .65s steps(1, end) both;
+}
+
+.planning-wizard.is-glitching .planning-content::after {
+  position: absolute;
+  z-index: 5;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 5px,
+    rgba(0, 255, 170, .08) 6px,
+    rgba(0, 255, 170, .08) 7px
+  );
+  content: '';
+  opacity: 0;
+  pointer-events: none;
+  animation: planning-scan-glitch .65s steps(1, end) both;
+}
+
+.planning-wizard.is-glitching .planning-stepper,
+.planning-wizard.is-glitching .planning-brand {
+  animation: planning-screen-glitch .65s steps(1, end) both;
+}
+
+.planning-wizard.is-glitching .planning-content :is(
+  .mission-type-option, .site-option, .landing-date-card, .planning-callout,
+  .planning-metric, .sky-card, .chart-card, .scenario-card, .summary-card,
+  .no-visibility-data, .mission-plan-preview, .planning-warning
+) {
+  animation: planning-box-glitch .65s steps(1, end) both;
+}
+
+.planning-wizard.is-glitching .planning-content :is(
+  h1, h2, h3, p, a, label, legend, strong, small, b, dt, dd, code, li, th, td
+) {
+  animation: planning-text-glitch .65s steps(1, end) both;
+}
+
+.planning-wizard.is-ambient-glitching .planning-content section > h2 {
+  animation: planning-title-glitch .5s steps(1, end) both;
+}
+
+@keyframes planning-screen-glitch {
+  0%, 12%, 25%, 43%, 58%, 76%, 100% { clip-path: inset(0); filter: none; transform: none; }
+  8% { clip-path: inset(8% 0 84%); filter: hue-rotate(16deg) contrast(1.08); transform: translateX(-2px); }
+  9% { clip-path: inset(53% 0 43%); filter: hue-rotate(-14deg) contrast(1.1); transform: translateX(2px); }
+  10% { clip-path: inset(0); filter: brightness(1.08); transform: translateX(-1px); }
+  33% { clip-path: inset(42% 0 52%); filter: hue-rotate(18deg); transform: translateX(2px); }
+  34% { clip-path: inset(0); filter: brightness(1.06); transform: translateX(-1px); }
+  63% { clip-path: inset(78% 0 12%); filter: hue-rotate(-16deg) contrast(1.08); transform: translateX(-2px); }
+  64% { clip-path: inset(0); filter: brightness(1.1); transform: translateX(1px); }
+  87% { clip-path: inset(20% 0 70%); filter: hue-rotate(14deg); transform: translateX(2px); }
+  88% { clip-path: inset(0); filter: none; transform: translateX(-1px); }
+}
+
+@keyframes planning-scan-glitch {
+  0%, 7%, 11%, 31%, 35%, 61%, 65%, 85%, 89%, 100% { opacity: 0; transform: translateY(0); }
+  8%, 33%, 63%, 87% { opacity: .35; transform: translateY(-2px); }
+  9%, 34%, 64%, 88% { opacity: .18; transform: translateY(2px); }
+}
+
+@keyframes planning-box-glitch {
+  0%, 12%, 25%, 43%, 58%, 76%, 100% { box-shadow: none; filter: none; transform: none; }
+  8%, 33%, 63%, 87% {
+    box-shadow: -2px 0 rgba(0, 255, 255, .42), 2px 0 rgba(255, 0, 85, .38);
+    filter: brightness(1.12);
+    transform: translateX(-1px);
+  }
+  9%, 34%, 64%, 88% {
+    box-shadow: 2px 0 rgba(0, 255, 255, .42), -2px 0 rgba(255, 0, 85, .38);
+    filter: contrast(1.1);
+    transform: translateX(1px);
+  }
+}
+
+@keyframes planning-text-glitch {
+  0%, 12%, 25%, 43%, 58%, 76%, 100% { text-shadow: none; }
+  8%, 33%, 63%, 87% { text-shadow: -1px 0 rgba(0, 255, 255, .58), 1px 0 rgba(255, 0, 85, .5); }
+  9%, 34%, 64%, 88% { text-shadow: 1px 0 rgba(0, 255, 255, .58), -1px 0 rgba(255, 0, 85, .5); }
+}
+
+@keyframes planning-title-glitch {
+  0%, 100% { transform: translateX(0); text-shadow: none; }
+  20%, 60% { transform: translateX(-4px); text-shadow: -1px 0 rgba(0, 255, 255, .7), 1px 0 rgba(255, 0, 85, .6); }
+  40%, 80% { transform: translateX(4px); text-shadow: 1px 0 rgba(0, 255, 255, .7), -1px 0 rgba(255, 0, 85, .6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .planning-wizard.is-glitching .planning-content,
+  .planning-wizard.is-glitching .planning-content::after,
+  .planning-wizard.is-glitching .planning-stepper,
+  .planning-wizard.is-glitching .planning-brand,
+  .planning-wizard.is-glitching .planning-content :is(
+    .mission-type-option, .site-option, .landing-date-card, .planning-callout,
+    .planning-metric, .sky-card, .chart-card, .scenario-card, .summary-card,
+    .no-visibility-data, .mission-plan-preview, .planning-warning,
+    h1, h2, h3, p, a, label, legend, strong, small, b, dt, dd, code, li, th, td
+  ) {
+    animation: none;
+  }
+
+  .planning-wizard.is-ambient-glitching .planning-content section > h2 {
+    animation: none;
+  }
 }

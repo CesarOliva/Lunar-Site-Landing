@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Check, ChevronLeft, ChevronRight, Moon } from 'lucide-react'
 import visibilitySite from '../../../Data_Structure/data/visibility-site.json'
 import '../../estilos/planificacion/PlanningPanel.css'
@@ -29,6 +29,11 @@ import {
 
 function PlanningPanel() {
   const [step, setStep] = useState(0)
+  const [glitchActive, setGlitchActive] = useState(
+    () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  )
+  const [ambientGlitch, setAmbientGlitch] = useState(false)
+  const glitchFrame = useRef(null)
   const [form, setForm] = useState(initialForm)
   const [validationMessage, setValidationMessage] = useState('')
   const [visibilitySamples, setVisibilitySamples] = useState(null)
@@ -46,6 +51,47 @@ function PlanningPanel() {
     { id: 'summary', label: 'Resumen de misión' },
   ]
   const currentStep = steps[step] ?? steps[0]
+  const triggerGlitch = () => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (glitchFrame.current !== null) {
+      window.cancelAnimationFrame(glitchFrame.current)
+    }
+
+    setGlitchActive(false)
+    glitchFrame.current = window.requestAnimationFrame(() => {
+      setGlitchActive(true)
+      glitchFrame.current = null
+    })
+  }
+
+  useEffect(() => {
+    if (!glitchActive) return undefined
+
+    const timer = window.setTimeout(() => setGlitchActive(false), 650)
+    return () => window.clearTimeout(timer)
+  }, [glitchActive])
+
+  useEffect(() => () => {
+    if (glitchFrame.current !== null) {
+      window.cancelAnimationFrame(glitchFrame.current)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
+
+    let glitchTimer
+    const interval = window.setInterval(() => {
+      setAmbientGlitch(true)
+      glitchTimer = window.setTimeout(() => setAmbientGlitch(false), 500)
+    }, 6000)
+
+    return () => {
+      window.clearInterval(interval)
+      window.clearTimeout(glitchTimer)
+    }
+  }, [])
+
   useEffect(() => {
     let active = true
     loadVisibilitySamples()
@@ -141,6 +187,7 @@ function PlanningPanel() {
       return
     }
     setValidationMessage('')
+    triggerGlitch()
     setStep((current) => Math.min(current + 1, steps.length - 1))
   }
 
@@ -225,7 +272,7 @@ function PlanningPanel() {
   }
 
   return (
-    <div className="planning-wizard">
+    <div className={`planning-wizard ${glitchActive ? 'is-glitching' : ''} ${ambientGlitch ? 'is-ambient-glitching' : ''}`}>
       <header className="planning-brand">
         <div className="planning-wordmark"><Moon size={18} /><span>moonapp</span></div>
       </header>
@@ -239,6 +286,7 @@ function PlanningPanel() {
             aria-label={`Paso ${index + 1}: ${label}`}
             aria-current={index === step ? 'step' : undefined}
             onClick={() => {
+              if (index !== step) triggerGlitch()
               setStep(index)
               setValidationMessage('')
             }}
@@ -296,6 +344,7 @@ function PlanningPanel() {
         <footer className="planning-navigation">
           {validationMessage && <p className="planning-error" role="alert">{validationMessage}</p>}
           <button className="planning-back-button" type="button" onClick={() => {
+            if (step > 0) triggerGlitch()
             setStep((current) => Math.max(current - 1, 0))
             setValidationMessage('')
           }} disabled={step === 0}>
