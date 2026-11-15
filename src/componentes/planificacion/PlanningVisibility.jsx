@@ -401,7 +401,7 @@ export function CompareStep({ form, update, isModeledSite, maxDateTime, visibili
         {renderScenario(comparisonSamples[0], form.dateTime.slice(0, 10), 'ESCENARIO A · FECHA ORIGINAL')}
         {renderScenario(comparisonSamples[1], form.compareDate, 'ESCENARIO B · FECHA ALTERNATIVA')}
       </div>
-      <p className="planning-hint">{isModeledSite ? 'Los resultados comparan el centro aparente de cada cuerpo con el horizonte LOLA de Site 04.' : comparisonSamples.some((sample) => sample?.horizonBasis === 'geometric') ? 'Sin cobertura LOLA, los estados solo comparan con el horizonte geométrico; la obstrucción del relieve es indeterminada.' : 'Los resultados comparan el centro aparente de cada cuerpo con el perfil de horizonte LOLA del sitio.'} Las muestras son horarias y no predicen potencia o rendimiento de radio.</p>
+      <p className="planning-hint">{isModeledSite ? 'Los resultados comparan el centro aparente de cada cuerpo con el horizonte LOLA de Shackleton.' : comparisonSamples.some((sample) => sample?.horizonBasis === 'geometric') ? 'Sin cobertura LOLA, los estados solo comparan con el horizonte geométrico; la obstrucción del relieve es indeterminada.' : 'Los resultados comparan el centro aparente de cada cuerpo con el perfil de horizonte LOLA del sitio.'} Las muestras son horarias y no predicen potencia o rendimiento de radio.</p>
     </section>
   )
 }

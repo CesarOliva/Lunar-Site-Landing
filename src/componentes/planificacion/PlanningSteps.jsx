@@ -90,35 +90,6 @@ export const initialForm = {
   compareDate: '2026-12-10',
 }
 
-export function createDemoForecast(dateTime, latitude, longitude) {
-  const timestamp = Date.parse(`${dateTime}:00Z`)
-  if (!Number.isFinite(timestamp)) return null
-
-  const hour = Math.floor(timestamp / 3600000)
-  const locationSeed = Math.floor(Math.abs(Number(latitude) * 10 + Number(longitude)))
-  const seed = Math.abs(hour + locationSeed) % 10
-  const temperatures = [
-    [-184, -42], [-178, -36], [-191, -51], [-172, -33], [-186, -47],
-    [-179, -39], [-188, -55], [-175, -31], [-182, -44], [-190, -49],
-  ]
-  const activity = ['Baja', 'Moderada', 'Elevada']
-
-  return {
-    status: 'demo',
-    selected_at_utc: `${dateTime}:00Z`,
-    illumination_hours: Number((5.5 + (seed % 8) * 0.9).toFixed(1)),
-    surface_temperature_c: {
-      minimum: temperatures[seed][0],
-      maximum: temperatures[seed][1],
-    },
-    radiation_index_demo: 1 + (seed % 5),
-    micrometeoroid_activity_demo: activity[seed % activity.length],
-    communication_windows_demo: 1 + (seed % 4),
-    communication_hours_demo: Number((2.5 + (seed % 7) * 0.7).toFixed(1)),
-    terrain_assessment: 'Pendiente y obstáculos sin evaluar',
-  }
-}
-
 // --- Duración: dato del escenario, no una recomendación NASA ---
 export const formatDays = (days) => `${days} ${Number(days) === 1 ? 'día' : 'días'}`
 
@@ -474,7 +445,6 @@ export function VehicleStep({ form, missionProfile, update }) {
           <LaunchWindowPicker value={form.launchWindow} onChange={(value) => update('launchWindow', value)} />
         </div>
       </div>
-      <p className="planning-note">Antecedentes NASA históricos; no indican disponibilidad. Masa, ventana, carga y propulsión no se validan aquí.</p>
     </section>
   )
 }
@@ -489,7 +459,7 @@ export function SiteStep({ form, update, updateCoordinate, coordinatesValid, alt
   return (
     <section aria-labelledby="planning-title">
       <h2 id="planning-title">Sitio de <em>aterrizaje</em></h2>
-      <p className="planning-intro">Elige Site 04 o haz clic en el mapa para colocar un punto propio. Las coordenadas se actualizan al instante.</p>
+      <p className="planning-intro">Elige Shackleton o haz clic en el mapa para colocar un punto propio. Las coordenadas se actualizan al instante.</p>
       <div className="site-explorer">
         <div className="polar-map-card">
           <PolarMap form={form} update={update} coordinatesValid={coordinatesValid} range={range} />
@@ -511,7 +481,6 @@ export function SiteStep({ form, update, updateCoordinate, coordinatesValid, alt
             <strong>Shackleton · Site 04</strong>
             <small>Referencia cartográfica; sus coordenadas están establecidas y bloqueadas.</small>
             <code>{visibilitySite.latitude_deg}° · {visibilitySite.longitude_east_deg}° E</code>
-            <span className="site-data-badge"><Check size={12} /> Modelo LOLA disponible</span>
           </button>
           <button className={`site-option ${form.site === 'custom' ? 'is-selected' : ''}`} type="button" aria-pressed={form.site === 'custom'} onClick={() => update('site', 'custom')}>
             <span className="site-option-icon"><MapPin size={18} /></span>
@@ -553,7 +522,7 @@ export function SiteStep({ form, update, updateCoordinate, coordinatesValid, alt
       <p className={`planning-hint ${siteInputsValid ? '' : 'planning-error'}`}>
         {siteInputsValid ? 'Marco planetocéntrico ME · evalúa el área y la pendiente antes de comparar la visibilidad.' : 'Ingresa una latitud válida, longitud este de 0° a 360° y altitud numérica.'}
       </p>
-      <p className="planning-note">Site 04 es una referencia cartográfica, no un sitio aprobado. Área y pendiente son parámetros del escenario, no límites universales NASA. El mapa usa una proyección polar simplificada.</p>
+      <p className="planning-note">Shackleton es una referencia cartográfica, no un sitio aprobado. Área y pendiente son parámetros del escenario, no límites universales NASA. El mapa usa una proyección polar simplificada.</p>
     </section>
   )
 }
@@ -613,77 +582,30 @@ export function SampleStep({ form, update }) {
   )
 }
 
-const activityLevel = { Baja: 1, Moderada: 2, Elevada: 3 }
-
-export function ForecastStep({ forecast }) {
-  if (!forecast) {
-    return (
-      <section aria-labelledby="forecast-title">
-        <h2 id="forecast-title">Pronóstico de <em>entorno</em></h2>
-        <p className="planning-intro">Selecciona una fecha y hora para ver la simulación.</p>
-      </section>
-    )
-  }
-  const { minimum, maximum } = forecast.surface_temperature_c
-  const windows = forecast.communication_windows_demo
-  const windowWidth = Math.min(forecast.communication_hours_demo / windows / 24 * 100, 100 / windows - 2)
-
+export function ForecastStep({ samples, loading, error }) {
+  const solarHours = samples?.filter((sample) => sample.sun.state === 'visible').length
+  const earthHours = samples?.filter((sample) => sample.earth.state === 'visible').length
+  const terrainKnown = samples?.[0]?.horizonBasis === 'terrain'
   return (
     <section aria-labelledby="forecast-title">
-      <h2 id="forecast-title">Entorno y <em>riesgos</em></h2>
-      <p className="planning-intro">Vista previa automática para la fecha seleccionada. Mueve la fecha arriba y las barras cambian.</p>
-      <p className="forecast-time">Escenario: {forecast.selected_at_utc.replace('T', ' · ').replace(':00Z', ' UT')}</p>
-      <div className="forecast-warning" role="note">
-        <strong>Simulación con datos ficticios</strong>
-        <span>No es un pronóstico real. La Luna no tiene clima como la Tierra; estos valores solo muestran la futura experiencia del backend.</span>
-      </div>
-      <div className="forecast-grid">
-        <article className="forecast-card">
-          <span>Iluminación simulada</span>
-          <strong>{forecast.illumination_hours} h</strong>
-          <div className="meter" aria-hidden="true"><i className="meter-fill" style={{ left: 0, width: `${(forecast.illumination_hours / 24) * 100}%` }} /></div>
-          <small>de luz en 24 h</small>
-        </article>
-        <article className="forecast-card">
-          <span>Temperatura superficial</span>
-          <strong>{minimum}° a {maximum}°C</strong>
-          <div className="meter" aria-hidden="true"><i className="meter-fill" style={{ left: `${((minimum + 200) / 200) * 100}%`, width: `${((maximum - minimum) / 200) * 100}%` }} /></div>
-          <small>rango ilustrativo sobre una escala de -200° a 0°C</small>
-        </article>
-        <article className="forecast-card">
-          <span>Radiación · índice demo</span>
-          <strong>{forecast.radiation_index_demo} / 5</strong>
-          <Gauge value={forecast.radiation_index_demo} />
-          <small>sin dosis ni evaluación de protección</small>
-        </article>
-        <article className="forecast-card">
-          <span>Micrometeoroides</span>
-          <strong>Actividad {forecast.micrometeoroid_activity_demo.toLowerCase()}</strong>
-          <Gauge value={activityLevel[forecast.micrometeoroid_activity_demo] ?? 1} max={3} />
-          <small>sin probabilidad de impacto calculada</small>
-        </article>
-        <article className="forecast-card">
-          <span>Comunicaciones simuladas</span>
-          <strong>{windows} {windows === 1 ? 'ventana' : 'ventanas'}</strong>
-          <div className="meter" aria-hidden="true">
-            {Array.from({ length: windows }, (_, index) => (
-              <i className="meter-block" key={index} style={{ left: `${(index * 100) / windows + 1}%`, width: `${windowWidth}%` }} />
-            ))}
-          </div>
-          <small>{forecast.communication_hours_demo} h repartidas en 24 h · sin validar enlace</small>
-        </article>
-        <article className="forecast-card">
-          <span>Terreno y aterrizaje</span>
-          <strong>{forecast.terrain_assessment}</strong>
-          <small>requiere datos topográficos del sitio</small>
-        </article>
-      </div>
-      <p className="planning-note">La simulación cambia con fecha y coordenadas. Riesgos reales requieren modelos y datos NASA/backend.</p>
+      <h2 id="forecast-title">Luz y <em>visibilidad</em></h2>
+      <p className="planning-intro">Muestras horarias del día seleccionado para la ubicación elegida.</p>
+      {loading && <p className="forecast-time" role="status">Calculando posiciones del Sol y la Tierra...</p>}
+      {error && <p className="planning-error" role="alert">{error}</p>}
+      {!loading && !error && samples?.length > 0 && <>
+        <div className="forecast-grid">
+          <article className="forecast-card"><span>Sol visible sobre el relieve</span><strong>{solarHours} de {samples.length} muestras</strong><small>Estimación horaria de iluminación directa</small></article>
+          <article className="forecast-card"><span>Tierra visible sobre el relieve</span><strong>{earthHours} de {samples.length} muestras</strong><small>Indicador geométrico; no confirma un enlace de comunicaciones</small></article>
+        </div>
+        {!terrainKnown && <p className="forecast-warning">No hay cobertura LOLA para este punto. Los resultados indican visibilidad sobre el horizonte geom?trico; el relieve es indeterminado.</p>}
+        <p className="planning-hint">Conteo de muestras horarias, no una predicción continua ni una garantía de energía o comunicaciones.</p>
+      </>}
+      {!loading && !error && !samples?.length && <p className="forecast-time">No hay muestras disponibles para este d?a.</p>}
     </section>
   )
 }
 
-export function SummaryStep({ form, missionProfile, isModeledSite, selectedSample, visibilityError, demoForecast, downloadPlan }) {
+export function SummaryStep({ form, missionProfile, isModeledSite, selectedSample, visibilityError, downloadPlan }) {
   return (
     <section className="summary-step" aria-labelledby="planning-title">
       <h2 id="planning-title">Resumen de <em>misión</em></h2>
@@ -703,17 +625,14 @@ export function SummaryStep({ form, missionProfile, isModeledSite, selectedSampl
           <div><dt>Altitud</dt><dd>{form.elevation} m sobre el radio lunar medio</dd></div>
           <div><dt>Coordenadas</dt><dd>{Number(form.latitude).toFixed(4)}° · {Number(form.longitude).toFixed(4)}° E</dd></div>
           <div><dt>Aterrizaje (UTC)</dt><dd>{form.dateTime.replace('T', ' · ')} UT</dd></div>
-          {demoForecast && (
-            <div><dt>Entorno / riesgos</dt><dd>Simulación ficticia · {demoForecast.illumination_hours} h de luz · micrometeoroides {demoForecast.micrometeoroid_activity_demo.toLowerCase()}</dd></div>
-          )}
           {missionProfile.conditionalSteps.includes('crew') && (
-            <div><dt>Tripulación y soporte</dt><dd>{form.crewSize} · {form.evaPlan} · {form.lifeSupport}</dd></div>
+            <div><dt>Tripulacion y soporte</dt><dd>{form.crewSize} ? {form.evaPlan} ? {form.lifeSupport}</dd></div>
           )}
           {missionProfile.conditionalSteps.includes('logistics') && (
-            <div><dt>Logística</dt><dd>{form.supplies} de reserva · energía {form.redundancy} · ISRU {form.isru}</dd></div>
+            <div><dt>Logistica</dt><dd>{form.supplies} de reserva ? energia {form.redundancy} ? ISRU {form.isru}</dd></div>
           )}
           {missionProfile.conditionalSteps.includes('sample') && (
-            <div><dt>Retorno de muestras</dt><dd>{form.sampleTarget} · {form.sampleCollection} · {form.sampleReturn}</dd></div>
+            <div><dt>Retorno de muestras</dt><dd>{form.sampleTarget} ? {form.sampleCollection} ? {form.sampleReturn}</dd></div>
           )}
         </dl>
         {selectedSample && (

@@ -5,7 +5,6 @@ import '../../estilos/planificacion/PlanningPanel.css'
 import {
   CrewStep,
   ForecastStep,
-  createDemoForecast,
   getDurationIssue,
   initialForm,
   LogisticsStep,
@@ -168,10 +167,6 @@ function PlanningPanel() {
   latestFullQueryDayDate.setUTCDate(latestFullQueryDayDate.getUTCDate() - 1)
   const latestFullQueryDay = `${latestFullQueryDayDate.toISOString().slice(0, 10)}T23:00`
   const planningDateMax = isModeledSite || dateTimeMax < latestFullQueryDay ? dateTimeMax : latestFullQueryDay
-  const demoForecast = useMemo(
-    () => createDemoForecast(form.dateTime, form.latitude, form.longitude),
-    [form.dateTime, form.latitude, form.longitude],
-  )
 
   const updateCoordinate = (key, value) => update(key, value)
   const coordinatesValid =
@@ -194,7 +189,7 @@ function PlanningPanel() {
   ])
 
   useEffect(() => {
-    if (currentStep.id !== 'analysis' || isModeledSite || !coordinatesValid || !altitudeValid) return undefined
+    if (!['forecast', 'analysis'].includes(currentStep.id) || isModeledSite || !coordinatesValid || !altitudeValid) return undefined
     if (customVisibility?.key === customRequestKey && !customVisibility.loading) return undefined
 
     const controller = new AbortController()
@@ -264,7 +259,7 @@ function PlanningPanel() {
   const activeVisibilityError = isModeledSite ? visibilityError : currentCustomVisibility?.error ?? ''
   const activeVisibilityLoading = isModeledSite
     ? visibilitySamples === null && !visibilityError
-    : currentStep.id === 'analysis' && coordinatesValid && altitudeValid && Boolean(currentCustomVisibility?.loading || !currentCustomVisibility)
+    : ['forecast', 'analysis'].includes(currentStep.id) && coordinatesValid && altitudeValid && Boolean(currentCustomVisibility?.loading || !currentCustomVisibility)
   const activeVisibilitySamples = isModeledSite ? visibilitySamples : selectedDay?.samples ?? null
   const retryVisibility = () => {
     setCustomVisibility(null)
@@ -340,12 +335,6 @@ function PlanningPanel() {
       `Fecha alternativa: ${form.compareDate} ${form.dateTime.slice(11, 16)} UTC`,
       '',
       'ENTORNO Y RIESGOS (SIMULACIÓN FICTICIA)',
-      `Iluminación simulada: ${demoForecast?.illumination_hours ?? 'No disponible'} h en 24 h`,
-      `Temperatura superficial simulada: ${demoForecast?.surface_temperature_c.minimum ?? '—'}° a ${demoForecast?.surface_temperature_c.maximum ?? '—'}°C`,
-      `Índice demostrativo de radiación: ${demoForecast?.radiation_index_demo ?? '—'} / 5`,
-      `Actividad simulada de micrometeoroides: ${demoForecast?.micrometeoroid_activity_demo ?? '—'}`,
-      `Ventanas de comunicación simuladas: ${demoForecast?.communication_windows_demo ?? '—'} (${demoForecast?.communication_hours_demo ?? '—'} h)`,
-      `Evaluación del terreno: ${demoForecast?.terrain_assessment ?? 'No disponible'}`,
       'Estos valores son ficticios y no representan un pronóstico, medición NASA ni evaluación de seguridad.',
       '',
       'VISIBILIDAD GEOMÉTRICA',
@@ -439,7 +428,7 @@ function PlanningPanel() {
         {currentStep.id === 'forecast' && (
           <div className="planning-group">
             <DateStep form={form} update={update} dateIsInCoverage={dateIsInCoverage} maxDateTime={planningDateMax} />
-            <ForecastStep forecast={demoForecast} />
+            <ForecastStep samples={daySamples} loading={isModeledSite ? visibilitySamples === null && !visibilityError : Boolean(currentCustomVisibility?.loading || !currentCustomVisibility)} error={isModeledSite ? visibilityError : currentCustomVisibility?.error} />
           </div>
         )}
 
@@ -451,7 +440,7 @@ function PlanningPanel() {
         )}
 
         {currentStep.id === 'summary' && (
-          <SummaryStep form={form} missionProfile={missionProfile} isModeledSite={isModeledSite} selectedSample={selectedSample} visibilityError={activeVisibilityError} demoForecast={demoForecast} downloadPlan={downloadPlan} />
+          <SummaryStep form={form} missionProfile={missionProfile} isModeledSite={isModeledSite} selectedSample={selectedSample} visibilityError={activeVisibilityError} downloadPlan={downloadPlan} />
         )}
 
         <footer className="planning-navigation">
