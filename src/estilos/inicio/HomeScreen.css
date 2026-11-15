@@ -22,14 +22,14 @@
 .home-intro h2 { font-size: clamp(39px, 4.3vw, 61px); line-height: 1.08; margin: 24px 0 15px; }
 .home-intro > p { font-size: 12px; line-height: 1.8; max-width: 340px; color: #00FF66; margin: 0 0 25px; }
 .home-actions { display: grid; gap: 10px; width: 100%; }
-.menu-option { text-align: left; width: 100%; display: grid; grid-template-columns: 39px 1fr 17px; align-items: center; gap: 13px; padding: 13px 15px; color: #39FF88; border: 1px solid #39FF881C; background: #0D1511CC; cursor: pointer; transition: border .2s, background .2s; }
+.menu-option { position: relative; text-align: center; width: 100%; display: flex; justify-content: center; align-items: center; padding: 13px 42px; color: #39FF88; border: 1px solid #39FF881C; background: #0D1511CC; cursor: pointer; transition: border .2s, background .2s; }
 .menu-option:hover { border-color: #00FF667A; background: #10231AE8; }
 .option-icon { width: 37px; height: 37px; display: grid; place-items: center; color: #00FF66; background: #00FF6614; }
 .menu-option strong { display: block; }
 .menu-option small { display: block; }
-.menu-option strong { font-size: 11px; font-weight: 600; margin-bottom: 5px; }
+.menu-option strong { font-size: 15px; font-weight: 600; margin-bottom: 5px; }
 .menu-option small { color: #477A5C; font-size: 9px; }
-.option-arrow { color: #477A5C; }
+.option-arrow { position: absolute; right: 15px; color: #477A5C; }
 .option-disabled { background: #0D1511CC; }
 .home-caption { position: absolute; z-index: 3; right: 12%; bottom: 15%; color: #39FF88; font-size: 8px; display: flex; align-items: center; gap: 10px; }
 .home-caption span:last-child { color: #477A5C; }
@@ -96,3 +96,15 @@
 .mission-marker::after { border-color: var(--terminal-green); }
 .marker-pulse { border-color: var(--terminal-green); }
 .marker-label { color: var(--neon-green); }
+
+/* Blancos en la paleta (mueve estas dos variables a tu archivo de paleta si prefieres) */
+:root { --snow: #F4FBF6; --fog: #C9DCCF; }
+
+.home-moon { background: radial-gradient(circle at 29% 28%, var(--snow), var(--muted-green) 13%, var(--terminal-green) 26%, var(--dark-forest) 54%, var(--deep-space)); }
+.home-intro h2 { color: var(--snow); }
+.home-intro > p { color: var(--fog); }
+.menu-option { color: var(--snow); border-color: rgba(255, 255, 255, .2); }
+.option-arrow { color: var(--fog); }
+.mission-marker { background: var(--snow); }
+.mission-marker::after { border-color: rgba(255, 255, 255, .5); }
+.marker-label { color: var(--snow); }

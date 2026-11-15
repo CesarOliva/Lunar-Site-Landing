@@ -60,3 +60,12 @@
 .spacecraft { color: var(--neon-green); filter: drop-shadow(0 0 16px var(--terminal-green)); }
 .craft-glow { background: linear-gradient(90deg, transparent, var(--matrix-green)); }
 .scroll-cue svg { color: var(--matrix-green); }
+
+/* Blancos en la paleta (mueve estas dos variables a tu archivo de paleta si prefieres) */
+:root { --snow: #F4FBF6; --fog: #C9DCCF; }
+
+.intro-moon { background: radial-gradient(circle at 27% 28%, var(--snow), var(--muted-green) 10%, var(--dark-forest) 45%, var(--deep-space) 76%, var(--void-black)); }
+.intro-copy h1 { color: var(--snow); }
+.intro-copy p { color: var(--fog); }
+.intro-coordinate { color: var(--fog); }
+.spacecraft { color: var(--snow); }

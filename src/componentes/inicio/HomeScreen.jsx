@@ -25,26 +25,20 @@ function HomeScreen({ missions, selectedMission, onShowMission, onOpenMissions, 
       <div className="home-vignette" />
 
       <div className="home-intro">
-        <span className="eyebrow"><span className="live-dot" /> EXPLORACIÓN LUNAR</span>
         <h2>Un pequeño paso.<br /><em>Un mundo</em> por descubrir.</h2>
         <p>Selecciona un punto en la Luna o explora el archivo de misiones históricas.</p>
         <div className="home-actions">
           <button className="menu-option" onClick={onOpenMissions}>
-            <span className="option-icon"><Orbit size={19} /></span>
-            <span><strong>Misiones históricas</strong><small>Revive la exploración lunar</small></span>
+            <span><strong>Misiones históricas</strong></span>
             <ArrowRight size={16} className="option-arrow" />
           </button>
           <button className="menu-option option-disabled" onClick={onOpenPlanning}>
-            <span className="option-icon"><Compass size={19} /></span>
-            <span><strong>Planeación de viaje</strong><small>Próximamente · elige un sitio de aterrizaje</small></span>
+            <span><strong>Planeación de viaje</strong></span>
             <ArrowRight size={16} className="option-arrow" />
           </button>
         </div>
       </div>
 
-      <div className="home-caption"><span className="caption-line" /> POLO SUR LUNAR <span>89° S</span></div>
-      <div className="home-index"><span>01</span><i /> 03</div>
-      <div className="home-bottom-note">UNA NUEVA PERSPECTIVA<br />DE NUESTRO VECINO CELESTE</div>
     </motion.section>
   )
 }
