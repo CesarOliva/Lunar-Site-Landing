@@ -6,6 +6,7 @@ import { Pause, Play, RotateCcw, X } from 'lucide-react'
 // Ajusta esta ruta a tu modelo. Puedes asignar un modelo distinto a cada tipo de misión.
 const shipModelUrl = '/modelos/nave.glb'
 const lunarModelUrl = '/modelos/Moon_NASA_LRO_8k_Topo_Small.glb'
+const earthModelUrl = '/modelos/Earth_1_12756.glb'
 
 const shipModels = {
   robotic: shipModelUrl,
@@ -157,9 +158,26 @@ export default function PlanningSimulation({ form, missionProfile, onClose }) {
     stars.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3))
     scene.add(new THREE.Points(stars, new THREE.PointsMaterial({ color: 0xf4fbf6, size: 0.12 })))
 
-    const earth = new THREE.Mesh(new THREE.SphereGeometry(EARTH_RADIUS, 32, 24), new THREE.MeshStandardMaterial({ color: 0x0b2a1a, roughness: 1 }))
-    earth.position.copy(EARTH)
-    scene.add(earth)
+    const earthFallback = new THREE.Mesh(new THREE.SphereGeometry(EARTH_RADIUS, 32, 24), new THREE.MeshStandardMaterial({ color: 0x0b2a1a, roughness: 1 }))
+    earthFallback.position.copy(EARTH)
+    scene.add(earthFallback)
+    new GLTFLoader().load(earthModelUrl, (gltf) => {
+      if (disposed) return
+      const earthModel = gltf.scene
+      const bounds = new THREE.Box3().setFromObject(earthModel)
+      const center = bounds.getCenter(new THREE.Vector3())
+      const size = bounds.getSize(new THREE.Vector3())
+      const diameter = Math.max(size.x, size.y, size.z)
+      const earth = new THREE.Group()
+      earthModel.position.sub(center)
+      if (diameter > 0) earthModel.scale.setScalar((EARTH_RADIUS * 2) / diameter)
+      earth.position.copy(EARTH)
+      earth.add(earthModel)
+      scene.remove(earthFallback)
+      earthFallback.geometry.dispose()
+      earthFallback.material.dispose()
+      scene.add(earth)
+    }, undefined, () => {})
     const earthGrid = new THREE.LineSegments(
       new THREE.WireframeGeometry(new THREE.SphereGeometry(EARTH_RADIUS * 1.005, 18, 12)),
       new THREE.LineBasicMaterial({ color: 0x00ff66, transparent: true, opacity: 0.35 }),
