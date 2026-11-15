@@ -9,15 +9,16 @@
 .intro-brand {
   position: absolute;
   inset: 0;
+  --intro-moon-radius: 17.5vh;
   pointer-events: none;
 }
 
 .intro-brand .oddity-logo-crop {
   position: absolute;
-  top: 50%;
+  top: calc(50% - var(--intro-moon-radius));
   left: 50%;
-  width: clamp(190px, 30vw, 290px);
-  transform: translate(-52%, -98%);
+  width: calc(var(--intro-moon-radius) * 2);
+  transform: translateX(-50%);
 }
 
 .intro-brand span {
@@ -31,4 +32,16 @@
   text-transform: uppercase;
   white-space: nowrap;
   transform: translateX(-50%);
+}
+
+@media (max-width: 1050px) {
+  .intro-brand { --intro-moon-radius: 16vh; }
+}
+
+@media (max-width: 800px) {
+  .intro-brand { --intro-moon-radius: 14.5vh; }
+}
+
+@media (max-width: 560px) {
+  .intro-brand { --intro-moon-radius: 11.7vh; }
 }
