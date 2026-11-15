@@ -47,9 +47,13 @@
   left: var(--x0);
   right: 0;
   top: 50%;
-  height: 1px;
-  background: var(--matrix-green);
-  opacity: .5;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--matrix-green) 0 14px,
+    transparent 14px 25px
+  );
+  opacity: .65;
   box-shadow: 0 0 8px rgba(3, 6, 5, .8);
 }
 
@@ -58,7 +62,10 @@
   position: absolute;
   left: calc(var(--x0) + var(--i) * var(--step));
   width: var(--event-w);
+  filter: brightness(.58) saturate(.45);
+  transition: filter .24s ease;
 }
+.timeline-event.is-current { filter: none; }
 .timeline-event.is-above { bottom: calc(50% + var(--event-gap)); }
 .timeline-event.is-below { top: calc(50% + var(--event-gap)); }
 
@@ -109,11 +116,17 @@
   will-change: transform;
 }
 
-/* Aviso de que se puede avanzar; desaparece al empezar a desplazarse */
-.timeline-hint {
+/* Aviso y controles para avanzar por la línea del tiempo */
+.timeline-footer {
   position: absolute;
   right: 5.3vw;
   bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.timeline-hint {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -124,11 +137,34 @@
   pointer-events: none;
 }
 
+.timeline-controls { display: flex; align-items: center; gap: 5px; }
+.timeline-control {
+  width: 31px;
+  height: 29px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(71, 122, 92, .42);
+  background: rgba(3, 6, 5, .42);
+  color: var(--muted-green);
+  cursor: pointer;
+  transition: color .2s ease, border-color .2s ease, background .2s ease;
+}
+.timeline-control:hover:not(:disabled) {
+  border-color: var(--matrix-green);
+  background: rgba(0, 184, 92, .12);
+  color: var(--matrix-green);
+}
+.timeline-control:focus-visible { outline: 1px solid var(--matrix-green); outline-offset: 2px; }
+.timeline-control:disabled { opacity: .35; cursor: default; }
+
 @media (max-width: 800px) {
   .timeline-stage { --step: max(320px, 48vw); --fs-date: 11px; --fs-title: 19px; --fs-desc: 14px; }
 }
 
 @media (max-width: 560px) {
   .timeline-stage { --step: 100vw; --event-w: 52vw; --event-gap: 26px; --fs-date: 10px; --fs-title: 17px; --fs-desc: 13px; }
-  .timeline-hint { right: 5vw; font-size: 10px; }
+  .timeline-footer { right: 5vw; gap: 8px; }
+  .timeline-hint { font-size: 10px; }
+  .timeline-control { width: 27px; height: 27px; }
 }

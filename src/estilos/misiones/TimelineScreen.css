@@ -10,19 +10,8 @@
   --rain-gap: clamp(32px, 5vw, 80px);
   position: absolute; inset: 0; z-index: 5; overflow: hidden;
   display: flex; flex-direction: column;
-  background: linear-gradient(90deg, var(--void-black), var(--deep-space) 58%, transparent);
+  background: transparent;
 }
-
-/* Luna decorativa */
-.timeline-moon { position: absolute; right: -12%; top: 14%; width: 58vw; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 29% 27%, var(--muted-green), var(--dark-forest) 58%, var(--deep-space) 82%); box-shadow: inset 25px -20px 70px var(--void-black), 0 0 110px var(--dark-forest); }
-.timeline-moon::before {
-  content: ''; position: absolute; inset: 0; border-radius: inherit;
-  background-image: linear-gradient(var(--terminal-green), var(--dark-forest)), url('https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&w=1400&q=85');
-  background-size: cover; background-position: center;
-  background-blend-mode: color, normal;
-  opacity: .7;
-}
-.timeline-moon::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: linear-gradient(90deg, #080D0B4D, #080D0B00 65%, #080D0B99); }
 
 /* Barra superior: regresar / inicio */
 .timeline-topline { z-index: 2; position: relative; flex: none; display: flex; align-items: center; gap: 17px; margin: 28px 5.3%; color: var(--muted-green); font-size: 8px; }
@@ -30,11 +19,9 @@
 
 @media (max-width: 800px) {
   .timeline-screen { --rain-width: 150px; --rain-gap: 24px; }
-  .timeline-moon { width: 90vw; right: -40%; }
 }
 
 @media (max-width: 560px) {
   .timeline-screen { --rain-left: 5vw; --rain-width: 96px; --rain-gap: 16px; }
   .timeline-topline { margin: 18px 5%; gap: 10px; }
-  .timeline-moon { width: 120vw; right: -87%; top: 25%; }
 }

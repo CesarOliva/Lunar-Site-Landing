@@ -1,71 +1,7 @@
-.intro-footnote {
-  font-family: var(--mono); letter-spacing: .12em;
+.intro-screen {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  overflow: hidden;
+  background: transparent;
 }
-.intro-coordinate {
-  font-family: var(--mono); letter-spacing: .12em;
-}
-.scroll-cue {
-  font-family: var(--mono); letter-spacing: .12em;
-}
-.intro-screen { position: absolute; inset: 0; overflow: hidden; }
-.intro-screen { background: linear-gradient(90deg, rgba(3, 6, 5, .98) 0%, rgba(3, 6, 5, .8) 37%, rgba(3, 6, 5, .05) 77%); }
-.intro-copy { z-index: 3; position: absolute; top: 50%; left: clamp(42px, 10.2vw, 155px); transform: translateY(-50%); width: min(440px, 43vw); }
-.intro-copy h1 { font-family: var(--display); letter-spacing: -.075em; font-weight: 400; }
-.intro-copy h1 { font-size: clamp(52px, 6.3vw, 92px); line-height: .99; margin: 27px 0 22px; }
-.intro-copy h1 em { font-weight: 300; color: #00FF66; }
-.intro-copy p { color: #00FF66; font-size: 14px; line-height: 1.85; max-width: 360px; margin: 0 0 33px; }
-.launch-button { min-width: 202px; }
-.intro-footnote { margin-top: 89px; color: #477A5C; font-size: 8px; }
-.intro-footnote span { color: #00FF66; margin-right: 17px; }
-.intro-moon { position: absolute; width: min(66vw, 880px); aspect-ratio: 1; border-radius: 50%; right: -7.5%; top: 50%; transform: translateY(-50%); background: radial-gradient(circle at 27% 28%, #00FF66 0, #477A5C 21%, #10231A 51%, #0D1511 72%, #080D0B 79%); box-shadow: inset 26px -16px 75px #030605, 0 0 110px #00FF6618; }
-.intro-moon::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: url('https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&w=1400&q=85') center/cover; mix-blend-mode: soft-light; opacity: .42; }
-.intro-moon::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: linear-gradient(90deg, transparent 36%, rgba(3, 6, 5, .38) 76%, #080D0B 100%); }
-.spacecraft { z-index: 2; position: absolute; top: 31%; right: 28%; color: #39FF88; filter: drop-shadow(0 0 16px #39FF8877); transform: rotate(-24deg); }
-.craft-glow { position: absolute; width: 90px; height: 3px; left: -78px; top: 28px; background: linear-gradient(90deg, transparent, #00FF66); transform: rotate(-8deg); filter: blur(2px); }
-.intro-coordinate { position: absolute; right: 8%; bottom: 17%; color: #00FF66; font-size: 8px; line-height: 1.9; }
-.scroll-cue { position: absolute; right: 8%; bottom: 6%; display: flex; gap: 15px; align-items: center; color: #477A5C; font-size: 8px; }
-.scroll-cue svg { color: #00FF66; }
-
-@media (max-width: 800px) {
-  .intro-copy { left: 7vw; width: 56vw; }
-  .intro-moon { width: 83vw; right: -39%; opacity: .77; }
-  .spacecraft { right: 18%; }
-}
-
-@media (max-width: 560px) {
-  .intro-copy { width: 80vw; left: 8vw; top: 44%; }
-  .intro-copy h1 { font-size: 59px; }
-  .intro-copy p { max-width: 300px; font-size: 12px; }
-  .intro-footnote { margin-top: 55px; font-size: 6px; }
-  .intro-moon { width: 115vw; top: 36%; right: -72%; opacity: .54; }
-  .spacecraft { right: 12%; top: 24%; transform: scale(.75); }
-  .intro-coordinate { right: 8%; bottom: 17%; font-size: 7px; }
-}
-.intro-screen { background: linear-gradient(90deg, var(--void-black), var(--deep-space) 48%, transparent 82%); }
-
-.intro-moon { background: radial-gradient(circle at 27% 28%, var(--muted-green), var(--dark-forest) 45%, var(--deep-space) 76%, var(--void-black)); box-shadow: inset 26px -16px 75px var(--void-black), 0 0 110px var(--dark-forest); }
-.intro-moon::before {
-  background-image: linear-gradient(var(--terminal-green), var(--dark-forest)), url('https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&w=1400&q=85');
-  background-blend-mode: color, normal;
-  mix-blend-mode: normal;
-  opacity: .7;
-}
-
-.intro-copy h1 em { color: var(--terminal-green); }
-.intro-copy p { color: var(--muted-green); }
-.intro-footnote { color: var(--muted-green); }
-.intro-coordinate { color: var(--muted-green); }
-.scroll-cue { color: var(--muted-green); }
-.intro-footnote span { color: var(--terminal-green); }
-.spacecraft { color: var(--neon-green); filter: drop-shadow(0 0 16px var(--terminal-green)); }
-.craft-glow { background: linear-gradient(90deg, transparent, var(--matrix-green)); }
-.scroll-cue svg { color: var(--matrix-green); }
-
-/* Blancos en la paleta (mueve estas dos variables a tu archivo de paleta si prefieres) */
-:root { --snow: #F4FBF6; --fog: #C9DCCF; }
-
-.intro-moon { background: radial-gradient(circle at 27% 28%, var(--snow), var(--muted-green) 10%, var(--dark-forest) 45%, var(--deep-space) 76%, var(--void-black)); }
-.intro-copy h1 { color: var(--snow); }
-.intro-copy p { color: var(--fog); }
-.intro-coordinate { color: var(--fog); }
-.spacecraft { color: var(--snow); }

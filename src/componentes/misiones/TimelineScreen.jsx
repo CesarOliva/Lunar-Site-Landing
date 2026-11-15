@@ -7,8 +7,6 @@ import '../../estilos/misiones/TimelineScreen.css'
 function TimelineScreen({ mission, onBack, onHome }) {
   return (
     <motion.section className="timeline-screen" initial={{ opacity: 0, x: 25 }} animate={{ opacity: 1, x: 0 }}>
-      <div className="timeline-moon" />
-
       {/* Letras de fondo: ocupan toda la pantalla, detrás de todo el contenido */}
       <MissionRainPanel mission={mission} />
 

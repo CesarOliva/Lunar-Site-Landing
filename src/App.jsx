@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { missions } from './data/missions.js'
+import Moon from './componentes/Luna/Moon.jsx'
 import HomeScreen from './componentes/inicio/HomeScreen.jsx'
 import IntroScreen from './componentes/inicio/IntroScreen.jsx'
 import TransitionScreen from './componentes/inicio/TransitionScreen.jsx'
@@ -9,32 +10,44 @@ import MissionPreview from './componentes/misiones/MissionPreview.jsx'
 import TimelineScreen from './componentes/misiones/TimelineScreen.jsx'
 import PlanningPanel from './componentes/planificacion/PlanningPanel.jsx'
 import PanelActions from './componentes/compartidos/PanelActions.jsx'
+import StarField from './componentes/compartidos/StarField.jsx'
 import './estilos/compartidos/App.css'
+
+const TRANSITION_DURATION = 2200
 
 function App() {
   const [screen, setScreen] = useState('intro')
   const [panel, setPanel] = useState(null)
   const [selectedMission, setSelectedMission] = useState(null)
+  const [hoveredMission, setHoveredMission] = useState(null)
   const [slide, setSlide] = useState(0)
+  const transitionStarted = useRef(false)
 
   const startExperience = () => {
+    if (transitionStarted.current) return
+
+    transitionStarted.current = true
     setScreen('transition')
-    window.setTimeout(() => setScreen('home'), 1450)
+    window.setTimeout(() => setScreen('home'), TRANSITION_DURATION)
   }
 
   const showMission = (mission) => {
+    setHoveredMission(null)
     setSelectedMission(mission)
     setSlide(0)
     setPanel('preview')
   }
 
   const goHome = () => {
+    setHoveredMission(null)
     setScreen('home')
     setPanel(null)
     setSelectedMission(null)
   }
 
   const goBack = () => {
+    setHoveredMission(null)
+
     if (screen === 'timeline') {
       setScreen('home')
       setPanel('preview')
@@ -49,14 +62,24 @@ function App() {
   }
 
   const openTimeline = () => {
+    setHoveredMission(null)
     setScreen('timeline')
     setPanel(null)
   }
 
   return (
     <main className={`app-shell screen-${screen}`}>
-      <div className="star-field" aria-hidden="true" />
-      <div className="ambient-glow" aria-hidden="true" />
+      <StarField />
+
+      {screen !== 'timeline' && (
+        <Moon
+          phase={screen}
+          missions={screen === 'home' ? missions : []}
+          selectedMission={screen === 'home' ? selectedMission : null}
+          hoveredMission={screen === 'home' ? hoveredMission : null}
+          onShowMission={showMission}
+        />
+      )}
 
       <AnimatePresence mode="wait">
         {screen === 'intro' && (
@@ -70,9 +93,7 @@ function App() {
         {screen === 'home' && (
           <HomeScreen
             key="home"
-            missions={missions}
-            selectedMission={selectedMission}
-            onShowMission={showMission}
+            panelOpen={Boolean(panel)}
             onOpenMissions={() => setPanel('list')}
             onOpenPlanning={() => setPanel('planning')}
           />
@@ -97,7 +118,11 @@ function App() {
               <PanelActions onBack={goBack} onHome={goHome} />
 
               {panel === 'list' && (
-                <MissionList missions={missions} onSelect={showMission} />
+                <MissionList
+                  missions={missions}
+                  onSelect={showMission}
+                  onHover={setHoveredMission}
+                />
               )}
 
               {panel === 'preview' && selectedMission && (

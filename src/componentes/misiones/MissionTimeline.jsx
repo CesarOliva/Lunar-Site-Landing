@@ -1,11 +1,19 @@
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowRight, Rocket } from 'lucide-react'
+import {
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Pause,
+  Play,
+  Rocket,
+} from 'lucide-react'
 import '../../estilos/misiones/MissionTimeline.css'
 
 const SHIP_OFFSET = 26     // px a la derecha del punto de cada evento (queda sobre/bajo su texto)
 const MAX_AMPLITUDE = 110  // px máximos que la nave se separa de la línea
 const TURN_SHARE = 0.26    // largo del giro para cruzar la línea, como fracción de la distancia entre eventos
+const AUTOPLAY_SEGMENT_MS = 5500
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max)
 
@@ -64,8 +72,101 @@ function MissionTimeline({ events }) {
   const hintRef = useRef(null)
   const eventRefs = useRef([])
   const geometry = useRef({ stations: [], eventWidth: 0, amplitude: 0 })
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [isPlaying, setIsPlaying] = useState(false)
 
   useWheelScroll(scrollerRef)
+
+  useEffect(() => {
+    const scroller = scrollerRef.current
+    if (!scroller) return undefined
+
+    const stopPlayback = () => setIsPlaying(false)
+    scroller.addEventListener('wheel', stopPlayback, { passive: true })
+    scroller.addEventListener('pointerdown', stopPlayback)
+    scroller.addEventListener('touchstart', stopPlayback, { passive: true })
+
+    return () => {
+      scroller.removeEventListener('wheel', stopPlayback)
+      scroller.removeEventListener('pointerdown', stopPlayback)
+      scroller.removeEventListener('touchstart', stopPlayback)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!isPlaying) return undefined
+
+    const scroller = scrollerRef.current
+    const lastIndex = events.length - 1
+    if (!scroller || lastIndex < 1) {
+      setIsPlaying(false)
+      return undefined
+    }
+
+    const max = scroller.scrollWidth - scroller.clientWidth
+    if (max <= 0) {
+      setIsPlaying(false)
+      return undefined
+    }
+
+    const step = max / lastIndex
+    let from = scroller.scrollLeft
+    if (from >= max - 1) {
+      from = 0
+      scroller.scrollLeft = 0
+    }
+
+    let targetIndex = Math.min(
+      lastIndex,
+      Math.floor(from / step + 0.0001) + 1
+    )
+    let to = targetIndex * step
+    let duration = AUTOPLAY_SEGMENT_MS * ((to - from) / step)
+    let startedAt = 0
+    let frame = 0
+
+    const animate = (timestamp) => {
+      if (!startedAt) startedAt = timestamp
+
+      const progress = clamp((timestamp - startedAt) / duration, 0, 1)
+      const eased = progress * progress * (3 - 2 * progress)
+      scroller.scrollLeft = from + (to - from) * eased
+
+      if (progress === 1) {
+        if (targetIndex >= lastIndex) {
+          setIsPlaying(false)
+          return
+        }
+
+        from = to
+        targetIndex += 1
+        to = targetIndex * step
+        duration = AUTOPLAY_SEGMENT_MS
+        startedAt = timestamp
+      }
+
+      frame = window.requestAnimationFrame(animate)
+    }
+
+    frame = window.requestAnimationFrame(animate)
+    return () => window.cancelAnimationFrame(frame)
+  }, [events.length, isPlaying])
+
+  const moveToAdjacentEvent = (direction) => {
+    const scroller = scrollerRef.current
+    if (!scroller || events.length < 2) return
+
+    setIsPlaying(false)
+    const max = scroller.scrollWidth - scroller.clientWidth
+    const progress = max > 0 ? clamp(scroller.scrollLeft / max, 0, 1) : 0
+    const current = Math.round(progress * (events.length - 1))
+    const targetIndex = clamp(current + direction, 0, events.length - 1)
+
+    scroller.scrollTo({
+      left: (max * targetIndex) / (events.length - 1),
+      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
+    })
+  }
 
   // La posición de la nave depende solo del scroll:
   // progreso 0 → primer evento, progreso 1 → último evento.
@@ -84,6 +185,13 @@ function MissionTimeline({ events }) {
 
       // s = índice continuo del evento (0, 1, 2, 3 ... con decimales entre uno y otro)
       const s = progress * (stations.length - 1)
+      const currentIndex = Math.min(
+        stations.length - 1,
+        Math.floor(s + 0.5)
+      )
+      setActiveIndex((current) => (
+        current === currentIndex ? current : currentIndex
+      ))
       const i = Math.min(Math.floor(s), stations.length - 2)
       const span = stations[i + 1] - stations[i]
       const travel = (s - i) * span // px recorridos desde el evento i
@@ -143,13 +251,16 @@ function MissionTimeline({ events }) {
 
           {events.map((event, index) => (
             <motion.article
-              className={`timeline-event ${index % 2 === 0 ? 'is-above' : 'is-below'}`}
+              className={`timeline-event ${index % 2 === 0 ? 'is-above' : 'is-below'} ${activeIndex === index ? 'is-current' : 'is-muted'}`}
               style={{ '--i': index }}
               key={event.time}
               ref={(el) => { eventRefs.current[index] = el }}
               initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.12 }}
+              animate={{ opacity: activeIndex === index ? 1 : 0.3, y: 0 }}
+              transition={{
+                opacity: { duration: 0.24 },
+                y: { duration: 0.4, delay: index * 0.12 },
+              }}
             >
               <span className="timeline-point" />
               <small>{event.time}</small>
@@ -172,7 +283,40 @@ function MissionTimeline({ events }) {
         </div>
       </div>
 
-      <span className="timeline-hint" ref={hintRef} aria-hidden="true">DESLIZA <ArrowRight size={13} /></span>
+      <div className="timeline-footer">
+        <span className="timeline-hint" ref={hintRef} aria-hidden="true">
+          DESLIZA <ArrowRight size={13} />
+        </span>
+        <div className="timeline-controls" role="group" aria-label="Controles de la línea del tiempo">
+          <button
+            className="timeline-control"
+            type="button"
+            aria-label="Evento anterior"
+            disabled={activeIndex === 0}
+            onClick={() => moveToAdjacentEvent(-1)}
+          >
+            <ChevronLeft size={17} />
+          </button>
+          <button
+            className="timeline-control"
+            type="button"
+            aria-label={isPlaying ? 'Pausar recorrido' : 'Reproducir recorrido'}
+            aria-pressed={isPlaying}
+            onClick={() => setIsPlaying((playing) => !playing)}
+          >
+            {isPlaying ? <Pause size={15} /> : <Play size={15} />}
+          </button>
+          <button
+            className="timeline-control"
+            type="button"
+            aria-label="Evento siguiente"
+            disabled={activeIndex === events.length - 1}
+            onClick={() => moveToAdjacentEvent(1)}
+          >
+            <ChevronRight size={17} />
+          </button>
+        </div>
+      </div>
     </div>
   )
 }

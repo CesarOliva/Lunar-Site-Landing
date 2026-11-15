@@ -6,8 +6,10 @@
 .home-screen {
   position: absolute;
   inset: 0;
+  z-index: 1;
   overflow: hidden;
-  background: #000000;
+  pointer-events: none;
+  background: transparent;
 }
 
 /* Contenedor del Canvas 3D */
@@ -18,7 +20,7 @@
   z-index: 0;
   height: 100%;
   width: 100%;
-  background: #000000;
+  background: transparent;
   cursor: grab;
   touch-action: none;
 }
@@ -83,6 +85,28 @@
   color: var(--terminal-green);
 }
 
+.matrix-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.matrix-char {
+  display: inline-block;
+}
+
+.matrix-char.is-hidden {
+  opacity: 0;
+}
+
+.matrix-char.is-glitch {
+  color: var(--snow);
+  text-shadow:
+    0 0 10px var(--terminal-green),
+    2px 0 var(--matrix-green),
+    -2px 0 var(--terminal-green);
+  transform: translateX(var(--gx, 0));
+}
+
 .home-intro > p {
   font-size: 12px;
   line-height: 1.8;
@@ -101,29 +125,27 @@
 }
 
 .menu-option {
-  position: relative;
   width: 100%;
-
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
-
-  padding: 13px 42px;
-
+  padding: 5px 0;
   color: var(--snow);
-  background: rgba(13, 21, 17, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-
+  text-align: left;
+  background: transparent;
+  border: 0;
   cursor: pointer;
-
-  transition:
-    border-color 0.25s,
-    background 0.25s;
+  transition: color 0.25s;
 }
 
-.menu-option:hover {
-  border-color: var(--matrix-green);
-  background: var(--dark-forest);
+.menu-option:hover strong,
+.menu-option:hover .matrix-char {
+  animation: menu-option-text-pulse 1.1s ease-in-out infinite;
+}
+
+.menu-option:focus-visible {
+  outline: 1px solid var(--matrix-green);
+  outline-offset: 4px;
 }
 
 .menu-option strong {
@@ -131,10 +153,25 @@
   font-weight: 600;
 }
 
-.option-arrow {
-  position: absolute;
-  right: 15px;
-  color: var(--fog);
+@keyframes menu-option-text-pulse {
+  0%,
+  100% {
+    color: var(--snow);
+    text-shadow: none;
+  }
+
+  50% {
+    color: var(--matrix-green);
+    text-shadow: 0 0 9px rgba(57, 255, 136, 0.55);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-option:hover strong,
+  .menu-option:hover .matrix-char {
+    animation: none;
+    color: var(--matrix-green);
+  }
 }
 
 /* Etiquetas de los marcadores 3D */
@@ -158,6 +195,19 @@
   color: #FFFFFF;
   border-color: #39FF88;
   opacity: 1;
+}
+
+.moon-marker-label.hovered {
+  color: #FFFFFF;
+  border-color: #39FF88;
+  box-shadow: 0 0 10px rgba(57, 255, 136, 0.35);
+  opacity: 1;
+  transform: scale(1.15);
+  transform-origin: left center;
+}
+
+.moon-marker-label {
+  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 
 /* Adaptación móvil */
