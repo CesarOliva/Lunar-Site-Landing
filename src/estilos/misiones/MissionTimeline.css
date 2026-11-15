@@ -1,0 +1,134 @@
+/* Línea de tiempo horizontal: eventos alternados arriba/abajo y una nave que vuela con el scroll */
+
+.timeline-stage {
+  --rain-end: calc(var(--rain-left) + var(--rain-width));  /* donde terminan las letras de fondo */
+  --x0: calc(var(--rain-end) + var(--rain-gap));           /* donde empieza el primer evento */
+  --step: max(360px, 34vw);                                /* distancia entre eventos */
+  --event-w: calc(var(--step) * .5);                       /* ancho del texto (no pasar de la mitad de --step: así la nave no roza el texto al cruzar) */
+  --event-gap: 32px;                                       /* separación entre la línea y el texto */
+
+  /* Tamaños de texto */
+  --fs-date: 12px;
+  --fs-title: 22px;
+  --fs-desc: 15px;
+
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  min-height: 0;
+  margin-bottom: 5vh;
+}
+
+/* Contenedor con scroll horizontal (sin barra visible).
+   El contenido se desvanece al pasar por detrás de las letras de la izquierda. */
+.timeline-scroller {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent var(--rain-end), #000 var(--x0));
+  mask-image: linear-gradient(90deg, transparent var(--rain-end), #000 var(--x0));
+}
+.timeline-scroller::-webkit-scrollbar { display: none; }
+.timeline-scroller:focus-visible { outline: 1px solid var(--matrix-green); outline-offset: -3px; }
+
+/* Riel: más ancho que la pantalla, así hay hacia dónde avanzar */
+.timeline-rail {
+  position: relative;
+  flex: none;
+  width: calc(var(--x0) + var(--step) * (var(--count) - 1) + var(--event-w) + 8vw);
+}
+
+/* La línea llega hasta el extremo derecho del riel (y de la pantalla al final del scroll) */
+.timeline-line {
+  position: absolute;
+  left: var(--x0);
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--matrix-green);
+  opacity: .5;
+  box-shadow: 0 0 8px rgba(3, 6, 5, .8);
+}
+
+/* Eventos: el primero arriba, el segundo abajo, y así */
+.timeline-event {
+  position: absolute;
+  left: calc(var(--x0) + var(--i) * var(--step));
+  width: var(--event-w);
+}
+.timeline-event.is-above { bottom: calc(50% + var(--event-gap)); }
+.timeline-event.is-below { top: calc(50% + var(--event-gap)); }
+
+/* Línea corta que une el texto con su punto en la línea */
+.timeline-event::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 1px;
+  height: var(--event-gap);
+  background: var(--terminal-green);
+  opacity: .45;
+}
+.timeline-event.is-above::before { bottom: calc(var(--event-gap) * -1); }
+.timeline-event.is-below::before { top: calc(var(--event-gap) * -1); }
+
+.timeline-point {
+  position: absolute;
+  left: -3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--matrix-green);
+  box-shadow: 0 0 10px var(--matrix-green);
+}
+.timeline-event.is-above .timeline-point { bottom: calc(var(--event-gap) * -1 - 3.5px); }
+.timeline-event.is-below .timeline-point { top: calc(var(--event-gap) * -1 - 3.5px); }
+
+/* Halo oscuro para que el texto se lea también cuando pasa sobre la luna */
+.timeline-event > small,
+.timeline-event h3,
+.timeline-event p { text-shadow: 0 0 10px rgba(3, 6, 5, .9), 0 1px 2px rgba(3, 6, 5, .9); }
+
+.timeline-event > small { display: block; font-family: var(--mono); letter-spacing: .12em; color: var(--terminal-green); font-size: var(--fs-date); }
+.timeline-event h3 { font-size: var(--fs-title); line-height: 1.15; margin: 10px 0 8px; font-weight: 600; }
+.timeline-event p { color: var(--snow, #F4FBF6); font-size: var(--fs-desc); line-height: 1.55; margin: 0; }
+
+/* Nave: su posición y giro los calcula el scroll (ver MissionTimeline.jsx) */
+.timeline-ship-anchor { position: absolute; left: 0; top: 50%; width: 0; height: 0; z-index: 3; pointer-events: none; }
+.timeline-ship {
+  position: absolute;
+  left: -23px;
+  top: -23px;
+  width: 46px;
+  height: 46px;
+  color: var(--neon-green);
+  filter: drop-shadow(0 0 10px var(--matrix-green));
+  will-change: transform;
+}
+
+/* Aviso de que se puede avanzar; desaparece al empezar a desplazarse */
+.timeline-hint {
+  position: absolute;
+  right: 5.3vw;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: .12em;
+  color: var(--muted-green);
+  pointer-events: none;
+}
+
+@media (max-width: 800px) {
+  .timeline-stage { --step: max(320px, 48vw); --fs-date: 11px; --fs-title: 19px; --fs-desc: 14px; }
+}
+
+@media (max-width: 560px) {
+  .timeline-stage { --step: 100vw; --event-w: 52vw; --event-gap: 26px; --fs-date: 10px; --fs-title: 17px; --fs-desc: 13px; }
+  .timeline-hint { right: 5vw; font-size: 10px; }
+}
