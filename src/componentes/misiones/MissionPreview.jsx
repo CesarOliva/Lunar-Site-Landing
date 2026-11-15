@@ -17,6 +17,7 @@ function MissionPreview({ mission, slide, onSlide, onExplore }) {
             transition={{ duration: 0.35 }}
           />
         </AnimatePresence>
+        <span className="hero-mission-dates">{mission.dates}</span>
         <div className="hero-indicators" role="group" aria-label="Imágenes de la misión">
           {Array.from({ length: 3 }, (_, index) => (
             <button
@@ -31,14 +32,12 @@ function MissionPreview({ mission, slide, onSlide, onExplore }) {
       </div>
       <div className="preview-details">
         <h2>{mission.name} - Misión {mission.number}</h2>
-        <p className="mission-dates"><span>FECHAS DE MISIÓN</span>{mission.dates}</p>
 
         <section className="detail-section">
-          <span className="section-label">TRIPULACIÓN <i /></span>
+          <span className="section-label">Tripulación <i /></span>
           <div className="crew-list">
             {mission.crew.map((person, index) => (
               <div className="crew-member" key={person.name}>
-                <span className="crew-number">0{index + 1}</span>
                 <span><strong>{person.name}</strong><small>{person.role}</small></span>
               </div>
             ))}
@@ -46,7 +45,7 @@ function MissionPreview({ mission, slide, onSlide, onExplore }) {
         </section>
 
         <section className="detail-section purpose-section">
-          <span className="section-label">PROPÓSITO DE LA MISIÓN <i /></span>
+          <span className="section-label">Propósito de la misión <i /></span>
           <p>{mission.purpose}</p>
           <p className="mission-description">{mission.description}</p>
         </section>

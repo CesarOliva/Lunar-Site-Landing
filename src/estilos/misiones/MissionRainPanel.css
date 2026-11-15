@@ -1,0 +1,106 @@
+/* Panel izquierdo de la línea de tiempo: dos columnas estilo lluvia de Matrix */
+
+.rain-panel {
+  --rain-head: #eafff2; /* letra líder de cada gota */
+  position: relative;
+  flex: 0 0 clamp(190px, 17vw, 250px);
+  min-height: 320px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  border: 1px solid var(--dark-forest);
+  background: linear-gradient(180deg, rgba(8, 13, 11, .78), rgba(16, 35, 26, .42));
+}
+
+/* Texto solo para lectores de pantalla */
+.rain-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Cada columna recorta lo que sale y lo desvanece arriba y abajo */
+.rain-column {
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+}
+.rain-column + .rain-column { border-left: 1px solid var(--dark-forest); }
+
+/* Pista en movimiento: va absoluta para no afectar la altura del panel */
+.rain-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  animation: rain-up var(--rain-duration, 24s) linear infinite;
+  will-change: transform;
+}
+.rain-column.is-down .rain-track { animation-name: rain-down; }
+
+/* Se mueve exactamente una copia del texto, por eso el loop no se nota */
+@keyframes rain-up {
+  from { transform: translateY(0); }
+  to { transform: translateY(calc(var(--rain-shift) * -1)); }
+}
+@keyframes rain-down {
+  from { transform: translateY(calc(var(--rain-shift) * -1)); }
+  to { transform: translateY(0); }
+}
+
+.rain-block,
+.rain-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Letras */
+.rain-char {
+  display: block;
+  font: 500 15px/1.2 var(--mono);
+  text-transform: uppercase;
+  color: var(--neon-green);
+  /* --p va de 0 (estela) a 1 (cabeza de la gota) */
+  opacity: calc(.38 + var(--p, 1) * .62);
+  text-shadow: 0 0 8px rgba(57, 255, 136, .35);
+}
+.rain-item.is-secondary .rain-char { color: var(--matrix-green); }
+.rain-char.is-head {
+  color: var(--rain-head);
+  opacity: 1;
+  text-shadow: 0 0 10px var(--neon-green), 0 0 24px var(--matrix-green);
+}
+
+.rain-space { display: block; height: 8px; }
+
+/* Separador entre gotas */
+.rain-divider {
+  display: block;
+  width: 14px;
+  height: 1px;
+  margin: 14px 0;
+  background: var(--terminal-green);
+  box-shadow: 0 0 8px var(--matrix-green);
+}
+
+@media (max-width: 800px) {
+  .rain-panel { flex-basis: 150px; }
+}
+
+@media (max-width: 560px) {
+  .rain-panel { flex-basis: 96px; }
+  .rain-char { font-size: 12px; }
+}
+
+/* Sin animación si la persona prefiere menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+  .rain-track { animation: none; transform: none; }
+}

@@ -12,22 +12,21 @@
 .hero-indicator::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--muted-green); transition: transform .2s, background .2s, box-shadow .2s; }
 .hero-indicator.is-active::before { background: var(--matrix-green); box-shadow: 0 0 10px var(--matrix-green); transform: scale(1.35); }
 .hero-indicator:focus-visible { outline: 1px solid var(--matrix-green); outline-offset: 1px; }
+.hero-mission-dates { z-index: 2; position: absolute; bottom: 20px; left: 20px; color: var(--neon-green); font-size: 13px; font-weight: 600; text-shadow: 0 1px 5px #030605; }
 .preview-details { padding: 23px 30px 0; }
 .preview-details h2 { font-size: clamp(24px, 2.4vw, 30px); margin: 9px 0 16px; line-height: 1.1; }
-.mission-dates { border-top: 1px solid #39FF8818; border-bottom: 1px solid #39FF8818; display: flex; justify-content: space-between; gap: 8px; align-items: center; padding: 12px 0; color: #39FF88; font-size: 11px; margin: 0; }
-.mission-dates span { color: #477A5C; font: 8px var(--mono); letter-spacing: .08em; }
 .detail-section { margin-top: 19px; }
-.section-label { display: flex; align-items: center; gap: 9px; color: #00FF66; font-size: 9px; }
+.section-label { display: flex; align-items: center; gap: 9px; color: #00FF66; font-size: 12px; }
 .section-label i { height: 1px; flex: 1; background: #39FF8819; }
 .crew-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 7px; padding-top: 13px; }
 .crew-member { display: flex; gap: 6px; align-items: flex-start; min-width: 0; }
-.crew-number { color: #00FF66; font: 9px var(--mono); padding-top: 2px; }
+.crew-number { color: #00FF66; font: 11px var(--mono); padding-top: 2px; }
 .crew-member strong { display: block; }
 .crew-member small { display: block; }
-.crew-member strong { font-size: 10px; font-weight: 600; margin-bottom: 4px; }
-.crew-member small { color: #477A5C; font-size: 9px; line-height: 1.4; }
+.crew-member strong { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.crew-member small { color: #477A5C; font-size: 12px; line-height: 1.4; }
 .purpose-section { margin-top: 22px; }
-.purpose-section > p { font-size: 11px; line-height: 1.7; color: #39FF88; margin: 12px 0 0; }
+.purpose-section > p { font-size: 14px; line-height: 1.7; color: #39FF88; margin: 12px 0 0; }
 .purpose-section > p.mission-description { color: #00FF66; margin-top: 7px; }
 .explore-button { margin-top: 20px; width: 100%; min-height: 43px; }
 
@@ -37,11 +36,9 @@
 }
 .purpose-section > p { color: var(--muted-green); }
 .purpose-section > p.mission-description { color: var(--muted-green); }
-.mission-dates span { color: var(--muted-green); }
 .section-label { color: var(--muted-green); }
 .crew-member small { color: var(--muted-green); }
 .crew-number { color: var(--terminal-green); }
 
 .preview-hero { background: radial-gradient(circle at 65% 45%, var(--muted-green), var(--dark-forest) 65%); }
-.mission-dates { color: var(--neon-green); border-color: var(--dark-forest); }
 .section-label i { background: var(--dark-forest); }
