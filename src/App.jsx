@@ -10,6 +10,7 @@ import MissionList from './componentes/misiones/MissionList.jsx'
 import MissionPreview from './componentes/misiones/MissionPreview.jsx'
 import TimelineScreen from './componentes/misiones/TimelineScreen.jsx'
 import PlanningPanel from './componentes/planificacion/PlanningPanel.jsx'
+import CreditosScreen from './componentes/Creditos/CreditosScreen.jsx'
 import PanelActions from './componentes/compartidos/PanelActions.jsx'
 import StarField from './componentes/compartidos/StarField.jsx'
 import './estilos/compartidos/App.css'
@@ -27,6 +28,7 @@ function App() {
   const [activeScene, setActiveScene] = useState(null)
   const [hoveredMission, setHoveredMission] = useState(null)
   const [slide, setSlide] = useState(0)
+  const [creditsBalance, setCreditsBalance] = useState(0)
   const transitionStarted = useRef(false)
 
   const startExperience = () => {
@@ -71,6 +73,10 @@ function App() {
   const goBack = () => {
     setHoveredMission(null)
 
+    if (panel === 'credits') {
+      setPanel('list')
+      return
+    }
     if (screen === 'timeline') {
       setScreen('home')
       setPanel('preview')
@@ -133,14 +139,19 @@ function App() {
         <AnimatePresence>
           {panel && (
             <motion.aside
-              className={`side-panel ${panel === 'preview' ? 'preview-panel' : ''} ${panel === 'planning' ? 'planning-panel-shell' : ''}`}
+              className={`side-panel ${panel === 'preview' ? 'preview-panel' : ''} ${panel === 'planning' ? 'planning-panel-shell' : ''} ${panel === 'credits' ? 'credits-panel-shell' : ''}`}
               key={panel}
               initial={{ x: '-105%', opacity: 0.6 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: '-105%', opacity: 0.6 }}
               transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
             >
-              <PanelActions onBack={goBack} onHome={goHome} />
+              <PanelActions
+                onBack={goBack}
+                onHome={goHome}
+                onCredits={['list', 'credits'].includes(panel) ? () => setPanel('credits') : undefined}
+                creditsBalance={creditsBalance}
+              />
 
               {panel === 'list' && (
                 <MissionList
@@ -162,6 +173,10 @@ function App() {
 
               {panel === 'planning' && (
                 <PlanningPanel />
+              )}
+
+              {panel === 'credits' && (
+                <CreditosScreen onRecharge={(amount) => setCreditsBalance((balance) => balance + amount)} />
               )}
             </motion.aside>
           )}

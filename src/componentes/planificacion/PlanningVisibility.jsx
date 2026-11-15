@@ -1,5 +1,6 @@
 import { Earth, Info, MapPin, Sun } from 'lucide-react'
 import visibilityCsvUrl from '../../../data/visibility/visibility.csv?url'
+import MatrixHeading from './PlanningMatrixHeading'
 
 // --- Datos de visibilidad: cobertura, carga del CSV y utilidades ---
 export const dateTimeMin = '2026-11-14T00:00'
@@ -219,7 +220,7 @@ export function DateStep({ form, update, dateIsInCoverage, maxDateTime }) {
   const offset = hasDate ? Math.min(Math.max(Math.round((current - rangeStart) / 3600000), 0), rangeHours) : 0
   return (
     <section aria-labelledby="date-step-title">
-      <h2 id="date-step-title">Fecha y <em>hora</em></h2>
+      <MatrixHeading id="date-step-title" text="Fecha y" emphasis="hora" />
       <p className="planning-intro">Mueve el control para recorrer el intervalo de datos. El entorno de abajo se recalcula al instante.</p>
       <div className="landing-date-card">
         <div className="date-readout">
@@ -275,7 +276,7 @@ export function VisibilityStep({ form, isModeledSite, visibilityError, visibilit
   const sampleIsTerrainBased = selectedSample?.horizonBasis !== 'geometric'
   return (
     <section aria-labelledby="visibility-step-title">
-      <h2 id="visibility-step-title">Luz y <em>comunicación</em></h2>
+      <MatrixHeading id="visibility-step-title" text="Luz y" emphasis="comunicación" />
       <p className="planning-intro">Posición geométrica respecto al horizonte local; no estima energía ni calidad del enlace.</p>
       {!selectedSample ? (
         <div className="no-visibility-data">
@@ -390,7 +391,7 @@ export function CompareStep({ form, update, isModeledSite, maxDateTime, visibili
 
   return (
     <section aria-labelledby="compare-step-title">
-      <h2 id="compare-step-title">Compara <em>escenarios</em></h2>
+      <MatrixHeading id="compare-step-title" text="Compara" emphasis="escenarios" />
       <p className="planning-intro">Compara dos fechas para el mismo sitio y la misma hora UTC.</p>
       <label className="planning-label compare-date-input">
         Fecha alternativa

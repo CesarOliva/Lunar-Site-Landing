@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Check, MapPin } from 'lucide-react'
 import visibilitySite from '../../../data/visibility-site.json'
+import MatrixHeading from './PlanningMatrixHeading'
 import { formatAngle } from './PlanningVisibility'
 import missionPhoto1 from '../../foto1.jpeg'
 import missionPhoto2 from '../../foto2.jpeg'
@@ -343,7 +344,7 @@ export function MissionStep({ form, missionProfile, update, selectMissionType })
   }
   return (
     <section className="mission-step" aria-labelledby="planning-title">
-      <h2 id="planning-title">Planeación <em>de viaje</em></h2>
+      <MatrixHeading id="planning-title" text="Planeación" emphasis="de viaje" />
       <label className="planning-label mission-name-field">
         Nombre de la misión
         <input value={form.name} maxLength={70} onChange={(event) => update('name', event.target.value)} />
@@ -420,7 +421,7 @@ export function MissionStep({ form, missionProfile, update, selectMissionType })
 export function VehicleStep({ form, missionProfile, update }) {
   return (
     <section aria-labelledby="planning-title">
-      <h2 id="planning-title">Vehículo y <em>lanzamiento</em></h2>
+      <MatrixHeading id="planning-title" text="Vehículo y" emphasis="lanzamiento" />
       <p className="planning-intro">Define el lanzador y observa cómo cambia la trayectoria al elegir la propulsión.</p>
       <div className="planning-form-grid">
         <label className="planning-label">
@@ -458,7 +459,7 @@ export function SiteStep({ form, update, updateCoordinate, coordinatesValid, alt
   const outsideMap = coordinatesValid && latitude + 90 > range
   return (
     <section aria-labelledby="planning-title">
-      <h2 id="planning-title">Sitio de <em>aterrizaje</em></h2>
+      <MatrixHeading id="planning-title" text="Sitio de" emphasis="aterrizaje" />
       <p className="planning-intro">Elige Shackleton o haz clic en el mapa para colocar un punto propio. Las coordenadas se actualizan al instante.</p>
       <div className="site-explorer">
         <div className="polar-map-card">
@@ -530,7 +531,7 @@ export function SiteStep({ form, update, updateCoordinate, coordinatesValid, alt
 export function CrewStep({ form, update }) {
   return (
     <section aria-labelledby="crew-step-title">
-      <h2 id="crew-step-title">Tripulación y <em>soporte vital</em></h2>
+      <MatrixHeading id="crew-step-title" text="Tripulación y" emphasis="soporte vital" />
       <p className="planning-intro">Este paso solo se agrega a las misiones tripuladas. Para una misión robótica se omiten estos requisitos.</p>
       <div className="planning-form-grid">
         <ChoiceGroup label="Tamaño de la tripulación" options={['2 personas', '3 personas', '4 personas']} value={form.crewSize} onChange={(value) => update('crewSize', value)} />
@@ -549,7 +550,7 @@ export function CrewStep({ form, update }) {
 export function LogisticsStep({ form, update }) {
   return (
     <section aria-labelledby="logistics-step-title">
-      <h2 id="logistics-step-title">Logística de <em>larga duración</em></h2>
+      <MatrixHeading id="logistics-step-title" text="Logística de" emphasis="larga duración" />
       <p className="planning-intro">Solo aparece para una misión tripulada de larga duración.</p>
       <div className="planning-form-grid">
         <ChoiceGroup label="Suministros de reserva" options={['30 días', '60 días', '90 días']} value={form.supplies} onChange={(value) => update('supplies', value)} />
@@ -567,7 +568,7 @@ export function LogisticsStep({ form, update }) {
 export function SampleStep({ form, update }) {
   return (
     <section aria-labelledby="sample-step-title">
-      <h2 id="sample-step-title">Retorno de <em>muestras</em></h2>
+      <MatrixHeading id="sample-step-title" text="Retorno de" emphasis="muestras" />
       <p className="planning-intro">Este paso solo se incluye cuando la misión debe traer material lunar de vuelta a la Tierra.</p>
       <div className="planning-form-grid">
         <ChoiceGroup label="Material objetivo" options={['Hielo de agua', 'Regolito', 'Rocas lunares']} value={form.sampleTarget} onChange={(value) => update('sampleTarget', value)} />
@@ -588,7 +589,7 @@ export function ForecastStep({ samples, loading, error }) {
   const terrainKnown = samples?.[0]?.horizonBasis === 'terrain'
   return (
     <section aria-labelledby="forecast-title">
-      <h2 id="forecast-title">Luz y <em>visibilidad</em></h2>
+      <MatrixHeading id="forecast-title" text="Luz y" emphasis="visibilidad" />
       <p className="planning-intro">Muestras horarias del día seleccionado para la ubicación elegida.</p>
       {loading && <p className="forecast-time" role="status">Calculando posiciones del Sol y la Tierra...</p>}
       {error && <p className="planning-error" role="alert">{error}</p>}
@@ -608,7 +609,7 @@ export function ForecastStep({ samples, loading, error }) {
 export function SummaryStep({ form, missionProfile, isModeledSite, selectedSample, visibilityError, downloadPlan }) {
   return (
     <section className="summary-step" aria-labelledby="planning-title">
-      <h2 id="planning-title">Resumen de <em>misión</em></h2>
+      <MatrixHeading id="planning-title" text="Resumen de" emphasis="misión" />
       <p className="planning-intro">Revisa la configuración y descarga el plan.</p>
       <div className="summary-card">
         <div className="summary-hero">

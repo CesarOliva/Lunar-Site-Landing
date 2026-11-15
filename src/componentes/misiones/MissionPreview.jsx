@@ -6,12 +6,12 @@ import '../../estilos/misiones/MissionPreview.css'
 function MissionPreview({ mission, slide, onSlide, onExplore, onSceneChange }) {
   return (
     <div className="preview-content">
-      <div className="preview-hero" style={{ '--mission-accent': mission.accent }}>
+      <div className="preview-hero">
         <AnimatePresence mode="wait">
           <motion.div
             className={`preview-image preview-image-${slide}`}
             key={`${mission.id}-${slide}`}
-            style={{ backgroundImage: `linear-gradient(180deg, transparent 30%, rgba(5,7,13,.78)), url("${mission.image}")` }}
+            style={{ backgroundImage: `linear-gradient(180deg, transparent 30%, rgba(3,6,5,.82)), url("${mission.image}")` }}
             initial={{ opacity: 0, scale: 1.04 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
