@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState } from 'react'
-import { Check, MapPin } from 'lucide-react'
+import { Check, Lock, MapPin } from 'lucide-react'
 import visibilitySite from '../../../data/visibility-site.json'
 import { formatAngle } from './PlanningVisibility'
 import missionPhoto1 from '../../foto1.jpeg'
@@ -366,7 +366,7 @@ function GlyphTiles({ label, options, value, onChange, Glyph }) {
 }
 
 // --- Pasos del asistente ---
-export function MissionStep({ form, missionProfile, update, selectMissionType }) {
+export function MissionStep({ form, missionProfile, update, selectMissionType, detailedPlan, onOpenDetailedPlan, planNotice }) {
   const durationIssue = getDurationIssue(form)
   const setDuration = (days) => {
     update('durationDays', days)
@@ -374,7 +374,17 @@ export function MissionStep({ form, missionProfile, update, selectMissionType })
   }
   return (
     <section className="mission-step" aria-labelledby="planning-title">
-      <h2 id="planning-title">Planeación <em>de viaje</em></h2>
+      <div className="mission-step-heading">
+        <h2 id="planning-title">Planeación <em>de viaje</em></h2>
+        {detailedPlan ? (
+          <span className="planning-detail-active">PLAN DETALLADO ACTIVO</span>
+        ) : (
+          <button className="planning-detail-button" type="button" onClick={onOpenDetailedPlan}>
+            Plan detallado
+          </button>
+        )}
+      </div>
+      {planNotice && <p className="planning-detail-notice" role="status">{planNotice}</p>}
       <label className="planning-label mission-name-field">
         Nombre de la misión
         <input value={form.name} maxLength={70} onChange={(event) => update('name', event.target.value)} />
@@ -685,7 +695,7 @@ export function ForecastStep({ forecast }) {
   )
 }
 
-export function SummaryStep({ form, missionProfile, isModeledSite, selectedSample, visibilityError, demoForecast, downloadPlan }) {
+export function SummaryStep({ form, missionProfile, isModeledSite, selectedSample, visibilityError, demoForecast, downloadPlan, detailedPlan }) {
   const [simulation, setSimulation] = useState(0)
   return (
     <section className="summary-step" aria-labelledby="planning-title">
@@ -732,12 +742,28 @@ export function SummaryStep({ form, missionProfile, isModeledSite, selectedSampl
           <p className="summary-data-note">No hay cálculo de visibilidad para las coordenadas personalizadas.</p>
         )}
       </div>
-      <button className="download-plan-button" type="button" onClick={downloadPlan}>
-        Descargar plan
-      </button>
-      <button className="download-plan-button sim-launch-button" type="button" onClick={() => setSimulation((run) => run + 1)}>
-        {simulation ? 'Reiniciar simulación' : 'Simular misión'}
-      </button>
+      {detailedPlan ? (
+        <>
+          <button className="download-plan-button" type="button" onClick={downloadPlan}>
+            Descargar plan
+          </button>
+          <button className="download-plan-button sim-launch-button" type="button" onClick={() => setSimulation((run) => run + 1)}>
+            {simulation ? 'Reiniciar simulación' : 'Simular misión'}
+          </button>
+        </>
+      ) : (
+        <>
+          <p className="planning-locked-actions-note" id="planning-locked-actions-note">
+            El PDF y la simulación final están incluidos en el plan detallado.
+          </p>
+          <button className="download-plan-button is-locked" type="button" disabled aria-describedby="planning-locked-actions-note">
+            <Lock size={15} /> Descargar plan
+          </button>
+          <button className="download-plan-button sim-launch-button is-locked" type="button" disabled aria-describedby="planning-locked-actions-note">
+            <Lock size={15} /> Simular misión
+          </button>
+        </>
+      )}
       {simulation > 0 && (
         <Suspense fallback={<p className="planning-hint">Cargando simulación…</p>}>
           <PlanningSimulation key={simulation} form={form} missionProfile={missionProfile} onClose={() => setSimulation(0)} />

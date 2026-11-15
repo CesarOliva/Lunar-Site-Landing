@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Check, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Check, ChevronLeft, ChevronRight, Lock } from 'lucide-react'
 import visibilitySite from '../../../data/visibility-site.json'
 import '../../estilos/planificacion/PlanningPanel.css'
 import {
@@ -29,6 +29,8 @@ import {
 
 const horizonsLongitude = (longitude) => ((longitude + 180) % 360 + 360) % 360 - 180
 const visibilityKey = (latitude, longitude, altitude, date) => `${latitude}|${longitude}|${altitude}|${date}`
+const DETAILED_PLAN_CREDITS = 5
+const FREE_STEP_IDS = new Set(['mission', 'site', 'forecast', 'summary'])
 
 function parseVisibilityDay(result) {
   return {
@@ -55,9 +57,11 @@ function parseVisibilityDay(result) {
   }
 }
 
-function PlanningPanel() {
+function PlanningPanel({ creditsBalance, onSpendCredits }) {
   const [step, setStep] = useState(0)
   const wizardRef = useRef(null)
+  const unlockDialogRef = useRef(null)
+  const unlockTriggerRef = useRef(null)
   const [glitchActive, setGlitchActive] = useState(
     () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
@@ -68,23 +72,74 @@ function PlanningPanel() {
   const [visibilityError, setVisibilityError] = useState('')
   const [customVisibility, setCustomVisibility] = useState(null)
   const [visibilityRetry, setVisibilityRetry] = useState(0)
+  const [detailedPlan, setDetailedPlan] = useState(false)
+  const [unlockDialogOpen, setUnlockDialogOpen] = useState(false)
+  const [purchaseError, setPurchaseError] = useState('')
+  const [planNotice, setPlanNotice] = useState('')
   const missionProfile = missionTypes.find((type) => type.id === form.missionType) ?? missionTypes[0]
   const steps = [
-    { id: 'mission', label: 'Información general' },
+    { id: 'mission', label: 'Planeación de viaje' },
     { id: 'vehicle', label: 'Vehículo y lanzamiento' },
     ...(missionProfile.conditionalSteps.length
       ? [{ id: 'mission-details', label: 'Configuración de misión' }]
       : []),
-    { id: 'site', label: 'Ubicación lunar' },
-    { id: 'forecast', label: 'Fecha y entorno' },
+    { id: 'site', label: 'Sitio de aterrizaje' },
+    { id: 'forecast', label: 'Fecha y hora' },
     { id: 'analysis', label: 'Fecha y visibilidad' },
     { id: 'summary', label: 'Resumen de misión' },
   ]
+  const isStepAvailable = (stepDefinition) => detailedPlan || FREE_STEP_IDS.has(stepDefinition.id)
+  const findNextAvailableStep = (index) => steps.findIndex(
+    (stepDefinition, stepIndex) => stepIndex > index && isStepAvailable(stepDefinition),
+  )
+  const findPreviousAvailableStep = (index) => {
+    for (let previous = index - 1; previous >= 0; previous -= 1) {
+      if (isStepAvailable(steps[previous])) return previous
+    }
+    return 0
+  }
   const currentStep = steps[step] ?? steps[0]
+  const nextAvailableStep = findNextAvailableStep(step)
 
   useEffect(() => {
     wizardRef.current?.closest('.side-panel')?.scrollTo({ top: 0, behavior: 'smooth' })
   }, [currentStep.id])
+
+  useEffect(() => {
+    const dialog = unlockDialogRef.current
+    if (!dialog) return
+
+    if (unlockDialogOpen && !dialog.open) {
+      dialog.showModal()
+      dialog.querySelector('.planning-unlock-confirm')?.focus()
+    } else if (!unlockDialogOpen && dialog.open) {
+      dialog.close()
+      if (unlockTriggerRef.current?.isConnected) unlockTriggerRef.current.focus()
+      else wizardRef.current?.querySelector('[aria-current="step"]')?.focus()
+    }
+  }, [unlockDialogOpen])
+
+  const openDetailedPlanDialog = (event) => {
+    unlockTriggerRef.current = event.currentTarget
+    setPurchaseError('')
+    setUnlockDialogOpen(true)
+  }
+
+  const confirmDetailedPlan = () => {
+    if (creditsBalance < DETAILED_PLAN_CREDITS) {
+      setPurchaseError(`Necesitas ${DETAILED_PLAN_CREDITS} créditos y tu saldo actual es de ${creditsBalance}.`)
+      return
+    }
+    if (!onSpendCredits(DETAILED_PLAN_CREDITS)) {
+      setPurchaseError(`No se pudo completar la compra. Necesitas ${DETAILED_PLAN_CREDITS} créditos disponibles.`)
+      return
+    }
+
+    setDetailedPlan(true)
+    setPlanNotice(`Plan detallado activado para esta misión. Saldo restante: ${creditsBalance - DETAILED_PLAN_CREDITS} créditos.`)
+    setPurchaseError('')
+    setUnlockDialogOpen(false)
+  }
 
   const triggerGlitch = () => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -279,7 +334,7 @@ function PlanningPanel() {
     }
     setValidationMessage('')
     if (currentStep.id !== 'analysis') triggerGlitch()
-    setStep((current) => Math.min(current + 1, steps.length - 1))
+    if (nextAvailableStep !== -1) setStep(nextAvailableStep)
   }
 
   const downloadPlan = async () => {
@@ -309,26 +364,40 @@ function PlanningPanel() {
       <nav className="planning-stepper" aria-label="Pasos de planificación" style={{ '--progress': steps.length > 1 ? step / (steps.length - 1) : 0 }}>
         {steps.map(({ label }, index) => (
           <button
-            className={`step-number ${index === step ? 'is-current' : ''} ${index < step ? 'is-complete' : ''}`}
+            className={`step-number ${index === step ? 'is-current' : ''} ${index < step && isStepAvailable(steps[index]) ? 'is-complete' : ''} ${isStepAvailable(steps[index]) ? '' : 'is-locked'}`}
             key={steps[index].id}
             type="button"
-            aria-label={`Paso ${index + 1}: ${label}`}
-            title={label}
+            disabled={!isStepAvailable(steps[index])}
+            aria-label={`Paso ${index + 1}: ${label}${isStepAvailable(steps[index]) ? '' : ', bloqueado en el plan gratuito'}`}
+            title={isStepAvailable(steps[index]) ? label : `${label} · Requiere plan detallado`}
             aria-current={index === step ? 'step' : undefined}
             onClick={() => {
+              if (!isStepAvailable(steps[index])) return
               if (index !== step && steps[index].id !== 'summary') triggerGlitch()
               setStep(index)
               setValidationMessage('')
             }}
           >
-            {index < step ? <Check size={14} /> : index + 1}
+            {!isStepAvailable(steps[index])
+              ? <Lock size={14} />
+              : index < step
+                ? <Check size={14} />
+                : index + 1}
           </button>
         ))}
       </nav>
 
       <main className="planning-content">
         {currentStep.id === 'mission' && (
-          <MissionStep form={form} missionProfile={missionProfile} update={update} selectMissionType={selectMissionType} />
+          <MissionStep
+            form={form}
+            missionProfile={missionProfile}
+            update={update}
+            selectMissionType={selectMissionType}
+            detailedPlan={detailedPlan}
+            onOpenDetailedPlan={openDetailedPlanDialog}
+            planNotice={planNotice}
+          />
         )}
 
         {currentStep.id === 'vehicle' && (
@@ -368,25 +437,83 @@ function PlanningPanel() {
         )}
 
         {currentStep.id === 'summary' && (
-          <SummaryStep form={form} missionProfile={missionProfile} isModeledSite={isModeledSite} selectedSample={selectedSample} visibilityError={activeVisibilityError} downloadPlan={downloadPlan} />
+          <SummaryStep
+            form={form}
+            missionProfile={missionProfile}
+            isModeledSite={isModeledSite}
+            selectedSample={selectedSample}
+            visibilityError={activeVisibilityError}
+            downloadPlan={downloadPlan}
+            detailedPlan={detailedPlan}
+          />
         )}
 
         <footer className="planning-navigation">
           {validationMessage && <p className="planning-error" role="alert">{validationMessage}</p>}
           <button className="planning-back-button" type="button" onClick={() => {
             if (step > 0) triggerGlitch()
-            setStep((current) => Math.max(current - 1, 0))
+            setStep(findPreviousAvailableStep(step))
             setValidationMessage('')
           }} disabled={step === 0}>
             <ChevronLeft size={16} /> Anterior
           </button>
-          {step < steps.length - 1 && (
+          {nextAvailableStep !== -1 && (
             <button className="planning-next-button" type="button" onClick={goNext}>
               Siguiente <ChevronRight size={16} />
             </button>
           )}
         </footer>
       </main>
+      <dialog
+        className="planning-unlock-dialog"
+        ref={unlockDialogRef}
+        aria-labelledby="planning-unlock-title"
+        onCancel={(event) => {
+          event.preventDefault()
+          setUnlockDialogOpen(false)
+        }}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) setUnlockDialogOpen(false)
+        }}
+      >
+        <div className="planning-unlock-content">
+          <p className="planning-unlock-eyebrow">DESBLOQUEO POR PLAN</p>
+          <h3 id="planning-unlock-title">Plan detallado</h3>
+          <p className="planning-unlock-description">
+            Por 5 créditos ($2.50 USD) obtienes, para esta planeación:
+          </p>
+          <ul className="planning-unlock-benefits">
+            <li>Edición de todos los pasos y sus detalles.</li>
+            <li>Simulación final de la misión.</li>
+            <li>Descarga en PDF del resumen de misión.</li>
+          </ul>
+          <p className="planning-unlock-balance">
+            Saldo actual: <strong>{creditsBalance} créditos</strong>
+          </p>
+          <p className="planning-unlock-once">
+            La compra desbloquea solo este plan. Cada nuevo plan detallado cuesta otros 5 créditos.
+          </p>
+          {creditsBalance < DETAILED_PLAN_CREDITS && (
+            <p className="planning-unlock-error" role="status">
+              Saldo insuficiente: necesitas {DETAILED_PLAN_CREDITS - creditsBalance} créditos más para continuar.
+            </p>
+          )}
+          {purchaseError && <p className="planning-unlock-error" role="alert">{purchaseError}</p>}
+          <div className="planning-unlock-actions">
+            <button
+              className="planning-unlock-confirm"
+              type="button"
+              onClick={confirmDetailedPlan}
+              disabled={creditsBalance < DETAILED_PLAN_CREDITS}
+            >
+              Comprar por 5 créditos
+            </button>
+            <button className="planning-unlock-cancel" type="button" onClick={() => setUnlockDialogOpen(false)}>
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </dialog>
     </div>
   )
 }
