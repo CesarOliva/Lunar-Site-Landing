@@ -87,7 +87,7 @@ function App() {
         <AnimatePresence>
           {panel && (
             <motion.aside
-              className={`side-panel ${panel === 'preview' ? 'preview-panel' : ''}`}
+              className={`side-panel ${panel === 'preview' ? 'preview-panel' : ''} ${panel === 'planning' ? 'planning-panel-shell' : ''}`}
               key={panel}
               initial={{ x: '-105%', opacity: 0.6 }}
               animate={{ x: 0, opacity: 1 }}
