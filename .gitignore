@@ -1,0 +1,13 @@
+node_modules/
+dist/
+*.tsbuildinfo
+__pycache__/
+.pytest_cache/
+.cache/
+.playwright/
+.edge-profile/
+.edge-review/
+apollo-review.png
+apollo-mobile-review.png
+apollo-custom-review*.png
+apollo-custom-mobile-review*.png

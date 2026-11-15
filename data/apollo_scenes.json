@@ -1,0 +1,167 @@
+{
+  "schema_version": 1,
+  "generated_utc": "2026-11-15",
+  "ephemeris": {
+    "provider": "NASA/JPL Horizons API",
+    "endpoint": "https://ssd.jpl.nasa.gov/api/horizons.api",
+    "api_version": "1.2",
+    "ephemeris_source": "DE441",
+    "time_type": "UT",
+    "time_note": "Se consultan las horas UT originales de NSSDCA. Horizons informa las fechas posteriores a 1962 en UTC, escala civil mantenida dentro de 0.9 s de UT1.",
+    "center_frame": "MEAN_ME (high precision), según las respuestas de Horizons",
+    "site_coordinates": "SITE_COORD = longitud este, latitud planetocéntrica, altitud km; coordenadas ME del catálogo",
+    "apparent_place": "Airless azimuth/elevation; quantity 4; light-time, deflexión gravitacional, aberración estelar, precesión y nutación según Horizons",
+    "horizon_model": "Horizonte geométrico plano de referencia: 0°. Sin perfil LOLA local para estos sitios; visibilidad con relieve indeterminada.",
+    "sun_vector_method": "Se reconstruye la dirección fija a la Luna a partir del azimut y elevación locales, y de las bases este, norte y cenit del sitio en coordenadas ME.",
+    "render_axis_mapping": "Three.js Y-up: (x_ME, y_ME, z_ME) -> (x, z, -y). La textura global de NASA está centrada en longitud 0° y orientada norte arriba."
+  },
+  "missions": {
+    "apollo-11": {
+      "site": {
+        "latitude_deg": 0.67416,
+        "longitude_deg": 23.47314,
+        "altitude_km": 0
+      },
+      "time_utc": "1969-07-20T20:17:40Z",
+      "query": {
+        "COMMAND": {
+          "sun": "10",
+          "earth": "399"
+        },
+        "CENTER": "coord@301",
+        "COORD_TYPE": "GEODETIC",
+        "SITE_COORD": "23.47314,0.67416,0",
+        "TLIST": "1969-07-20 20:17:40 UT",
+        "TIME_TYPE": "UT",
+        "QUANTITIES": "4",
+        "ANG_FORMAT": "DEG",
+        "APPARENT": "AIRLESS"
+      },
+      "sun": {
+        "azimuth_deg": 88.805495,
+        "elevation_deg": 10.703313,
+        "direction_me": [
+          -0.221182743,
+          0.974968908,
+          0.02266766
+        ],
+        "above_geometric_horizon": true,
+        "terrain_visibility": "indeterminate",
+        "source": "DE441",
+        "source_file": "data/horizons/raw/apollo-11-sun.json"
+      },
+      "earth": {
+        "azimuth_deg": 272.195241,
+        "elevation_deg": 59.224237,
+        "direction_me": [
+          0.991472967,
+          -0.126881119,
+          0.029707532
+        ],
+        "above_geometric_horizon": true,
+        "terrain_visibility": "indeterminate",
+        "source": "DE441",
+        "source_file": "data/horizons/raw/apollo-11-earth.json"
+      },
+      "response_frame": "not reported"
+    },
+    "apollo-12": {
+      "site": {
+        "latitude_deg": -3.0128,
+        "longitude_deg": -23.4219,
+        "altitude_km": 0
+      },
+      "time_utc": "1969-11-19T06:54:35Z",
+      "query": {
+        "COMMAND": {
+          "sun": "10",
+          "earth": "399"
+        },
+        "CENTER": "coord@301",
+        "COORD_TYPE": "GEODETIC",
+        "SITE_COORD": "-23.4219,-3.0128,0",
+        "TLIST": "1969-11-19 06:54:35 UT",
+        "TIME_TYPE": "UT",
+        "QUANTITIES": "4",
+        "ANG_FORMAT": "DEG",
+        "APPARENT": "AIRLESS"
+      },
+      "sun": {
+        "azimuth_deg": 91.181896,
+        "elevation_deg": 5.148218,
+        "direction_me": [
+          0.477045087,
+          0.878516575,
+          -0.025231165
+        ],
+        "above_geometric_horizon": true,
+        "terrain_visibility": "indeterminate",
+        "source": "DE441",
+        "source_file": "data/horizons/raw/apollo-12-sun.json"
+      },
+      "earth": {
+        "azimuth_deg": 87.305807,
+        "elevation_deg": 61.395337,
+        "direction_me": [
+          0.995673119,
+          0.089859564,
+          -0.023670639
+        ],
+        "above_geometric_horizon": true,
+        "terrain_visibility": "indeterminate",
+        "source": "DE441",
+        "source_file": "data/horizons/raw/apollo-12-earth.json"
+      },
+      "response_frame": "not reported"
+    },
+    "apollo-14": {
+      "site": {
+        "latitude_deg": -3.64589,
+        "longitude_deg": -17.47194,
+        "altitude_km": 0
+      },
+      "time_utc": "1971-02-05T09:18:11Z",
+      "query": {
+        "COMMAND": {
+          "sun": "10",
+          "earth": "399"
+        },
+        "CENTER": "coord@301",
+        "COORD_TYPE": "GEODETIC",
+        "SITE_COORD": "-17.47194,-3.64589,0",
+        "TLIST": "1971-02-05 09:18:11 UT",
+        "TIME_TYPE": "UT",
+        "QUANTITIES": "4",
+        "ANG_FORMAT": "DEG",
+        "APPARENT": "AIRLESS"
+      },
+      "sun": {
+        "azimuth_deg": 89.555509,
+        "elevation_deg": 10.348525,
+        "direction_me": [
+          0.466809792,
+          0.88434955,
+          -0.003806875
+        ],
+        "above_geometric_horizon": true,
+        "terrain_visibility": "indeterminate",
+        "source": "DE441",
+        "source_file": "data/horizons/raw/apollo-14-sun.json"
+      },
+      "earth": {
+        "azimuth_deg": 96.869207,
+        "elevation_deg": 65.951171,
+        "direction_me": [
+          0.987821453,
+          0.113231627,
+          -0.106711645
+        ],
+        "above_geometric_horizon": true,
+        "terrain_visibility": "indeterminate",
+        "source": "DE441",
+        "source_file": "data/horizons/raw/apollo-14-earth.json"
+      },
+      "response_frame": "not reported"
+    }
+  }
+}
