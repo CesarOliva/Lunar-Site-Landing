@@ -5,3 +5,30 @@
   overflow: hidden;
   background: transparent;
 }
+
+.intro-brand {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.intro-brand .oddity-logo-crop {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(190px, 30vw, 290px);
+  transform: translate(-52%, -98%);
+}
+
+.intro-brand span {
+  position: absolute;
+  top: calc(50% + 12vh);
+  left: 50%;
+  color: var(--fog);
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}

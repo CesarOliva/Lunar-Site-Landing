@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import OddityLogo from '../compartidos/OddityLogo.jsx'
 import '../../estilos/inicio/HomeScreen.css'
 
 const INTRO_MS = 1000
@@ -163,6 +164,9 @@ function HomeScreen({
       transition={{ duration: 0.8 }}
     >
       <div className="home-vignette" />
+      <div className={`home-brand ${panelOpen ? 'is-panel-open' : ''}`} aria-label="Oddity">
+        <OddityLogo />
+      </div>
 
       <AnimatePresence>
         {!panelOpen && (

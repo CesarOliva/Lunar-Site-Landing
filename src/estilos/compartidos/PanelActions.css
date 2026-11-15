@@ -1,14 +1,64 @@
-.panel-top-actions { position: sticky; z-index: 5; top: 0; height: 63px; display: flex; align-items: center; gap: 12px; padding: 0 25px; background: linear-gradient(#080D0B 78%, #080D0B00); }
+.panel-top-actions {
+  position: sticky;
+  z-index: 5;
+  top: 0;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 28px;
+  background: linear-gradient(var(--panel-black) 78%, transparent);
+}
+
 .panel-top-actions .text-button { margin-right: auto; }
-.icon-button { display: grid; place-items: center; width: 31px; height: 31px; background: transparent; color: #00FF66; border: 1px solid #39FF8819; cursor: pointer; transition: color .2s, border .2s; }
-.icon-button:hover { color: #39FF88; border-color: #00FF66; }
-.text-button { display: inline-flex; align-items: center; gap: 9px; color: #00FF66; border: 0; padding: 8px 0; background: transparent; font-size: 10px; cursor: pointer; }
-.text-button:hover { color: #39FF88; }
+
+.icon-button {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  background: rgba(57, 255, 136, .08);
+  color: var(--neon-green);
+  border: 1px solid rgba(57, 255, 136, .48);
+  cursor: pointer;
+  transition: color .2s, border-color .2s, background-color .2s, box-shadow .2s;
+}
+
+.icon-button:hover {
+  color: var(--void-black);
+  border-color: var(--neon-green);
+  background: var(--neon-green);
+  box-shadow: 0 0 16px rgba(57, 255, 136, .3);
+}
+
+.text-button {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 13px;
+  border: 1px solid rgba(57, 255, 136, .35);
+  background: rgba(57, 255, 136, .07);
+  color: var(--neon-green);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color .2s, border-color .2s, background-color .2s, box-shadow .2s;
+}
+
+.text-button:hover {
+  color: var(--snow);
+  border-color: var(--neon-green);
+  background: rgba(57, 255, 136, .16);
+  box-shadow: 0 0 14px rgba(57, 255, 136, .16);
+}
+
+.icon-button:focus-visible,
+.text-button:focus-visible {
+  outline: 2px solid var(--neon-green);
+  outline-offset: 3px;
+}
 
 @media (max-width: 560px) {
-  .panel-top-actions { padding: 0 20px; } }
-.panel-top-actions { background: linear-gradient(var(--panel-black) 78%, transparent); }
-.icon-button { color: var(--muted-green); border-color: var(--dark-forest); }
-.icon-button:hover { color: var(--neon-green); border-color: var(--matrix-green); }
-.text-button:hover { color: var(--neon-green); border-color: var(--matrix-green); }
-.text-button { color: var(--muted-green); }
+  .panel-top-actions { padding: 0 20px; }
+}

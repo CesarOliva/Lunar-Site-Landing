@@ -29,12 +29,13 @@
 }
 
 .planning-wordmark {
-  display: inline-flex;
+  width: 126px;
+  display: flex;
   align-items: center;
-  gap: 8px;
-  color: var(--terminal-green);
-  font-size: 14px;
-  font-weight: 500;
+}
+
+.planning-wordmark .oddity-logo-crop {
+  width: 120px;
 }
 
 .planning-stepper {
