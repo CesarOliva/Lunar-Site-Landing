@@ -48,3 +48,10 @@ de misión (`x = cos(lat)·sin(lon)`, `z = cos(lat)·cos(lon)`). Latitud y longi
 - El detalle por debajo de ~10–30 m de la primera persona es sintético y calibrado con la rugosidad real de LOLA;
   hay un deslizador para apagarlo.
 - `moon/src/surface/microRelief.test.mjs` valida la calibración del microrrelieve: `node moon/src/surface/microRelief.test.mjs`.
+- **Cielo estrellado** (`starSky.js`, `lunarOrientation.js`): CesiumJS solo crea su cielo con el elipsoide terrestre, así que la
+  primera persona dibuja uno propio con las 5.044 estrellas del catálogo Yale Bright Star hasta magnitud 6
+  (`surface/data/stars.json`, obtenido de d3-celestial, licencia BSD-3), con su brillo y color (B−V). Se orienta con la
+  rotación real de la Luna (modelo IAU: polo y meridiano origen en función de la fecha), de modo que gira una vuelta cada
+  27,32 días; sin atmósfera no titilan, y el relieve las oculta bajo el horizonte. El selector «Cielo estrellado: giro»
+  acelera ese movimiento (por defecto 1 hora por segundo) y solo mueve el cielo, no la luz del terreno.
+  Prueba: `node moon/src/surface/lunarOrientation.test.mjs`.

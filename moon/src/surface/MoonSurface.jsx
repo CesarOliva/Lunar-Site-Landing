@@ -25,6 +25,8 @@ import {
   measureMeanBrightness,
 } from './detailImagery.js'
 import { FirstPersonController } from './firstPerson.js'
+import { createLandingDemo } from './landingDemo.js'
+import { createStarSky } from './starSky.js'
 import { buildLayerStack, createUrlProvider, imageTileCache } from './imageryStack.js'
 import { LOLA_WINDOW_RADIUS_KM } from './config.js'
 
@@ -64,6 +66,8 @@ function MoonSurface({
   onError,
   onTourActiveChange,
   onPositionChange,
+  landingModelUrl,
+  onDemoChange,
 }) {
   const hostRef = useRef(null)
   const exaggerationRef = useRef(exaggeration)
@@ -85,6 +89,8 @@ function MoonSurface({
     const abort = new AbortController()
     let viewer
     let controller
+    let landingDemo
+    let starSky
     let lolaWindow
     let recentering = false
     let disposed = false
@@ -222,6 +228,8 @@ function MoonSurface({
         if (scene.moon) scene.moon.show = false
         scene.screenSpaceCameraController.enableInputs = false
         scene.verticalExaggeration = exaggerationRef.current
+        // Cesium solo crea su cielo estrellado con el elipsoide terrestre: aquí se dibuja uno real propio.
+        starSky = createStarSky(viewer)
         viewer.camera.frustum.fov = (70 * Math.PI) / 180
 
         const [foundLayers, firstWindow] = await Promise.all([
@@ -302,7 +310,22 @@ function MoonSurface({
           result.sunReady.then(() => { if (!disposed) onReady(describe(result)) })
         }
 
+        // Demostración de aterrizaje (solo si la aplicación aporta el modelo de la nave).
+        if (landingModelUrl) {
+          landingDemo = createLandingDemo({
+            viewer,
+            controller,
+            modelUrl: landingModelUrl,
+            fallbackGroundHeight: groundHeight,
+            getSun: () => sun,
+            onChange: (demoState) => onDemoChange?.(demoState),
+          })
+        }
+
         apiRef.current = {
+          setSkyTimeScale: (value) => starSky?.setTimeScale(value),
+          startLandingDemo: () => landingDemo?.start().catch((error) => console.error('Demostración de aterrizaje:', error)),
+          stopLandingDemo: () => landingDemo?.stop(),
           setVerticalExaggeration: (value) => {
             if (!viewer.isDestroyed()) scene.verticalExaggeration = value
           },
@@ -341,12 +364,14 @@ function MoonSurface({
       abort.abort()
       if (handleEscape) window.removeEventListener('keydown', handleEscape)
       if (viewer && !viewer.isDestroyed()) {
+        landingDemo?.stop()
+        starSky?.dispose()
         controller?.dispose()
         viewer.destroy()
       }
       apiRef.current = null
     }
-  }, [pointLatitude, pointLongitude, apiRef, onStatus, onReady, onError, onTourActiveChange, onPositionChange])
+  }, [pointLatitude, pointLongitude, apiRef, onStatus, onReady, onError, onTourActiveChange, onPositionChange, landingModelUrl, onDemoChange])
 
   return <div className="cesium-host" ref={hostRef} />
 }

@@ -177,6 +177,33 @@
   margin-bottom: 6px;
 }
 
+/* Demostración de aterrizaje */
+.surface-demo {
+  width: 100%;
+  min-height: 46px;
+  margin-bottom: 8px;
+  color: var(--neon-green);
+  border: 1px solid var(--matrix-green);
+  background: rgba(3, 6, 5, .72);
+}
+
+.surface-demo:hover:not(:disabled) {
+  color: var(--snow);
+  border-color: var(--neon-green);
+  background: rgba(3, 6, 5, .9);
+}
+
+.surface-demo:disabled {
+  opacity: .6;
+  cursor: progress;
+  transform: none;
+}
+
+.surface-demo-remove {
+  width: 100%;
+  justify-content: center;
+}
+
 /* Secciones */
 .surface-section {
   margin-top: 24px;
