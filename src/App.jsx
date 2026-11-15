@@ -16,6 +16,7 @@ function App() {
   const [screen, setScreen] = useState('intro')
   const [panel, setPanel] = useState(null)
   const [selectedMission, setSelectedMission] = useState(null)
+  const [hoveredMission, setHoveredMission] = useState(null)
   const [slide, setSlide] = useState(0)
 
   const startExperience = () => {
@@ -24,18 +25,22 @@ function App() {
   }
 
   const showMission = (mission) => {
+    setHoveredMission(null)
     setSelectedMission(mission)
     setSlide(0)
     setPanel('preview')
   }
 
   const goHome = () => {
+    setHoveredMission(null)
     setScreen('home')
     setPanel(null)
     setSelectedMission(null)
   }
 
   const goBack = () => {
+    setHoveredMission(null)
+
     if (screen === 'timeline') {
       setScreen('home')
       setPanel('preview')
@@ -50,6 +55,7 @@ function App() {
   }
 
   const openTimeline = () => {
+    setHoveredMission(null)
     setScreen('timeline')
     setPanel(null)
   }
@@ -57,7 +63,6 @@ function App() {
   return (
     <main className={`app-shell screen-${screen}`}>
       <StarField />
-      <div className="ambient-glow" aria-hidden="true" />
 
       <AnimatePresence mode="wait">
         {screen === 'intro' && (
@@ -73,6 +78,8 @@ function App() {
             key="home"
             missions={missions}
             selectedMission={selectedMission}
+            hoveredMission={hoveredMission}
+            panelOpen={Boolean(panel)}
             onShowMission={showMission}
             onOpenMissions={() => setPanel('list')}
             onOpenPlanning={() => setPanel('planning')}
@@ -98,7 +105,11 @@ function App() {
               <PanelActions onBack={goBack} onHome={goHome} />
 
               {panel === 'list' && (
-                <MissionList missions={missions} onSelect={showMission} />
+                <MissionList
+                  missions={missions}
+                  onSelect={showMission}
+                  onHover={setHoveredMission}
+                />
               )}
 
               {panel === 'preview' && selectedMission && (

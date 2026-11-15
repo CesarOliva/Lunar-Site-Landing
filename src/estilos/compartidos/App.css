@@ -5,11 +5,10 @@
   overflow: hidden;
   position: relative;
   isolation: isolate;
-  background: radial-gradient(ellipse at 68% 50%, #0D1511 0%, #080D0B 42%, #030605 78%);
+  background: radial-gradient(ellipse at 68% 50%, #080B10 0%, #040609 48%, #010203 100%);
 }
 .star-field { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
 .star-field canvas { display: block; width: 100%; height: 100%; }
-.ambient-glow { position: absolute; z-index: 0; width: 52vw; height: 52vw; right: 3%; top: -25%; border-radius: 50%; background: #477A5C; opacity: .07; filter: blur(115px); pointer-events: none; }
 .intro-screen { z-index: 1; }
 .eyebrow {
   font-family: var(--mono); letter-spacing: .12em;
@@ -32,8 +31,7 @@
   .app-shell { min-height: 600px; }
   .side-panel { width: 100%; min-width: 0; border-right: 0; }
 }
-.app-shell { background: radial-gradient(ellipse at 68% 50%, var(--dark-forest), var(--deep-space) 48%, var(--void-black)); }
-.ambient-glow { background: var(--terminal-green); opacity: .14; }
+.app-shell { background: radial-gradient(ellipse at 68% 50%, #080B10 0%, #040609 48%, #010203 100%); }
 .side-panel { background: var(--panel-black); border-right-color: var(--dark-forest); scrollbar-color: var(--muted-green) transparent; }
 
 .side-panel h2 em { color: var(--terminal-green); }

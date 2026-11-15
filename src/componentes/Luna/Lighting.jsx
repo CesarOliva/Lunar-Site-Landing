@@ -7,7 +7,7 @@ export default function Lighting() {
 
       {/* Luz solar principal */}
       <directionalLight
-        position={[-5, 2.5, 5]}
+        position={[5, 2.5, 5]}
         intensity={3.2}
         color="#FFF4DF"
       />

@@ -84,6 +84,28 @@
   color: var(--terminal-green);
 }
 
+.matrix-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.matrix-char {
+  display: inline-block;
+}
+
+.matrix-char.is-hidden {
+  opacity: 0;
+}
+
+.matrix-char.is-glitch {
+  color: var(--snow);
+  text-shadow:
+    0 0 10px var(--terminal-green),
+    2px 0 var(--matrix-green),
+    -2px 0 var(--terminal-green);
+  transform: translateX(var(--gx, 0));
+}
+
 .home-intro > p {
   font-size: 12px;
   line-height: 1.8;
@@ -103,6 +125,8 @@
 
 .menu-option {
   position: relative;
+  isolation: isolate;
+  overflow: hidden;
   width: 100%;
 
   display: flex;
@@ -122,20 +146,76 @@
     background 0.25s;
 }
 
-.menu-option:hover {
-  border-color: var(--matrix-green);
+.menu-option::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  inset: 0;
   background: var(--dark-forest);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.5s ease;
+}
+
+.menu-option:hover,
+.menu-option:focus-visible {
+  border-color: var(--matrix-green);
+  background: rgba(13, 21, 17, 0.85);
+  animation: none;
+}
+
+.menu-option:hover {
+  animation: menu-option-pulse 1.1s ease-in-out infinite;
+}
+
+.menu-option:hover::before,
+.menu-option:focus-visible::before {
+  transform: scaleX(1);
+}
+
+.menu-option:focus-visible {
+  outline: 2px solid var(--matrix-green);
+  outline-offset: 3px;
 }
 
 .menu-option strong {
+  position: relative;
+  z-index: 1;
   font-size: 15px;
   font-weight: 600;
 }
 
 .option-arrow {
   position: absolute;
+  z-index: 1;
   right: 15px;
   color: var(--fog);
+}
+
+@keyframes menu-option-pulse {
+  0%,
+  100% {
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 0 rgba(57, 255, 136, 0);
+    filter: brightness(1);
+  }
+
+  50% {
+    border-color: var(--matrix-green);
+    box-shadow: 0 0 12px rgba(57, 255, 136, 0.18);
+    filter: brightness(1.14);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-option,
+  .menu-option:hover {
+    animation: none;
+  }
+
+  .menu-option::before {
+    transition: none;
+  }
 }
 
 /* Etiquetas de los marcadores 3D */

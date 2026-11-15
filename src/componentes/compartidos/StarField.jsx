@@ -29,9 +29,10 @@ function StarField() {
         if (particle.y < 0) particle.y = height
         if (particle.y > height) particle.y = 0
 
-        const opacity = particle.opacity * (
-          0.65 + (Math.sin(particle.phase) + 1) * 0.175
-        )
+        const pulse = particle.twinkle
+          ? Math.max(0, Math.sin(particle.phase)) * 0.24
+          : 0
+        const opacity = particle.opacity * (1 + pulse)
 
         context.beginPath()
         context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2)
@@ -53,20 +54,23 @@ function StarField() {
       context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0)
 
       const count = Math.min(
-        100,
-        Math.max(45, Math.round((width * height) / 12000))
+        300,
+        Math.max(120, Math.round((width * height) / 3500))
       )
 
       particles = Array.from({ length: count }, () => ({
         x: Math.random() * width,
         y: Math.random() * height,
-        radius: 0.35 + Math.random() * 0.9,
-        velocityX: (Math.random() - 0.5) * 1.1,
-        velocityY: (Math.random() - 0.5) * 1.1,
-        opacity: 0.18 + Math.random() * 0.38,
+        radius: Math.random() < 0.08
+          ? 1.25 + Math.random() * 0.8
+          : 0.45 + Math.random() * 1,
+        velocityX: (Math.random() - 0.5) * 0.8,
+        velocityY: (Math.random() - 0.5) * 0.8,
+        opacity: 0.24 + Math.random() * 0.42,
         phase: Math.random() * Math.PI * 2,
-        twinkleSpeed: 0.3 + Math.random() * 0.8,
-        green: Math.random() < 0.18,
+        twinkleSpeed: 0.4 + Math.random() * 1,
+        twinkle: Math.random() < 0.3,
+        green: Math.random() < 0.04,
       }))
 
       draw(0)

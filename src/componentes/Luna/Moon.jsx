@@ -22,8 +22,10 @@ import Lighting from './Lighting'
 const MOON_MODEL = '/modelos/Moon_NASA_LRO_8k_Topo_Small.glb'
 
 const MOON_RADIUS = 1.1
-const HOME_CAMERA_DISTANCE = 3.7
-const FOCUSED_CAMERA_DISTANCE = 3.3
+const HOME_CAMERA_DISTANCE = 2.8
+const FOCUSED_CAMERA_DISTANCE = 2
+const MIN_MISSION_ROTATION_DURATION = 1.2
+const MISSION_ROTATION_RADIANS_PER_SECOND = 1.6
 
 // Convierte latitud y longitud lunar en una posición 3D.
 function getMoonPosition(latitude, longitude, radius = MOON_RADIUS) {
@@ -62,7 +64,13 @@ function MoonModel() {
 }
 
 // Marcador individual de misión.
-function MissionMarker({ mission, onSelect, selected, moonGroup }) {
+function MissionMarker({
+  mission,
+  onSelect,
+  selected,
+  highlighted,
+  moonGroup,
+}) {
   const position = useMemo(
     () => getMoonPosition(
       mission.latitude,
@@ -76,7 +84,8 @@ function MissionMarker({ mission, onSelect, selected, moonGroup }) {
   const label = useRef()
   const markerMesh = useRef()
   const glowMesh = useRef()
-  const [hovered, setHovered] = useState(false)
+  const [pointerHovered, setPointerHovered] = useState(false)
+  const hovered = pointerHovered || highlighted
   const cameraLocalPosition = useMemo(() => new THREE.Vector3(), [])
   const surfaceNormal = useMemo(
     () => position.clone().normalize(),
@@ -178,16 +187,17 @@ function MissionMarker({ mission, onSelect, selected, moonGroup }) {
 function MoonScene({
   missions,
   selectedMission,
+  hoveredMission,
   onShowMission,
   moonGroup,
   dragging,
 }) {
   const { camera, size } = useThree()
-  const moonTransform = useMemo(() => {
-    if (size.width <= 560) return { position: [0.1, 0, 0], scale: 0.55 }
-    if (size.width <= 800) return { position: [0.3, 0, 0], scale: 0.68 }
-    if (size.width <= 1050) return { position: [0.85, 0, 0], scale: 0.75 }
-    return { position: [0.85, 0, 0], scale: 0.82 }
+  const moonScale = useMemo(() => {
+    if (size.width <= 560) return 0.55
+    if (size.width <= 800) return 0.68
+    if (size.width <= 1050) return 0.75
+    return 0.82
   }, [size.width])
 
   const cameraTarget = useRef(new THREE.Vector3(0, 0, HOME_CAMERA_DISTANCE))
@@ -195,10 +205,34 @@ function MoonScene({
 
   const focused = useRef(false)
   const cameraAnimating = useRef(false)
+  const missionRotationTarget = useRef(new THREE.Quaternion())
+  const missionRotationStart = useRef(new THREE.Quaternion())
+  const missionRotationElapsed = useRef(0)
+  const missionRotationDuration = useRef(MIN_MISSION_ROTATION_DURATION)
+  const missionRotationAnimating = useRef(false)
 
   // Prepara un acercamiento cinematográfico.
   const focusMission = useCallback((mission) => {
     if (!moonGroup.current || !mission) return
+
+    const missionDirection = getMoonPosition(
+      mission.latitude,
+      mission.longitude
+    ).normalize()
+    missionRotationTarget.current.setFromUnitVectors(
+      missionDirection,
+      new THREE.Vector3(0, 0, 1)
+    )
+    missionRotationStart.current.copy(moonGroup.current.quaternion)
+    missionRotationElapsed.current = 0
+    const rotationAngle = missionRotationStart.current.angleTo(
+      missionRotationTarget.current
+    )
+    missionRotationDuration.current = Math.max(
+      MIN_MISSION_ROTATION_DURATION,
+      rotationAngle / MISSION_ROTATION_RADIANS_PER_SECOND
+    )
+    missionRotationAnimating.current = rotationAngle > 0.001
 
     const center = moonGroup.current.getWorldPosition(new THREE.Vector3())
     const zoomRatio = FOCUSED_CAMERA_DISTANCE / HOME_CAMERA_DISTANCE
@@ -224,6 +258,7 @@ function MoonScene({
       focusMission(selectedMission)
     } else {
       focused.current = false
+      missionRotationAnimating.current = false
 
       lookTarget.current.set(0, 0, 0)
       cameraTarget.current.set(0, 0, HOME_CAMERA_DISTANCE)
@@ -240,6 +275,27 @@ function MoonScene({
     if (dragging.current && focused.current) {
       focused.current = false
       cameraAnimating.current = false
+      missionRotationAnimating.current = false
+    }
+
+    if (missionRotationAnimating.current && !dragging.current) {
+      missionRotationElapsed.current += delta
+      const progress = Math.min(
+        missionRotationElapsed.current / missionRotationDuration.current,
+        1
+      )
+      const easedProgress = progress * progress * (3 - 2 * progress)
+
+      group.quaternion.slerpQuaternions(
+        missionRotationStart.current,
+        missionRotationTarget.current,
+        easedProgress
+      )
+
+      if (progress === 1) {
+        group.quaternion.copy(missionRotationTarget.current)
+        missionRotationAnimating.current = false
+      }
     }
 
     if (!focused.current && !dragging.current) {
@@ -265,8 +321,7 @@ function MoonScene({
 
       <group
         ref={moonGroup}
-        position={moonTransform.position}
-        scale={moonTransform.scale}
+        scale={moonScale}
       >
         <MoonModel />
 
@@ -275,6 +330,7 @@ function MoonScene({
             key={mission.id}
             mission={mission}
             selected={selectedMission?.id === mission.id}
+            highlighted={hoveredMission?.id === mission.id}
             onSelect={onShowMission}
             moonGroup={moonGroup}
           />
@@ -289,6 +345,7 @@ function MoonScene({
 export default function Moon({
   missions = [],
   selectedMission = null,
+  hoveredMission = null,
   onShowMission,
 }) {
   const moonGroup = useRef()
@@ -350,7 +407,7 @@ export default function Moon({
     >
       <Canvas
         camera={{
-          position: [0, 0, 3.7],
+          position: [0, 0, HOME_CAMERA_DISTANCE],
           fov: 38,
           near: 0.1,
           far: 100,
@@ -366,6 +423,7 @@ export default function Moon({
           <MoonScene
             missions={missions}
             selectedMission={selectedMission}
+            hoveredMission={hoveredMission}
             onShowMission={onShowMission}
             moonGroup={moonGroup}
             dragging={dragging}
