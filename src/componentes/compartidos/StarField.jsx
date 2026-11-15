@@ -37,8 +37,8 @@ function StarField() {
         context.beginPath()
         context.arc(particle.x, particle.y, particle.radius, 0, Math.PI * 2)
         context.fillStyle = particle.green
-          ? `rgba(140, 255, 190, ${opacity})`
-          : `rgba(220, 235, 245, ${opacity})`
+          ? `rgba(57, 255, 136, ${opacity})`
+          : `rgba(255, 255, 255, ${opacity})`
         context.fill()
       })
     }

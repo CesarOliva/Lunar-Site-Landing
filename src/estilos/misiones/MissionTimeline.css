@@ -161,8 +161,8 @@
 }
 .timeline-control:hover:not(:disabled) {
   border-color: var(--matrix-green);
-  background: rgba(0, 184, 92, .12);
-  color: var(--matrix-green);
+  background: rgba(3, 6, 5, .82);
+  color: var(--snow);
 }
 .timeline-control:focus-visible { outline: 1px solid var(--matrix-green); outline-offset: 2px; }
 .timeline-control:disabled { opacity: .35; cursor: default; }

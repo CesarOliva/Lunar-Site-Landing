@@ -25,7 +25,7 @@ function MissionList({ missions, onSelect, onHover }) {
             onMouseEnter={() => onHover(mission)}
             onMouseLeave={() => onHover(null)}
           >
-            <span className="mission-thumb" style={{ '--mission-accent': mission.accent }}><span>{mission.number}</span></span>
+            <span className="mission-thumb"><span>{mission.number}</span></span>
             <span className="mission-list-copy">
               <small>APOLLO · {mission.landingDate.toUpperCase()}</small>
               <strong>{mission.name}</strong>

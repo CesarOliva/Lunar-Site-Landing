@@ -356,11 +356,11 @@ function CustomMarker({ latitude, longitude }) {
     <group position={position}>
       <mesh>
         <sphereGeometry args={[0.028, 16, 16]} />
-        <meshBasicMaterial color="#F4D78A" />
+        <meshBasicMaterial color="#39FF88" />
       </mesh>
       <mesh scale={2.1}>
         <sphereGeometry args={[0.028, 16, 16]} />
-        <meshBasicMaterial color="#F4D78A" transparent opacity={0.22} depthWrite={false} />
+        <meshBasicMaterial color="#39FF88" transparent opacity={0.22} depthWrite={false} />
       </mesh>
     </group>
   )

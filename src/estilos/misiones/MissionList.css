@@ -1,42 +1,53 @@
-.panel-footnote {
-  font-family: var(--mono); letter-spacing: .12em;
-}
+.panel-footnote { font-family: var(--mono); letter-spacing: .12em; }
 .mission-list-content { padding: 21px 30px 28px; }
-.panel-description { max-width: 340px; font-size: 11px; line-height: 1.7; color: #00FF66; margin: 0 0 23px; }
+.panel-description { max-width: 340px; margin: 0 0 23px; color: var(--muted-green); font-size: 11px; line-height: 1.7; }
 .mission-list { display: grid; }
-.mission-list-item { min-height: 88px; padding: 10px 0; display: grid; grid-template-columns: 56px 1fr 18px; align-items: center; gap: 13px; color: #39FF88; text-align: left; background: transparent; border: 0; border-top: 1px solid #39FF8812; cursor: pointer; transition: background .2s, box-shadow .2s, transform .2s; transform-origin: left center; }
-.mission-list-item:hover .mission-list-copy strong { color: #00FF66; }
-.mission-list-item > svg { color: #477A5C; }
-.mission-thumb { width: 56px; height: 52px; position: relative; overflow: hidden; display: grid; place-items: center; color: #39FF88; background: radial-gradient(circle at 55% 40%, var(--mission-accent), #10231A 66%, #0D1511); }
+.mission-list-item {
+  min-height: 88px;
+  padding: 10px 0;
+  display: grid;
+  grid-template-columns: 56px 1fr 18px;
+  align-items: center;
+  gap: 13px;
+  border: 0;
+  border-top: 1px solid var(--dark-forest);
+  background: transparent;
+  color: var(--neon-green);
+  text-align: left;
+  cursor: pointer;
+  transition: background .2s, box-shadow .2s, transform .2s, color .2s;
+  transform-origin: left center;
+}
+.mission-list-item > svg { color: var(--muted-green); }
+.mission-thumb { width: 56px; height: 52px; position: relative; overflow: hidden; display: grid; place-items: center; color: var(--neon-green); background: radial-gradient(circle at 55% 40%, rgba(57, 255, 136, .12), var(--dark-forest) 66%, var(--panel-black)); }
 .mission-thumb::before { content: ''; position: absolute; inset: 0; background: url('https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&w=180&q=60') center/cover; opacity: .28; mix-blend-mode: screen; }
 .mission-thumb span { z-index: 1; font: 11px var(--mono); }
-.mission-list-copy small { display: block; }
-.mission-list-copy strong { display: block; }
+.mission-list-copy small,
+.mission-list-copy strong,
 .mission-list-copy em { display: block; }
-.mission-list-copy small { color: #477A5C; font: 7px var(--mono); letter-spacing: .08em; margin-bottom: 4px; }
+.mission-list-copy small { margin-bottom: 4px; color: var(--muted-green); font: 7px var(--mono); letter-spacing: .08em; }
 .mission-list-copy strong { font-size: 12px; font-weight: 600; transition: color .2s; }
-.mission-list-copy em { color: #00FF66; font-size: 9px; font-style: normal; margin-top: 4px; }
-.mission-assessment-badge { display: inline-block; margin-top: 6px; color: var(--terminal-green); font: 7px var(--mono); letter-spacing: .045em; }
-.mission-assessment-badge.is-unfavorable { color: #e69472; }
-.mission-assessment-badge.is-indeterminate { color: #b8ae82; }
-.panel-footnote { display: flex; align-items: center; gap: 8px; color: #477A5C; font-size: 7px; margin: 19px 0 3px; }
-.panel-footnote svg { color: #00FF66; }
+.mission-list-copy em { margin-top: 4px; color: var(--matrix-green); font-size: 9px; font-style: normal; }
+.mission-assessment-badge { display: inline-block; margin-top: 6px; color: var(--matrix-green); font: 7px var(--mono); letter-spacing: .045em; }
+.mission-assessment-badge.is-unfavorable { color: var(--neon-green); }
+.mission-assessment-badge.is-indeterminate { color: var(--muted-green); }
+.panel-footnote { display: flex; align-items: center; gap: 8px; margin: 19px 0 3px; color: var(--muted-green); font-size: 7px; }
+.panel-footnote svg { color: var(--matrix-green); }
 
 @media (max-width: 560px) {
   .mission-list-content { padding-left: 23px; padding-right: 23px; }
 }
-.panel-description { color: var(--muted-green); }
-.mission-list-copy small { color: var(--muted-green); }
-.mission-list-copy em { color: var(--muted-green); }
-.panel-footnote { color: var(--muted-green); }
-.panel-footnote svg { color: var(--terminal-green); }
-.mission-list-item > svg { color: var(--muted-green); }
-.mission-list-item { color: var(--neon-green); border-top-color: var(--dark-forest); }
-.mission-list-item:hover .mission-list-copy strong { color: var(--matrix-green); }
-.mission-thumb { color: var(--neon-green); background: radial-gradient(circle at 55% 40%, var(--muted-green), var(--dark-forest) 66%, var(--panel-black)); }
 .mission-list-item:hover,
-.mission-list-item:focus-visible { position: relative; z-index: 1; background: rgba(57, 255, 136, .06); box-shadow: inset 2px 0 var(--matrix-green), 0 0 18px rgba(57, 255, 136, .08); transform: scale(1.025); }
+.mission-list-item:focus-visible { position: relative; z-index: 1; outline: 1px solid var(--matrix-green); outline-offset: -1px; background: rgba(3, 6, 5, .72); box-shadow: 0 0 18px rgba(57, 255, 136, .08); transform: scale(1.025); }
 .mission-list-item:hover .mission-thumb,
 .mission-list-item:focus-visible .mission-thumb { filter: brightness(1.35); }
 .mission-list-item:hover .mission-list-copy strong,
-.mission-list-item:focus-visible .mission-list-copy strong { color: var(--neon-green); text-shadow: 0 0 10px rgba(57, 255, 136, .55); }
+.mission-list-item:focus-visible .mission-list-copy strong,
+.mission-list-item:hover .mission-list-copy small,
+.mission-list-item:hover .mission-list-copy em,
+.mission-list-item:hover .mission-assessment-badge,
+.mission-list-item:hover > svg,
+.mission-list-item:focus-visible .mission-list-copy small,
+.mission-list-item:focus-visible .mission-list-copy em,
+.mission-list-item:focus-visible .mission-assessment-badge,
+.mission-list-item:focus-visible > svg { color: var(--snow); text-shadow: 0 0 10px rgba(57, 255, 136, .28); }

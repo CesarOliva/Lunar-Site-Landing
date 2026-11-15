@@ -39,7 +39,6 @@ export const missions = [
     description:
       'La misión llevó a los primeros seres humanos a la Luna. Armstrong y Aldrin exploraron el lugar de alunizaje mientras Collins permanecía en órbita.',
     image: lunarSurface,
-    accent: '#e8b880',
     latitude: 0.67416,
     longitude: 23.47314,
     timeline: [
@@ -67,7 +66,6 @@ export const missions = [
     description:
       'Apollo 12 aterrizó cerca de la sonda Surveyor 3. La tripulación instaló instrumentos científicos y recogió muestras para estudiar el terreno.',
     image: lunarSurface,
-    accent: '#c4a0db',
     latitude: -3.0128,
     longitude: -23.4219,
     timeline: [
@@ -95,7 +93,6 @@ export const missions = [
     description:
       'Tras los problemas de Apollo 13, esta misión retomó los alunizajes. La tripulación desplegó experimentos y recorrió el terreno de Fra Mauro.',
     image: lunarSurface,
-    accent: '#89b6c8',
     latitude: -3.64589,
     longitude: -17.47194,
     timeline: [
@@ -123,7 +120,6 @@ export const missions = [
     description:
       'Apollo 15 fue la primera misión de tipo J, enfocada en ciencia de campo. Scott e Irwin recorrieron Hadley–Apennine en el Lunar Roving Vehicle.',
     image: lunarSurface,
-    accent: '#d49c70',
     latitude: 26.13239,
     longitude: 3.63330,
     timeline: [
@@ -151,7 +147,6 @@ export const missions = [
     description:
       'La tripulación exploró las tierras altas de Descartes, desplegó experimentos y recolectó muestras para analizar la historia geológica lunar.',
     image: lunarSurface,
-    accent: '#8fae8a',
     latitude: -8.9734,
     longitude: 15.5011,
     timeline: [
@@ -179,7 +174,6 @@ export const missions = [
     description:
       'La última misión Apollo a la Luna combinó experiencia de piloto y geólogo. La tripulación realizó tres caminatas lunares en Taurus–Littrow.',
     image: lunarSurface,
-    accent: '#d4c37d',
     latitude: 20.1911,
     longitude: 30.7723,
     timeline: [
