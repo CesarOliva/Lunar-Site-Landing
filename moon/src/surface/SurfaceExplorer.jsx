@@ -1,6 +1,15 @@
 import useSurfaceExplorer from './useSurfaceExplorer.jsx'
 import './SurfaceExplorer.css'
 
+// Velocidad del cielo estrellado respecto al tiempo real (la Luna da una vuelta cada 27,32 días).
+const SKY_SPEEDS = [
+  [1, 'Tiempo real'],
+  [60, '1 minuto por segundo'],
+  [600, '10 minutos por segundo'],
+  [3600, '1 hora por segundo'],
+  [21600, '6 horas por segundo'],
+]
+
 function WalkButton({ direction, label, symbol, disabled, onWalk }) {
   const startWalking = (event) => {
     event.preventDefault()
@@ -131,6 +140,13 @@ export default function SurfaceExplorer({ point, title, closeLabel = 'VOLVER', o
                 value={surface.contrast}
                 onChange={(event) => surface.changeContrast(Number(event.target.value))}
               />
+            </label>
+
+            <label className="moon-sx-slider">
+              <span>Cielo estrellado: giro</span>
+              <select value={surface.skyTimeScale} onChange={(event) => surface.changeSkyTimeScale(Number(event.target.value))}>
+                {SKY_SPEEDS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+              </select>
             </label>
 
             {info.baseOptions.length > 1 && (

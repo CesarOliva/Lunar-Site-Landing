@@ -1,10 +1,13 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Footprints, Home, PanelLeftClose, PanelLeftOpen, Pause } from 'lucide-react'
+import { ArrowLeft, Footprints, Home, PanelLeftClose, PanelLeftOpen, Pause, Rocket, X } from 'lucide-react'
 import OddityLogo from '../compartidos/OddityLogo.jsx'
 import useSurfaceExplorer from '../../../moon/src/surface/useSurfaceExplorer.jsx'
 import { formatLatitude, formatLongitude } from './coordinates.js'
 import '../../estilos/superficie/SurfaceScreen.css'
+
+// Nave de la demostración de aterrizaje (public/modelos).
+const LANDING_MODEL_URL = '/modelos/Saturn%20V.glb'
 
 function WalkButton({ direction, label, symbol, disabled, onWalk }) {
   const startWalking = (event) => {
@@ -36,6 +39,15 @@ function WalkButton({ direction, label, symbol, disabled, onWalk }) {
   )
 }
 
+// Velocidad del cielo estrellado respecto al tiempo real (la Luna da una vuelta cada 27,32 días).
+const SKY_SPEEDS = [
+  [1, 'Tiempo real'],
+  [60, '1 minuto por segundo'],
+  [600, '10 minutos por segundo'],
+  [3600, '1 hora por segundo'],
+  [21600, '6 horas por segundo'],
+]
+
 function Slider({ label, value, display, ...inputProps }) {
   return (
     <label className="surface-slider">
@@ -56,9 +68,10 @@ function Slider({ label, value, display, ...inputProps }) {
 export default function SurfaceScreen({ target, onClose, onHome }) {
   const { mission } = target
   const point = { latitude: target.latitude, longitude: target.longitude }
-  const surface = useSurfaceExplorer(point)
+  const surface = useSurfaceExplorer(point, { landingModelUrl: LANDING_MODEL_URL })
   const [panelOpen, setPanelOpen] = useState(true)
-  const { info, status, error, loading, tourActive, position, bestImagery: best } = surface
+  const { info, status, error, loading, tourActive, position, bestImagery: best, demoState } = surface
+  const demoBusy = demoState === 'loading' || demoState === 'descending'
 
   const loadingText = status.phase === 'terrain'
     ? `Relieve LOLA de 16 bits · ${status.terrain.loaded}/${status.terrain.total}`
@@ -143,6 +156,23 @@ export default function SurfaceScreen({ target, onClose, onHome }) {
                 {tourActive ? <Pause size={17} /> : <Footprints size={17} />}
               </button>
 
+              <button
+                className="primary-button surface-demo"
+                onClick={surface.startLandingDemo}
+                disabled={demoBusy}
+              >
+                {demoState === 'loading' ? 'Cargando nave…'
+                  : demoState === 'descending' ? 'Aterrizando…'
+                    : demoState === 'landed' ? 'Repetir demostración'
+                      : 'Demostración de aterrizaje'}
+                <Rocket size={17} />
+              </button>
+              {demoState !== 'idle' && (
+                <button className="text-button surface-demo-remove" onClick={surface.stopLandingDemo}>
+                  <X size={15} /> {demoBusy ? 'Cancelar' : 'Retirar nave'}
+                </button>
+              )}
+
               <section className="surface-section">
                 <span className="section-label">Datos de NASA <i /></span>
                 <dl className="surface-data">
@@ -198,6 +228,17 @@ export default function SurfaceScreen({ target, onClose, onHome }) {
                   El detalle sintético extiende el relieve por debajo de la resolución de los datos,
                   calibrado con la rugosidad real de LOLA de la zona (
                   {info.detail.roughness.toFixed(2)} m a 30 m). Ponlo en «apagado» para ver solo datos de la NASA.
+                </p>
+                <label className="surface-slider">
+                  <span>Cielo estrellado: giro</span>
+                  <select value={surface.skyTimeScale} onChange={(event) => surface.changeSkyTimeScale(Number(event.target.value))}>
+                    {SKY_SPEEDS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                  </select>
+                </label>
+                <p className="surface-note">
+                  Estrellas reales (catálogo Yale Bright Star, hasta magnitud 6) con el color de cada una y la
+                  orientación real de la Luna: sin atmósfera no titilan y el cielo gira una vuelta cada 27,3 días.
+                  El giro está acelerado para que se note; solo mueve el cielo, no la luz del terreno.
                 </p>
                 {info.baseOptions.length > 1 && (
                   <label className="surface-slider">
