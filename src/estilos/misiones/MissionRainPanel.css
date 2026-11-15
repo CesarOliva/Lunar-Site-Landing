@@ -1,7 +1,9 @@
 /* Panel izquierdo de la línea de tiempo: dos columnas estilo lluvia de Matrix */
 
 .rain-panel {
-  --rain-head: #eafff2; /* letra líder de cada gota */
+  --rain-head: #eafff2;  /* letra líder de cada gota */
+  --rain-size: 24;       /* tamaño de letra en px (sin unidad) */
+  --rain-speed: 48;      /* velocidad de caída en px por segundo */
   position: relative;
   flex: 0 0 clamp(190px, 17vw, 250px);
   min-height: 320px;
@@ -32,7 +34,6 @@
   -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
   mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
 }
-.rain-column + .rain-column { border-left: 1px solid var(--dark-forest); }
 
 /* Pista en movimiento: va absoluta para no afectar la altura del panel */
 .rain-track {
@@ -40,7 +41,9 @@
   top: 0;
   left: 0;
   right: 0;
-  animation: rain-up var(--rain-duration, 24s) linear infinite;
+  animation: rain-up linear infinite;
+  /* duración = alto aproximado del texto (letras × tamaño × 1.2) ÷ velocidad */
+  animation-duration: max(10s, calc(var(--chars) * 1.2 * var(--rain-size) / var(--rain-speed) * 1s));
   will-change: transform;
 }
 .rain-column.is-down .rain-track { animation-name: rain-down; }
@@ -65,7 +68,10 @@
 /* Letras */
 .rain-char {
   display: block;
-  font: 500 15px/1.2 var(--mono);
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: calc(var(--rain-size) * 1px);
+  line-height: 1.2;
   text-transform: uppercase;
   color: var(--neon-green);
   /* --p va de 0 (estela) a 1 (cabeza de la gota) */
@@ -79,25 +85,33 @@
   text-shadow: 0 0 10px var(--neon-green), 0 0 24px var(--matrix-green);
 }
 
-.rain-space { display: block; height: 8px; }
+/* Intro con glitch: la letra todavía no aparece / está glitcheando */
+.rain-char.is-hidden { opacity: 0; }
+.rain-item .rain-char.is-glitch {
+  color: var(--rain-head);
+  opacity: 1;
+  transform: translateX(var(--gx, 0px));
+  text-shadow: 0 0 10px var(--neon-green), 2px 0 var(--matrix-green), -2px 0 var(--terminal-green);
+}
+
+.rain-space { display: block; height: calc(var(--rain-size) * .5px); }
 
 /* Separador entre gotas */
 .rain-divider {
   display: block;
-  width: 14px;
+  width: calc(var(--rain-size) * .6px);
   height: 1px;
-  margin: 14px 0;
+  margin: calc(var(--rain-size) * .6px) 0;
   background: var(--terminal-green);
   box-shadow: 0 0 8px var(--matrix-green);
 }
 
 @media (max-width: 800px) {
-  .rain-panel { flex-basis: 150px; }
+  .rain-panel { flex-basis: 150px; --rain-size: 20; }
 }
 
 @media (max-width: 560px) {
-  .rain-panel { flex-basis: 96px; }
-  .rain-char { font-size: 12px; }
+  .rain-panel { flex-basis: 96px; --rain-size: 16; }
 }
 
 /* Sin animación si la persona prefiere menos movimiento */
