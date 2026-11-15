@@ -1,14 +1,16 @@
 import { ArrowRight, Check, Download, Earth, MapPin, Rocket, Sun } from 'lucide-react'
 import visibilitySite from '../../../Data_Structure/data/visibility-site.json'
-import { formatAngle } from './PlanningVisibility'
+import { dateTimeMax, dateTimeMin, formatAngle } from './PlanningVisibility'
 
 // --- Datos del formulario ---
 export const missionTypes = [
   {
     id: 'robotic',
+    maxDays: 90,
     letter: 'A',
+    photo: 'src/foto1.jpeg',
     label: 'Misión robótica no tripulada',
-    description: 'Un aterrizador o rover opera de forma autónoma en el polo sur.',
+    description: 'Un aterrizador o rover opera de forma autónoma en el polo sur, sin tripulación a bordo. Navega, toma mediciones y envía datos a la Tierra de forma continua. Es la opción más económica y de menor riesgo para explorar zonas de sombra permanente y estudiar el hielo o el terreno.',
     objectives: ['Estudio de hielo', 'Mapeo del terreno', 'Experimentos científicos'],
     durations: ['7 días', '30 días', '90 días'],
     vehicles: ['Clase ligera', 'Clase media', 'Clase pesada'],
@@ -20,9 +22,11 @@ export const missionTypes = [
   },
   {
     id: 'crewed-short',
+    maxDays: 14,
     letter: 'B',
+    photo: 'src/foto2.jpeg',
     label: 'Misión tripulada de corta duración',
-    description: 'Una tripulación explora la superficie durante una estancia breve.',
+    description: 'Una tripulación aterriza, explora la superficie durante una estancia breve y regresa. Incluye un módulo habitable, trajes para actividad extravehicular y soporte vital para pocos días. Permite hacer trabajo científico directo con menor exposición y menor consumo de recursos.',
     objectives: ['Estudio de hielo', 'Mapeo del terreno', 'Recolección de muestras'],
     durations: ['7 días', '14 días'],
     vehicles: ['Clase media', 'Clase pesada', 'Súper pesado'],
@@ -34,9 +38,11 @@ export const missionTypes = [
   },
   {
     id: 'crewed-long',
+    maxDays: 90,
     letter: 'C',
+    photo: 'src/foto3.jpeg',
     label: 'Misión tripulada de larga duración',
-    description: 'Una tripulación mantiene una presencia prolongada en la superficie.',
+    description: 'Una tripulación mantiene una presencia prolongada en la superficie, con un hábitat estable y rutinas de trabajo. Requiere suministros y energía redundantes, protección contra la radiación y, si es posible, aprovechar recursos lunares. Es la misión más compleja y la que más prepara el camino para una base permanente.',
     objectives: ['Estudio de hielo', 'Mapeo del terreno', 'Uso de recursos lunares'],
     durations: ['30 días', '90 días'],
     vehicles: ['Clase pesada', 'Súper pesado'],
@@ -48,9 +54,11 @@ export const missionTypes = [
   },
   {
     id: 'sample-return',
+    maxDays: 30,
     letter: 'D',
+    photo: 'src/foto4.jpeg',
     label: 'Misión robótica con retorno de muestras',
-    description: 'Recolecta material lunar, lo almacena y lo devuelve a la Tierra.',
+    description: 'Un sistema robótico recolecta material lunar, como hielo, regolito o roca, y lo almacena. Después un vehículo de ascenso lo saca de la Luna y una cápsula lo devuelve a la Tierra. Permite analizar las muestras en laboratorio sin enviar personas.',
     objectives: ['Muestras de hielo', 'Muestras del regolito', 'Muestras de roca'],
     durations: ['7 días', '30 días'],
     vehicles: ['Clase media', 'Clase pesada', 'Súper pesado'],
@@ -66,12 +74,13 @@ export const initialForm = {
   missionType: 'robotic',
   objective: 'Estudio de hielo',
   duration: '7 días',
+  durationDays: '7',
   vehicle: 'Clase media',
   mass: 'Menos de 2 t',
   launchSite: 'Cabo Cañaveral',
   payload: 'Instrumentos',
   propulsion: 'Química',
-  launchWindow: 'Nov 2026',
+  launchWindow: 'Noviembre 2026',
   crewSize: '2 personas',
   evaPlan: '1 caminata',
   lifeSupport: 'Integrado',
@@ -107,6 +116,36 @@ export const initialForm = {
   },
 }
 
+// --- Duración: días libres con tope según el tipo de misión ---
+export const formatDays = (days) => `${days} ${Number(days) === 1 ? 'día' : 'días'}`
+
+export function getDurationIssue(form, missionProfile) {
+  const raw = String(form.durationDays ?? '').trim()
+  const days = Number(raw)
+  if (raw === '' || !Number.isFinite(days)) return 'Escribe cuántos días durará la misión.'
+  if (!Number.isInteger(days) || days < 1) return 'La duración debe ser un número entero de días, de 1 en adelante.'
+  if (days > missionProfile.maxDays) {
+    return `${missionProfile.label} admite como máximo ${formatDays(missionProfile.maxDays)}. Reduce la duración para continuar.`
+  }
+  return ''
+}
+
+// --- Ventanas de lanzamiento: solo los meses dentro del intervalo de datos ---
+const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+export const launchWindowOptions = (() => {
+  const start = new Date(`${dateTimeMin}:00Z`)
+  const end = new Date(`${dateTimeMax}:00Z`)
+  const options = []
+  let year = start.getUTCFullYear()
+  let month = start.getUTCMonth()
+  while (year < end.getUTCFullYear() || (year === end.getUTCFullYear() && month <= end.getUTCMonth())) {
+    options.push(`${monthNames[month]} ${year}`)
+    month += 1
+    if (month > 11) { month = 0; year += 1 }
+  }
+  return options
+})()
+
 // --- Campo de opciones reutilizable ---
 export function ChoiceGroup({ label, options, value, onChange }) {
   return (
@@ -130,9 +169,18 @@ export function ChoiceGroup({ label, options, value, onChange }) {
 }
 // --- Pasos del asistente ---
 export function MissionStep({ form, missionProfile, update, selectMissionType }) {
+  const durationIssue = getDurationIssue(form, missionProfile)
+  const setDuration = (days) => {
+    update('durationDays', days)
+    update('duration', days.trim() === '' ? '' : formatDays(days))
+  }
   return (
     <section aria-labelledby="planning-title">
       <h2 id="planning-title">Planeación <em>de viaje</em></h2>
+      <label className="planning-label mission-name-field">
+        Nombre de la misión
+        <input value={form.name} maxLength={70} onChange={(event) => update('name', event.target.value)} />
+      </label>
       <fieldset className="planning-fieldset mission-type-fieldset">
         <legend>Elige el tipo de misión</legend>
         <div className="mission-type-grid">
@@ -144,10 +192,14 @@ export function MissionStep({ form, missionProfile, update, selectMissionType })
               aria-pressed={form.missionType === type.id}
               onClick={() => selectMissionType(type.id)}
             >
+              <span className="mission-type-photo">
+                <span>{type.photo}</span>
+                <img src={`/${type.photo}`} alt="" onError={(event) => { event.currentTarget.style.display = 'none' }} />
+              </span>
               <span className="mission-type-letter">{type.letter}</span>
               <span className="mission-type-copy">
                 <strong>{type.label}</strong>
-                <small>{type.description}</small>
+                <small className="mission-type-description">{type.description}</small>
                 <span className="mission-type-requirements">
                   {type.requirements.join(' · ')}
                 </span>
@@ -160,22 +212,34 @@ export function MissionStep({ form, missionProfile, update, selectMissionType })
         </div>
       </fieldset>
       <div className="planning-form-grid">
-        <label className="planning-label">
-          Nombre de la misión
-          <input value={form.name} maxLength={70} onChange={(event) => update('name', event.target.value)} />
-        </label>
         <ChoiceGroup
           label="Objetivo científico"
           options={missionProfile.objectives}
           value={form.objective}
           onChange={(value) => update('objective', value)}
         />
-        <ChoiceGroup
-          label="Duración estimada"
-          options={missionProfile.durations}
-          value={form.duration}
-          onChange={(value) => update('duration', value)}
-        />
+        <fieldset className={`planning-fieldset duration-field ${durationIssue ? 'has-warning' : ''}`}>
+          <legend>Duración estimada (días)</legend>
+          <input
+            className="duration-input"
+            type="number"
+            min="1"
+            max={missionProfile.maxDays}
+            step="1"
+            inputMode="numeric"
+            value={form.durationDays}
+            aria-invalid={Boolean(durationIssue)}
+            aria-describedby="duration-hint"
+            onChange={(event) => setDuration(event.target.value)}
+          />
+          <p
+            id="duration-hint"
+            className={durationIssue ? 'planning-warning' : 'planning-hint'}
+            role={durationIssue ? 'alert' : undefined}
+          >
+            {durationIssue || `Máximo recomendado para esta misión: ${formatDays(missionProfile.maxDays)}.`}
+          </p>
+        </fieldset>
       </div>
       <div className="mission-plan-preview">
         <strong>Tu selección ajusta el plan</strong>
@@ -206,7 +270,14 @@ export function VehicleStep({ form, missionProfile, update }) {
         <ChoiceGroup label="Lugar de lanzamiento" options={['Cabo Cañaveral', 'Kourou', 'Sriharikota']} value={form.launchSite} onChange={(value) => update('launchSite', value)} />
         <ChoiceGroup label="Carga útil" options={missionProfile.payloads} value={form.payload} onChange={(value) => update('payload', value)} />
         <ChoiceGroup label="Sistema de propulsión" options={['Química', 'Eléctrica', 'Híbrida']} value={form.propulsion} onChange={(value) => update('propulsion', value)} />
-        <ChoiceGroup label="Ventana de lanzamiento" options={['Oct 2026', 'Nov 2026', 'Dic 2026']} value={form.launchWindow} onChange={(value) => update('launchWindow', value)} />
+        <label className="planning-label planning-select-shell">
+          Ventana de lanzamiento
+          <select value={form.launchWindow} onChange={(event) => update('launchWindow', event.target.value)}>
+            {launchWindowOptions.map((option) => (
+              <option key={option} value={option}>{option}</option>
+            ))}
+          </select>
+        </label>
       </div>
       <p className="mission-plan-preview">
         {missionProfile.id === 'crewed-long'

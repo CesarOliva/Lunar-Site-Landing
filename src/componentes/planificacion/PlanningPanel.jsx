@@ -236,7 +236,6 @@ function PlanningPanel() {
     <div className="planning-wizard">
       <header className="planning-brand">
         <div className="planning-wordmark"><Moon size={18} /><span>moonapp</span></div>
-        <span className="planning-kicker">MISSION PLANNER / LUNAR SOUTH POLE</span>
       </header>
 
       <nav className="planning-stepper" aria-label="Pasos de planificación">
@@ -258,8 +257,6 @@ function PlanningPanel() {
       </nav>
 
       <main className="planning-content">
-        <div className="planning-step-caption">Paso {String(step + 1).padStart(2, '0')} / {String(steps.length).padStart(2, '0')} · {currentStep.label}</div>
-
         {currentStep.id === 'mission' && (
           <MissionStep form={form} missionProfile={missionProfile} update={update} selectMissionType={selectMissionType} />
         )}
