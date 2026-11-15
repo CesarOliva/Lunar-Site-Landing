@@ -195,8 +195,8 @@ export function MetricCard({ Icon, label, value, detail, state }) {
 // --- Pasos: fecha, luz y comunicación, comparar escenarios ---
 export function DateStep({ form, update, dateIsInCoverage }) {
   return (
-    <section aria-labelledby="planning-title">
-      <h2 id="planning-title">Fecha y <em>hora</em></h2>
+    <section aria-labelledby="date-step-title">
+      <h2 id="date-step-title">Fecha y <em>hora</em></h2>
       <p className="planning-intro">Explora cómo cambia la iluminación y la comunicación directa al mover la fecha de aterrizaje.</p>
       <div className="landing-date-card">
         <label className="planning-label">
@@ -216,7 +216,7 @@ export function DateStep({ form, update, dateIsInCoverage }) {
       </div>
       <div className="planning-callout">
         <span className="live-dot" />
-        <p>El intervalo corresponde a la cobertura disponible de Horizons y del horizonte de terreno LOLA para Site 04.</p>
+        <p>Rango del conjunto de datos local; no es una ventana de lanzamiento ni una fecha validada por NASA.</p>
       </div>
       {!dateIsInCoverage && <p className="planning-error">Selecciona una fecha dentro del intervalo de datos.</p>}
     </section>
@@ -225,9 +225,9 @@ export function DateStep({ form, update, dateIsInCoverage }) {
 
 export function VisibilityStep({ form, isModeledSite, visibilityError, visibilitySamples, selectedSample, daySamples }) {
   return (
-    <section aria-labelledby="planning-title">
-      <h2 id="planning-title">Luz y <em>comunicación</em></h2>
-      <p className="planning-intro">Posición aparente respecto al horizonte local en el instante seleccionado.</p>
+    <section aria-labelledby="visibility-step-title">
+      <h2 id="visibility-step-title">Luz y <em>comunicación</em></h2>
+      <p className="planning-intro">Posición geométrica respecto al horizonte local; no estima energía ni calidad del enlace.</p>
       {!isModeledSite || (isModeledSite && visibilityError) || !selectedSample ? (
         <div className="no-visibility-data">
           {isModeledSite && visibilityError ? <Info size={21} /> : <MapPin size={21} />}
@@ -332,8 +332,8 @@ export function CompareStep({ form, update, isModeledSite, visibilityError, visi
   }
 
   return (
-    <section aria-labelledby="planning-title">
-      <h2 id="planning-title">Compara <em>escenarios</em></h2>
+    <section aria-labelledby="compare-step-title">
+      <h2 id="compare-step-title">Compara <em>escenarios</em></h2>
       <p className="planning-intro">Compara dos fechas para el mismo sitio y la misma hora UTC.</p>
       <label className="planning-label compare-date-input">
         Fecha alternativa

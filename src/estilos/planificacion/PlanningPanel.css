@@ -393,6 +393,16 @@
 .planning-next-button:hover { background: var(--neon-green); }
 
 .planning-navigation .planning-error { flex: 1; margin: 0; }
+.planning-group { display: grid; gap: 20px; }
+.planning-group > section { min-height: 0; }
+.planning-note { margin: 10px 0 0; color: var(--fog); font-size: 8px; line-height: 1.5; }
+.forecast-warning { display: grid; gap: 5px; margin: 14px 0; padding: 11px 13px; border: 1px solid rgba(255, 190, 90, .55); background: rgba(255, 190, 90, .07); color: #ffe0a6; font-size: 9px; line-height: 1.55; }
+.forecast-warning strong { color: #ffd166; font-size: 9px; letter-spacing: .06em; }
+.forecast-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }
+.forecast-card { min-width: 0; min-height: 91px; display: grid; align-content: start; gap: 7px; padding: 11px; border: 1px solid rgba(255, 255, 255, .18); background: rgba(3, 6, 5, .42); }
+.forecast-card > span { color: var(--fog); font-size: 8px; line-height: 1.4; }
+.forecast-card > strong { color: var(--snow); font-size: 12px; font-weight: 500; line-height: 1.4; overflow-wrap: anywhere; }
+.forecast-card > small { color: var(--fog); font-size: 7px; line-height: 1.4; }
 
 /* Blancos en la paleta (mismas variables que HomeScreen/IntroScreen; mueve a tu archivo de paleta si prefieres) */
 :root { --snow: #F4FBF6; --fog: #C9DCCF; }

@@ -4,12 +4,12 @@ import visibilitySite from '../../../Data_Structure/data/visibility-site.json'
 import '../../estilos/planificacion/PlanningPanel.css'
 import {
   CrewStep,
-  EnvironmentStep,
+  ForecastStep,
+  createDemoForecast,
   initialForm,
   LogisticsStep,
   MissionStep,
   missionTypes,
-  RiskStep,
   SampleStep,
   SiteStep,
   SummaryStep,
@@ -38,20 +38,11 @@ function PlanningPanel() {
     { id: 'mission', label: 'Información general' },
     { id: 'vehicle', label: 'Vehículo y lanzamiento' },
     { id: 'site', label: 'Ubicación lunar' },
-    ...missionProfile.conditionalSteps
-      .filter((id) => id === 'crew')
-      .map((id) => ({ id, label: 'Tripulación y soporte vital' })),
-    ...missionProfile.conditionalSteps
-      .filter((id) => id === 'logistics')
-      .map((id) => ({ id, label: 'Logística de larga duración' })),
-    ...missionProfile.conditionalSteps
-      .filter((id) => id === 'sample')
-      .map((id) => ({ id, label: 'Retorno de muestras' })),
-    { id: 'date', label: 'Fecha y hora' },
-    { id: 'environment', label: 'Condiciones ambientales' },
-    { id: 'risk', label: 'Riesgos y seguridad' },
-    { id: 'visibility', label: 'Luz y comunicación' },
-    { id: 'compare', label: 'Comparar escenarios' },
+    ...(missionProfile.conditionalSteps.length
+      ? [{ id: 'mission-details', label: 'Configuración de misión' }]
+      : []),
+    { id: 'forecast', label: 'Fecha y entorno' },
+    { id: 'analysis', label: 'Fecha y visibilidad' },
     { id: 'summary', label: 'Resumen de misión' },
   ]
   const currentStep = steps[step] ?? steps[0]
@@ -85,12 +76,6 @@ function PlanningPanel() {
       duration: selectedType.durations.includes(current.duration)
         ? current.duration
         : selectedType.durations[0],
-      vehicle: selectedType.vehicles.includes(current.vehicle)
-        ? current.vehicle
-        : selectedType.vehicles[0],
-      mass: selectedType.masses.includes(current.mass)
-        ? current.mass
-        : selectedType.masses[0],
       payload: selectedType.payloads.includes(current.payload)
         ? current.payload
         : selectedType.payloads[0],
@@ -117,6 +102,10 @@ function PlanningPanel() {
       getNearestSample(visibilitySamples, `${form.compareDate}T${time}`),
     ]
   }, [form.compareDate, form.dateTime, isModeledSite, visibilitySamples])
+  const demoForecast = useMemo(
+    () => createDemoForecast(form.dateTime, form.latitude, form.longitude),
+    [form.dateTime, form.latitude, form.longitude],
+  )
 
   const updateCoordinate = (key, value) => update(key, value)
   const coordinatesValid =
@@ -144,11 +133,11 @@ function PlanningPanel() {
       setValidationMessage('Revisa latitud, longitud y altitud del sitio antes de continuar.')
       return
     }
-    if (currentStep.id === 'date' && !dateIsInCoverage) {
+    if (currentStep.id === 'forecast' && !dateIsInCoverage) {
       setValidationMessage('Selecciona una fecha dentro del intervalo de datos disponible.')
       return
     }
-    if (currentStep.id === 'compare' && !comparisonDateIsInCoverage) {
+    if (currentStep.id === 'analysis' && !comparisonDateIsInCoverage) {
       setValidationMessage('Selecciona una fecha alternativa dentro del intervalo de datos.')
       return
     }
@@ -161,70 +150,75 @@ function PlanningPanel() {
       setValidationMessage('Completa el nombre, las coordenadas y las fechas dentro del intervalo disponible antes de descargar.')
       return
     }
-    const plan = {
-      mission: {
-        name: form.name.trim(),
-        type: form.missionType,
-        objective: form.objective,
-        estimated_duration: form.duration,
-        requirements: missionProfile.requirements,
-      },
-      vehicle: {
-        class: form.vehicle,
-        total_mass: form.mass,
-        launch_site: form.launchSite,
-        payload: form.payload,
-        propulsion: form.propulsion,
-        launch_window: form.launchWindow,
-      },
-      landing_site: {
-        name: isModeledSite ? visibilitySite.name : 'Coordenadas personalizadas',
-        latitude_deg: Number(form.latitude),
-        longitude_east_deg: Number(form.longitude),
-        elevation_m: Number(form.elevation),
-        landing_area: form.landingArea,
-        maximum_slope: form.maxSlope,
-        visibility_model_available: isModeledSite,
-      },
-      mission_specific: {
-        crew: missionProfile.conditionalSteps.includes('crew') ? {
-          size: form.crewSize,
-          eva_plan: form.evaPlan,
-          life_support: form.lifeSupport,
-          habitat_control: form.habitatControl,
-        } : null,
-        logistics: missionProfile.conditionalSteps.includes('logistics') ? {
-          supplies: form.supplies,
-          energy_redundancy: form.redundancy,
-          in_situ_resource_utilization: form.isru,
-        } : null,
-        sample_return: missionProfile.conditionalSteps.includes('sample') ? {
-          target: form.sampleTarget,
-          collection_system: form.sampleCollection,
-          return_system: form.sampleReturn,
-        } : null,
-      },
-      environmental_factors: form.environment,
-      risk_factors: form.risk,
-      landing_time_utc: `${form.dateTime}:00Z`,
-      comparison_date_utc: `${form.compareDate}T${form.dateTime.slice(11, 16)}:00Z`,
-      visibility_sample: selectedSample ? {
-        sampled_at_utc: new Date(selectedSample.time).toISOString(),
-        sun: selectedSample.sun,
-        earth: selectedSample.earth,
-      } : null,
-      comparison_visibility_sample: comparisonSamples[1] ? {
-        sampled_at_utc: new Date(comparisonSamples[1].time).toISOString(),
-        sun: comparisonSamples[1].sun,
-        earth: comparisonSamples[1].earth,
-      } : null,
-      data_note: 'La visibilidad indica el centro aparente del objeto frente al horizonte LOLA muestreado; no estima potencia ni calidad del enlace.',
-    }
-    const blob = new Blob([JSON.stringify(plan, null, 2)], { type: 'application/json' })
+    const text = [
+      'PLAN DE MISIÓN LUNAR',
+      '====================',
+      '',
+      'MISIÓN',
+      `Nombre: ${form.name.trim()}`,
+      `Perfil: ${missionProfile.label}`,
+      `Objetivo: ${form.objective}`,
+      `Duración seleccionada: ${form.duration}`,
+      `Requisitos considerados: ${missionProfile.requirements.join(', ')}`,
+      '',
+      'VEHÍCULO Y LANZAMIENTO',
+      `Lanzador/configuración: ${form.vehicle || 'Sin definir'}`,
+      `Masa de carga útil: ${form.mass ? `${form.mass} kg` : 'Sin definir'}`,
+      `Lugar: ${form.launchSite}`,
+      `Carga útil: ${form.payload}`,
+      `Propulsión: ${form.propulsion}`,
+      `Ventana de lanzamiento (referencia): ${form.launchWindow}`,
+      'Nota: el antecedente de un lugar no confirma disponibilidad ni compatibilidad.',
+      '',
+      'SITIO LUNAR',
+      `Sitio: ${isModeledSite ? visibilitySite.name : 'Coordenadas personalizadas'}`,
+      `Latitud: ${Number(form.latitude)}°`,
+      `Longitud este: ${Number(form.longitude)}°`,
+      `Elevación: ${Number(form.elevation)} m`,
+      `Área de aterrizaje: ${form.landingArea}`,
+      `Pendiente máxima seleccionada: ${form.maxSlope}`,
+      '',
+      'FECHA Y HORA',
+      `Escenario de aterrizaje: ${form.dateTime.replace('T', ' ')} UTC`,
+      `Fecha alternativa: ${form.compareDate} ${form.dateTime.slice(11, 16)} UTC`,
+      '',
+      'ENTORNO Y RIESGOS (SIMULACIÓN FICTICIA)',
+      `Iluminación simulada: ${demoForecast?.illumination_hours ?? 'No disponible'} h en 24 h`,
+      `Temperatura superficial simulada: ${demoForecast?.surface_temperature_c.minimum ?? '—'}° a ${demoForecast?.surface_temperature_c.maximum ?? '—'}°C`,
+      `Índice demostrativo de radiación: ${demoForecast?.radiation_index_demo ?? '—'} / 5`,
+      `Actividad simulada de micrometeoroides: ${demoForecast?.micrometeoroid_activity_demo ?? '—'}`,
+      `Ventanas de comunicación simuladas: ${demoForecast?.communication_windows_demo ?? '—'} (${demoForecast?.communication_hours_demo ?? '—'} h)`,
+      `Evaluación del terreno: ${demoForecast?.terrain_assessment ?? 'No disponible'}`,
+      'Estos valores son ficticios y no representan un pronóstico, medición NASA ni evaluación de seguridad.',
+      '',
+      'VISIBILIDAD GEOMÉTRICA',
+      selectedSample
+        ? `Sol: ${selectedSample.sun.state === 'visible' ? 'visible' : 'oculto'}, elevación ${selectedSample.sun.elevation.toFixed(1)}°`
+        : 'Sol: sin datos calculados para este escenario.',
+      selectedSample
+        ? `Tierra: ${selectedSample.earth.state === 'visible' ? 'visible' : 'oculta'}, elevación ${selectedSample.earth.elevation.toFixed(1)}°`
+        : 'Tierra: sin datos calculados para este escenario.',
+      comparisonSamples[1]
+        ? `Escenario alternativo (${form.compareDate}): Sol ${comparisonSamples[1].sun.state === 'visible' ? 'visible' : 'oculto'}; Tierra ${comparisonSamples[1].earth.state === 'visible' ? 'visible' : 'oculta'}.`
+        : 'Escenario alternativo: sin datos calculados.',
+      'La visibilidad geométrica no estima generación eléctrica ni calidad del enlace de comunicaciones.',
+      '',
+      'CONFIGURACIÓN CONDICIONAL',
+      ...(missionProfile.conditionalSteps.includes('crew')
+        ? [`Tripulación: ${form.crewSize}`, `Plan EVA: ${form.evaPlan}`, `Soporte vital: ${form.lifeSupport}`, `Control ambiental: ${form.habitatControl}`]
+        : []),
+      ...(missionProfile.conditionalSteps.includes('logistics')
+        ? [`Suministros: ${form.supplies}`, `Redundancia energética: ${form.redundancy}`, `ISRU: ${form.isru}`]
+        : []),
+      ...(missionProfile.conditionalSteps.includes('sample')
+        ? [`Material objetivo: ${form.sampleTarget}`, `Recolección: ${form.sampleCollection}`, `Sistema de retorno: ${form.sampleReturn}`]
+        : []),
+    ].join('\n')
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = 'plan-lunar.json'
+    link.download = 'plan-lunar.txt'
     document.body.appendChild(link)
     link.click()
     link.remove()
@@ -272,40 +266,36 @@ function PlanningPanel() {
           <SiteStep form={form} update={update} updateCoordinate={updateCoordinate} coordinatesValid={coordinatesValid} altitudeValid={altitudeValid} siteInputsValid={siteInputsValid} />
         )}
 
-        {currentStep.id === 'crew' && (
-          <CrewStep form={form} update={update} />
+        {currentStep.id === 'mission-details' && (
+          <div className="planning-group">
+            {missionProfile.conditionalSteps.includes('crew') && (
+              <CrewStep form={form} update={update} />
+            )}
+            {missionProfile.conditionalSteps.includes('logistics') && (
+              <LogisticsStep form={form} update={update} />
+            )}
+            {missionProfile.conditionalSteps.includes('sample') && (
+              <SampleStep form={form} update={update} />
+            )}
+          </div>
         )}
 
-        {currentStep.id === 'logistics' && (
-          <LogisticsStep form={form} update={update} />
+        {currentStep.id === 'forecast' && (
+          <div className="planning-group">
+            <DateStep form={form} update={update} dateIsInCoverage={dateIsInCoverage} />
+            <ForecastStep forecast={demoForecast} />
+          </div>
         )}
 
-        {currentStep.id === 'sample' && (
-          <SampleStep form={form} update={update} />
-        )}
-
-        {currentStep.id === 'date' && (
-          <DateStep form={form} update={update} dateIsInCoverage={dateIsInCoverage} />
-        )}
-
-        {currentStep.id === 'environment' && (
-          <EnvironmentStep form={form} update={update} />
-        )}
-
-        {currentStep.id === 'risk' && (
-          <RiskStep form={form} update={update} missionProfile={missionProfile} />
-        )}
-
-        {currentStep.id === 'visibility' && (
-          <VisibilityStep form={form} isModeledSite={isModeledSite} visibilityError={visibilityError} visibilitySamples={visibilitySamples} selectedSample={selectedSample} daySamples={daySamples} />
-        )}
-
-        {currentStep.id === 'compare' && (
-          <CompareStep form={form} update={update} isModeledSite={isModeledSite} visibilityError={visibilityError} visibilitySamples={visibilitySamples} comparisonSamples={comparisonSamples} />
+        {currentStep.id === 'analysis' && (
+          <div className="planning-group">
+            <VisibilityStep form={form} isModeledSite={isModeledSite} visibilityError={visibilityError} visibilitySamples={visibilitySamples} selectedSample={selectedSample} daySamples={daySamples} />
+            <CompareStep form={form} update={update} isModeledSite={isModeledSite} visibilityError={visibilityError} visibilitySamples={visibilitySamples} comparisonSamples={comparisonSamples} />
+          </div>
         )}
 
         {currentStep.id === 'summary' && (
-          <SummaryStep form={form} missionProfile={missionProfile} isModeledSite={isModeledSite} selectedSample={selectedSample} visibilityError={visibilityError} downloaded={downloaded} downloadPlan={downloadPlan} />
+          <SummaryStep form={form} missionProfile={missionProfile} isModeledSite={isModeledSite} selectedSample={selectedSample} visibilityError={visibilityError} demoForecast={demoForecast} downloaded={downloaded} downloadPlan={downloadPlan} />
         )}
 
         <footer className="planning-navigation">
