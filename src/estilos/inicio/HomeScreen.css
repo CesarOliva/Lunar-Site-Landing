@@ -1,110 +1,199 @@
-.home-caption {
-  font-family: var(--mono); letter-spacing: .12em;
+
+/* =========================================
+   ESCENA LUNAR 3D
+========================================= */
+
+.home-screen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #000000;
 }
-.home-index {
-  font-family: var(--mono); letter-spacing: .12em;
+
+/* Contenedor del Canvas 3D */
+
+.moon-3d-container {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  height: 100%;
+  width: 100%;
+  background: #000000;
+  cursor: grab;
+  touch-action: none;
 }
-.home-bottom-note {
-  font-family: var(--mono); letter-spacing: .12em;
+
+.moon-3d-container canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none;
 }
-.home-screen { position: absolute; inset: 0; overflow: hidden; }
-.home-intro h2 { font-family: var(--display); letter-spacing: -.075em; font-weight: 400; }
-.home-intro h2 em { font-weight: 300; color: #00FF66; }
-.home-moon::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: url('https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&w=1400&q=85') center/cover; mix-blend-mode: soft-light; opacity: .42; }
-.home-screen { background: radial-gradient(ellipse at 72% 54%, #10231A 0, #0D1511 33%, #080D0B 68%, #030605 100%); }
-.home-moon { position: absolute; width: min(77vw, 1120px); aspect-ratio: 1; right: -5.5%; top: 49%; transform: translateY(-50%); border-radius: 50%; background: radial-gradient(circle at 29% 28%, #00FF66 0%, #477A5C 21%, #477A5C 49%, #10231A 73%, #0D1511 100%); box-shadow: inset -35px -10px 95px #080D0B, 0 0 90px #00FF661B; }
-.home-moon::after { content: ''; position: absolute; inset: 0; border-radius: 50%; background: radial-gradient(ellipse at 39% 48%, transparent 20%, rgba(8, 13, 11, .08) 53%, rgba(3, 6, 5, .82) 100%); }
-.moon-shadow { z-index: 1; position: absolute; inset: -1px 51% -1px -1px; border-radius: 100% 0 0 100%; background: linear-gradient(90deg, rgba(3, 6, 5, .99), rgba(3, 6, 5, .89) 68%, rgba(3, 6, 5, .5)); }
-.moon-craters { position: absolute; inset: 0; border-radius: inherit; z-index: 1; opacity: .33; background: radial-gradient(ellipse at 63% 31%, #10231A 0 2.3%, transparent 2.6%), radial-gradient(ellipse at 38% 64%, #10231A 0 3.1%, transparent 3.4%), radial-gradient(ellipse at 74% 69%, #10231A 0 1.6%, transparent 1.9%), radial-gradient(ellipse at 51% 20%, #10231A 0 1.3%, transparent 1.6%), radial-gradient(ellipse at 82% 45%, #10231A 0 2.5%, transparent 2.8%), radial-gradient(ellipse at 30% 38%, #10231A 0 2.2%, transparent 2.5%); }
-.moon-atmosphere { z-index: 2; position: absolute; inset: -2%; border-radius: 50%; box-shadow: inset 18px 0 42px #39FF881C, 0 0 65px #00FF662B; pointer-events: none; }
-.home-vignette { pointer-events: none; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(3, 6, 5, .6), transparent 58%), linear-gradient(0deg, #030605 0%, transparent 18%, transparent 85%, #080D0B 100%); }
-.home-intro { z-index: 3; position: absolute; top: 50%; left: clamp(40px, 7.8vw, 118px); transform: translateY(-49%); width: min(440px, 38vw); }
-.home-intro h2 { font-size: clamp(39px, 4.3vw, 61px); line-height: 1.08; margin: 24px 0 15px; }
-.home-intro > p { font-size: 12px; line-height: 1.8; max-width: 340px; color: #00FF66; margin: 0 0 25px; }
-.home-actions { display: grid; gap: 10px; width: 100%; }
-.menu-option { position: relative; text-align: center; width: 100%; display: flex; justify-content: center; align-items: center; padding: 13px 42px; color: #39FF88; border: 1px solid #39FF881C; background: #0D1511CC; cursor: pointer; transition: border .2s, background .2s; }
-.menu-option:hover { border-color: #00FF667A; background: #10231AE8; }
-.option-icon { width: 37px; height: 37px; display: grid; place-items: center; color: #00FF66; background: #00FF6614; }
-.menu-option strong { display: block; }
-.menu-option small { display: block; }
-.menu-option strong { font-size: 15px; font-weight: 600; margin-bottom: 5px; }
-.menu-option small { color: #477A5C; font-size: 9px; }
-.option-arrow { position: absolute; right: 15px; color: #477A5C; }
-.option-disabled { background: #0D1511CC; }
-.home-caption { position: absolute; z-index: 3; right: 12%; bottom: 15%; color: #39FF88; font-size: 8px; display: flex; align-items: center; gap: 10px; }
-.home-caption span:last-child { color: #477A5C; }
-.caption-line { width: 30px; height: 1px; background: #39FF88; }
-.home-index { z-index: 3; position: absolute; right: 7.7%; top: 9%; display: flex; align-items: center; gap: 10px; font-size: 9px; color: #477A5C; }
-.home-index span { color: #39FF88; }
-.home-index i { width: 36px; height: 1px; background: #477A5C; }
-.home-bottom-note { position: absolute; left: 8%; bottom: 7%; z-index: 3; font-size: 7px; color: #477A5C; line-height: 1.8; }
-.mission-marker { z-index: 4; position: absolute; width: 13px; height: 13px; padding: 0; border: 1px solid #39FF88; border-radius: 50%; background: #39FF88; box-shadow: 0 0 14px #39FF886B; cursor: pointer; transform: translate(-50%, -50%); transition: transform .2s; }
-.mission-marker::after { content: ''; position: absolute; inset: -7px; border: 1px solid #39FF8862; border-radius: 50%; }
-.mission-marker:hover { transform: translate(-50%, -50%) scale(1.35); }
-.mission-marker.is-selected { transform: translate(-50%, -50%) scale(1.35); }
-.marker-pulse { position: absolute; inset: -12px; border: 1px solid #39FF8845; border-radius: 50%; animation: pulse 2.5s ease-out infinite; }
-.marker-label { position: absolute; top: 50%; left: 24px; white-space: nowrap; color: #39FF88; font: 8px var(--mono); letter-spacing: .08em; opacity: 0; transform: translateY(-50%) translateX(-4px); transition: .2s; pointer-events: none; text-shadow: 0 1px 6px #030605; }
-.mission-marker:hover .marker-label { opacity: 1; transform: translateY(-50%) translateX(0); }
-.mission-marker.is-selected .marker-label { opacity: 1; transform: translateY(-50%) translateX(0); }
+
+/* Degradado para integrar la Luna con la interfaz */
+
+.home-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.88) 0%,
+      rgba(0, 0, 0, 0.58) 25%,
+      transparent 65%
+    ),
+    linear-gradient(
+      0deg,
+      #000000 0%,
+      transparent 18%,
+      transparent 85%,
+      rgba(0, 0, 0, 0.5) 100%
+    );
+}
+
+/* Panel de introducción */
+
+.home-intro {
+  z-index: 3;
+  position: absolute;
+  top: 50%;
+  left: clamp(40px, 7.8vw, 118px);
+
+  transform: translateY(-49%);
+
+  width: min(440px, 38vw);
+
+  pointer-events: none;
+}
+
+.home-intro h2 {
+  font-family: var(--display);
+  font-size: clamp(39px, 4.3vw, 61px);
+  line-height: 1.08;
+  letter-spacing: -0.075em;
+  font-weight: 400;
+  color: var(--snow);
+}
+
+.home-intro h2 em {
+  font-weight: 300;
+  color: var(--terminal-green);
+}
+
+.home-intro > p {
+  font-size: 12px;
+  line-height: 1.8;
+  max-width: 340px;
+  color: var(--fog);
+  margin: 15px 0 25px;
+}
+
+/* Los botones deben seguir siendo interactivos */
+
+.home-actions {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  pointer-events: auto;
+}
+
+.menu-option {
+  position: relative;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 13px 42px;
+
+  color: var(--snow);
+  background: rgba(13, 21, 17, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.25s,
+    background 0.25s;
+}
+
+.menu-option:hover {
+  border-color: var(--matrix-green);
+  background: var(--dark-forest);
+}
+
+.menu-option strong {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.option-arrow {
+  position: absolute;
+  right: 15px;
+  color: var(--fog);
+}
+
+/* Etiquetas de los marcadores 3D */
+
+.moon-marker-label {
+  color: #39FF88;
+  font-family: var(--mono);
+  font-size: 6px;
+  letter-spacing: 0.02em;
+
+  padding: 1px 3px;
+
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(57, 255, 136, 0.25);
+
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.moon-marker-label.active {
+  color: #FFFFFF;
+  border-color: #39FF88;
+  opacity: 1;
+}
+
+/* Adaptación móvil */
 
 @media (max-width: 800px) {
-  .home-moon { width: 110vw; right: -54%; opacity: .85; }
-  .home-intro { left: 7vw; width: min(420px, 54vw); }
+  .home-intro {
+    left: 7vw;
+    width: min(420px, 54vw);
+  }
+
+  .home-vignette {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.8),
+        transparent 90%
+      );
+  }
 }
 
 @media (max-width: 560px) {
-  .home-moon { width: 142vw; right: -88%; top: 48%; opacity: .6; }
-  .moon-shadow { right: 48%; }
-  .home-intro { left: 7vw; top: 48%; width: 84vw; }
-  .home-intro h2 { font-size: 43px; }
-  .home-intro > p { max-width: 300px; }
-  .menu-option { max-width: 410px; }
-  .home-caption { right: 7%; bottom: 8%; font-size: 7px; }
-  .home-bottom-note { display: none; }
-  .home-index { top: 6%; right: 7%; }
+  .home-intro {
+    left: 7vw;
+    top: 48%;
+    width: 84vw;
+  }
+
+  .home-intro h2 {
+    font-size: 43px;
+  }
+
+  .home-intro > p {
+    max-width: 300px;
+  }
+
+  .menu-option {
+    max-width: 410px;
+  }
 }
-.home-screen { background: radial-gradient(ellipse at 72% 54%, var(--dark-forest), var(--deep-space) 62%, var(--void-black)); }
-.home-moon { background: radial-gradient(circle at 29% 28%, var(--muted-green), var(--terminal-green) 24%, var(--dark-forest) 54%, var(--deep-space)); box-shadow: inset -35px -10px 95px var(--void-black), 0 0 90px var(--dark-forest); }
-.home-moon::before {
-  background-image: linear-gradient(var(--terminal-green), var(--dark-forest)), url('https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&w=1400&q=85');
-  background-blend-mode: color, normal;
-  mix-blend-mode: normal;
-  opacity: .7;
-}
-.moon-craters { background: radial-gradient(ellipse at 63% 31%, var(--panel-black) 0 2.3%, transparent 2.6%), radial-gradient(ellipse at 38% 64%, var(--panel-black) 0 3.1%, transparent 3.4%), radial-gradient(ellipse at 74% 69%, var(--dark-forest) 0 1.6%, transparent 1.9%), radial-gradient(ellipse at 51% 20%, var(--dark-forest) 0 1.3%, transparent 1.6%), radial-gradient(ellipse at 82% 45%, var(--panel-black) 0 2.5%, transparent 2.8%), radial-gradient(ellipse at 30% 38%, var(--panel-black) 0 2.2%, transparent 2.5%); }
-.moon-atmosphere { box-shadow: inset 18px 0 42px var(--muted-green), 0 0 65px var(--terminal-green); }
-
-.home-intro h2 em { color: var(--terminal-green); }
-.home-intro > p { color: var(--muted-green); }
-.home-caption span:last-child { color: var(--muted-green); }
-.home-index { color: var(--muted-green); }
-.home-bottom-note { color: var(--muted-green); }
-.option-icon { color: var(--terminal-green); }
-
-.menu-option { color: var(--neon-green); background: var(--panel-black); border-color: var(--dark-forest); }
-
-.option-disabled { color: var(--neon-green); background: var(--panel-black); border-color: var(--dark-forest); }
-.menu-option:hover { border-color: var(--matrix-green); background: var(--dark-forest); }
-.option-icon { background: var(--deep-space); }
-.option-arrow { color: var(--muted-green); }
-.home-caption { color: var(--muted-green); }
-.caption-line { background-color: var(--terminal-green); }
-.home-index span { color: var(--matrix-green); }
-.home-index i { background: var(--dark-forest); }
-
-.mission-marker { border-color: var(--matrix-green); background: var(--matrix-green); box-shadow: 0 0 14px var(--matrix-green); }
-.mission-marker::after { border-color: var(--terminal-green); }
-.marker-pulse { border-color: var(--terminal-green); }
-.marker-label { color: var(--neon-green); }
-
-/* Blancos en la paleta (mueve estas dos variables a tu archivo de paleta si prefieres) */
-:root { --snow: #F4FBF6; --fog: #C9DCCF; }
-
-.home-moon { background: radial-gradient(circle at 29% 28%, var(--snow), var(--muted-green) 13%, var(--terminal-green) 26%, var(--dark-forest) 54%, var(--deep-space)); }
-.home-intro h2 { color: var(--snow); }
-.home-intro > p { color: var(--fog); }
-.menu-option { color: var(--snow); border-color: rgba(255, 255, 255, .2); }
-.option-arrow { color: var(--fog); }
-.mission-marker { background: var(--snow); }
-.mission-marker::after { border-color: rgba(255, 255, 255, .5); }
-.marker-label { color: var(--snow); }

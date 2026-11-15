@@ -1,4 +1,4 @@
-import { ArrowRight, Check, Download, Earth, MapPin, Rocket, Sun } from 'lucide-react'
+import { Check, MapPin } from 'lucide-react'
 import visibilitySite from '../../../Data_Structure/data/visibility-site.json'
 import { formatAngle } from './PlanningVisibility'
 
@@ -7,10 +7,10 @@ export const missionTypes = [
   {
     id: 'robotic',
     letter: 'A',
+    photo: 'src/foto1.jpeg',
     label: 'Misión robótica no tripulada',
-    description: 'Un aterrizador o rover opera de forma autónoma en el polo sur.',
+    description: 'Un aterrizador o rover opera de forma autónoma en el polo sur, sin tripulación a bordo. Navega, toma mediciones y envía datos a la Tierra de forma continua. Es la opción más económica y de menor riesgo para explorar zonas de sombra permanente y estudiar el hielo o el terreno.',
     objectives: ['Estudio de hielo', 'Mapeo del terreno', 'Experimentos científicos'],
-    durations: ['7 días', '30 días', '90 días'],
     payloads: ['Instrumentos', 'Rover e instrumentos'],
     conditionalSteps: [],
     requirements: ['Navegación autónoma', 'Energía para operar', 'Sin soporte vital'],
@@ -19,10 +19,10 @@ export const missionTypes = [
   {
     id: 'crewed-short',
     letter: 'B',
+    photo: 'src/foto2.jpeg',
     label: 'Misión tripulada de corta duración',
-    description: 'Una tripulación explora la superficie durante una estancia breve.',
+    description: 'Una tripulación aterriza, explora la superficie durante una estancia breve y regresa. Incluye un módulo habitable, trajes para actividad extravehicular y soporte vital para pocos días. Permite hacer trabajo científico directo con menor exposición y menor consumo de recursos.',
     objectives: ['Estudio de hielo', 'Mapeo del terreno', 'Recolección de muestras'],
-    durations: ['7 días', '14 días'],
     payloads: ['Módulo habitado', 'Módulo habitado y rover'],
     conditionalSteps: ['crew'],
     requirements: ['Soporte vital', 'Trajes para EVA', 'Seguridad de la tripulación'],
@@ -31,10 +31,10 @@ export const missionTypes = [
   {
     id: 'crewed-long',
     letter: 'C',
+    photo: 'src/foto3.jpeg',
     label: 'Misión tripulada de larga duración',
-    description: 'Una tripulación mantiene una presencia prolongada en la superficie.',
+    description: 'Una tripulación mantiene una presencia prolongada en la superficie, con un hábitat estable y rutinas de trabajo. Requiere suministros y energía redundantes, protección contra la radiación y, si es posible, aprovechar recursos lunares. Es la misión más compleja y la que más prepara el camino para una base permanente.',
     objectives: ['Estudio de hielo', 'Mapeo del terreno', 'Uso de recursos lunares'],
-    durations: ['30 días', '90 días'],
     payloads: ['Módulo habitado', 'Base y rover'],
     conditionalSteps: ['crew', 'logistics'],
     requirements: ['Soporte vital', 'Suministros y energía redundantes', 'Protección radiológica'],
@@ -43,10 +43,10 @@ export const missionTypes = [
   {
     id: 'sample-return',
     letter: 'D',
+    photo: 'src/foto4.jpeg',
     label: 'Misión robótica con retorno de muestras',
-    description: 'Recolecta material lunar, lo almacena y lo devuelve a la Tierra.',
+    description: 'Un sistema robótico recolecta material lunar, como hielo, regolito o roca, y lo almacena. Después un vehículo de ascenso lo saca de la Luna y una cápsula lo devuelve a la Tierra. Permite analizar las muestras en laboratorio sin enviar personas.',
     objectives: ['Muestras de hielo', 'Muestras del regolito', 'Muestras de roca'],
-    durations: ['7 días', '30 días'],
     payloads: ['Brazo recolector', 'Rover y sistema de muestreo'],
     conditionalSteps: ['sample'],
     requirements: ['Recolección y almacenamiento', 'Ascenso desde la Luna', 'Cápsula de retorno'],
@@ -58,6 +58,7 @@ export const initialForm = {
   missionType: 'robotic',
   objective: 'Estudio de hielo',
   duration: '7 días',
+  durationDays: '7',
   vehicle: 'Sin definir',
   mass: '',
   launchSite: 'Kennedy Space Center (antecedente NASA)',
@@ -113,6 +114,17 @@ export function createDemoForecast(dateTime, latitude, longitude) {
   }
 }
 
+// --- Duración: dato del escenario, no una recomendación NASA ---
+export const formatDays = (days) => `${days} ${Number(days) === 1 ? 'día' : 'días'}`
+
+export function getDurationIssue(form) {
+  const raw = String(form.durationDays ?? '').trim()
+  const days = Number(raw)
+  if (raw === '' || !Number.isFinite(days)) return 'Escribe cuántos días durará la misión.'
+  if (!Number.isInteger(days) || days < 1) return 'La duración debe ser un número entero de días, de 1 en adelante.'
+  return ''
+}
+
 // --- Campo de opciones reutilizable ---
 export function ChoiceGroup({ label, options, value, onChange }) {
   return (
@@ -136,9 +148,18 @@ export function ChoiceGroup({ label, options, value, onChange }) {
 }
 // --- Pasos del asistente ---
 export function MissionStep({ form, missionProfile, update, selectMissionType }) {
+  const durationIssue = getDurationIssue(form)
+  const setDuration = (days) => {
+    update('durationDays', days)
+    update('duration', days.trim() === '' ? '' : formatDays(days))
+  }
   return (
     <section aria-labelledby="planning-title">
       <h2 id="planning-title">Planeación <em>de viaje</em></h2>
+      <label className="planning-label mission-name-field">
+        Nombre de la misión
+        <input value={form.name} maxLength={70} onChange={(event) => update('name', event.target.value)} />
+      </label>
       <fieldset className="planning-fieldset mission-type-fieldset">
         <legend>Elige el tipo de misión</legend>
         <div className="mission-type-grid">
@@ -150,10 +171,14 @@ export function MissionStep({ form, missionProfile, update, selectMissionType })
               aria-pressed={form.missionType === type.id}
               onClick={() => selectMissionType(type.id)}
             >
+              <span className="mission-type-photo">
+                <span>{type.photo}</span>
+                <img src={`/${type.photo}`} alt="" onError={(event) => { event.currentTarget.style.display = 'none' }} />
+              </span>
               <span className="mission-type-letter">{type.letter}</span>
               <span className="mission-type-copy">
                 <strong>{type.label}</strong>
-                <small>{type.description}</small>
+                <small className="mission-type-description">{type.description}</small>
                 <span className="mission-type-requirements">
                   {type.requirements.join(' · ')}
                 </span>
@@ -166,24 +191,35 @@ export function MissionStep({ form, missionProfile, update, selectMissionType })
         </div>
       </fieldset>
       <div className="planning-form-grid">
-        <label className="planning-label">
-          Nombre de la misión
-          <input value={form.name} maxLength={70} onChange={(event) => update('name', event.target.value)} />
-        </label>
         <ChoiceGroup
           label="Objetivo científico"
           options={missionProfile.objectives}
           value={form.objective}
           onChange={(value) => update('objective', value)}
         />
-        <ChoiceGroup
-          label="Duración estimada"
-          options={missionProfile.durations}
-          value={form.duration}
-          onChange={(value) => update('duration', value)}
-        />
+        <fieldset className={`planning-fieldset duration-field ${durationIssue ? 'has-warning' : ''}`}>
+          <legend>Duración estimada (días)</legend>
+          <input
+            className="duration-input"
+            type="number"
+            min="1"
+            step="1"
+            inputMode="numeric"
+            value={form.durationDays}
+            aria-invalid={Boolean(durationIssue)}
+            aria-describedby="duration-hint"
+            onChange={(event) => setDuration(event.target.value)}
+          />
+          <p
+            id="duration-hint"
+            className={durationIssue ? 'planning-warning' : 'planning-hint'}
+            role={durationIssue ? 'alert' : undefined}
+          >
+            {durationIssue || 'Duración del escenario; no es una recomendación ni un límite NASA.'}
+          </p>
+        </fieldset>
       </div>
-      <p className="planning-note">Perfiles, objetivos y duraciones son presets del formulario, no estándares NASA.</p>
+      <p className="planning-note">Perfiles y objetivos son presets; la duración es del escenario, no un límite NASA.</p>
       <div className="mission-plan-preview">
         <strong>Tu selección ajusta el plan</strong>
         <span>Se incluirán: {missionProfile.requirements.join(' · ')}.</span>
@@ -395,13 +431,13 @@ export function ForecastStep({ forecast }) {
   )
 }
 
-export function SummaryStep({ form, missionProfile, isModeledSite, selectedSample, visibilityError, demoForecast, downloaded, downloadPlan }) {
+export function SummaryStep({ form, missionProfile, isModeledSite, selectedSample, visibilityError, demoForecast, downloadPlan }) {
   return (
     <section aria-labelledby="planning-title">
       <h2 id="planning-title">Resumen de <em>misión</em></h2>
       <p className="planning-intro">Revisa la configuración y descarga el plan.</p>
       <div className="summary-card">
-        <div className="summary-heading"><Rocket size={18} /><div><span>PLAN DE MISIÓN</span><strong>{form.name || 'Misión sin nombre'}</strong></div></div>
+        <div className="summary-heading"><div><span>PLAN DE MISIÓN</span><strong>{form.name || 'Misión sin nombre'}</strong></div></div>
         <dl className="summary-list">
           <div><dt>Perfil</dt><dd>{missionProfile.label}</dd></div>
           <div><dt>Objetivo</dt><dd>{form.objective} · {form.duration}</dd></div>
@@ -427,8 +463,8 @@ export function SummaryStep({ form, missionProfile, isModeledSite, selectedSampl
         </dl>
         {selectedSample && (
           <div className="summary-visibility">
-            <span><Sun size={14} /> Sol {selectedSample.sun.state === 'visible' ? 'visible' : 'oculto'} <b>{formatAngle(selectedSample.sun.elevation)}</b></span>
-            <span><Earth size={14} /> Tierra {selectedSample.earth.state === 'visible' ? 'visible' : 'oculta'} <b>{formatAngle(selectedSample.earth.elevation)}</b></span>
+            <span>Sol {selectedSample.sun.state === 'visible' ? 'visible' : 'oculto'} <b>{formatAngle(selectedSample.sun.elevation)}</b></span>
+            <span>Tierra {selectedSample.earth.state === 'visible' ? 'visible' : 'oculta'} <b>{formatAngle(selectedSample.earth.elevation)}</b></span>
           </div>
         )}
         {isModeledSite && visibilityError && (
@@ -439,11 +475,8 @@ export function SummaryStep({ form, missionProfile, isModeledSite, selectedSampl
         )}
       </div>
       <button className="download-plan-button" type="button" onClick={downloadPlan}>
-        {downloaded ? <Check size={16} /> : <Download size={16} />}
-        {downloaded ? 'Plan descargado' : 'Descargar plan'}
-        <ArrowRight size={15} />
+        Descargar plan
       </button>
-      {downloaded && <p className="download-confirmation" role="status">Se descargó plan-lunar.txt con los datos del escenario.</p>}
     </section>
   )
 }

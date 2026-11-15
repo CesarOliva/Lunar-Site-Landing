@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { ArrowLeft, Home } from 'lucide-react'
 import MissionRainPanel from './MissionRainPanel.jsx'
+import MissionTimeline from './MissionTimeline.jsx'
 import '../../estilos/misiones/TimelineScreen.css'
 
 function TimelineScreen({ mission, onBack, onHome }) {
@@ -17,20 +18,8 @@ function TimelineScreen({ mission, onBack, onHome }) {
         <button className="icon-button" onClick={onHome} aria-label="Ir al inicio"><Home size={17} /></button>
       </div>
 
-      <div className="timeline-layout">
-        <div className="timeline-content">
-          <div className="timeline-track">
-            {mission.timeline.map((event, index) => (
-              <motion.article className="timeline-event" key={event.time} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.12 }}>
-                <span className="timeline-point" />
-                <small>{event.time}</small>
-                <h3>{event.title}</h3>
-                <p>{event.detail}</p>
-              </motion.article>
-            ))}
-          </div>
-        </div>
-      </div>
+      {/* Línea de tiempo horizontal con la nave */}
+      <MissionTimeline events={mission.timeline} />
     </motion.section>
   )
 }

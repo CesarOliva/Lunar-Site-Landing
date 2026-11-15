@@ -20,7 +20,8 @@ export const missions = [
       'La misión llevó a los primeros seres humanos a la Luna. Armstrong y Aldrin exploraron el lugar de alunizaje mientras Collins permanecía en órbita.',
     image: lunarSurface,
     accent: '#e8b880',
-    position: { left: '59%', top: '53%' },
+    latitude: 0.6741,
+    longitude: 23.4730,
     timeline: [
       { time: '16 JUL 1969', title: 'Despegue', detail: 'El Saturn V despega desde el Centro Espacial Kennedy.' },
       { time: '20 JUL 1969', title: 'Alunizaje', detail: 'Eagle aterriza en el Mar de la Tranquilidad.' },
@@ -46,7 +47,8 @@ export const missions = [
       'Apollo 12 aterrizó cerca de la sonda Surveyor 3. La tripulación instaló instrumentos científicos y recogió muestras para estudiar el terreno.',
     image: lunarSurface,
     accent: '#c4a0db',
-    position: { left: '38%', top: '58%' },
+    latitude: -3.0124,
+    longitude: -23.4216,
     timeline: [
       { time: '14 NOV 1969', title: 'Despegue', detail: 'Apollo 12 inicia su viaje a la Luna.' },
       { time: '19 NOV 1969', title: 'Alunizaje de precisión', detail: 'Intrepid aterriza cerca de Surveyor 3.' },
@@ -72,7 +74,8 @@ export const missions = [
       'Tras los problemas de Apollo 13, esta misión retomó los alunizajes. La tripulación desplegó experimentos y recorrió el terreno de Fra Mauro.',
     image: lunarSurface,
     accent: '#89b6c8',
-    position: { left: '45%', top: '39%' },
+    latitude: -3.6453,
+    longitude: -17.4714,
     timeline: [
       { time: '31 ENE 1971', title: 'Despegue', detail: 'Apollo 14 parte rumbo a la Luna.' },
       { time: '5 FEB 1971', title: 'Alunizaje', detail: 'Antares aterriza en la región de Fra Mauro.' },
@@ -98,7 +101,8 @@ export const missions = [
       'Apollo 15 fue la primera misión de tipo J, enfocada en ciencia de campo. Scott e Irwin recorrieron Hadley–Apennine en el Lunar Roving Vehicle.',
     image: lunarSurface,
     accent: '#d49c70',
-    position: { left: '66%', top: '38%' },
+    latitude: 26.1322,
+    longitude: 3.6339,
     timeline: [
       { time: '26 JUL 1971', title: 'Despegue', detail: 'El Saturn V despega con una tripulación de tres.' },
       { time: '30 JUL 1971', title: 'Alunizaje', detail: 'Falcon aterriza cerca de Hadley Rille.' },
@@ -124,7 +128,8 @@ export const missions = [
       'La tripulación exploró las tierras altas de Descartes, desplegó experimentos y recolectó muestras para analizar la historia geológica lunar.',
     image: lunarSurface,
     accent: '#8fae8a',
-    position: { left: '51%', top: '31%' },
+    latitude: -8.9734,
+    longitude: 15.5002,
     timeline: [
       { time: '16 ABR 1972', title: 'Despegue', detail: 'Apollo 16 inicia el viaje desde Florida.' },
       { time: '21 ABR 1972', title: 'Alunizaje', detail: 'Orion aterriza en las tierras altas de Descartes.' },
@@ -150,7 +155,8 @@ export const missions = [
       'La última misión Apollo a la Luna combinó experiencia de piloto y geólogo. La tripulación realizó tres caminatas lunares en Taurus–Littrow.',
     image: lunarSurface,
     accent: '#d4c37d',
-    position: { left: '72%', top: '54%' },
+    latitude: 20.1908,
+    longitude: 30.7717,
     timeline: [
       { time: '7 DIC 1972', title: 'Despegue', detail: 'Apollo 17 despega en una misión nocturna.' },
       { time: '11 DIC 1972', title: 'Alunizaje', detail: 'Challenger aterriza en el valle Taurus–Littrow.' },

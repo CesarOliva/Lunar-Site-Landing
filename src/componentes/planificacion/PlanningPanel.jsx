@@ -6,6 +6,7 @@ import {
   CrewStep,
   ForecastStep,
   createDemoForecast,
+  getDurationIssue,
   initialForm,
   LogisticsStep,
   MissionStep,
@@ -29,7 +30,6 @@ import {
 function PlanningPanel() {
   const [step, setStep] = useState(0)
   const [form, setForm] = useState(initialForm)
-  const [downloaded, setDownloaded] = useState(false)
   const [validationMessage, setValidationMessage] = useState('')
   const [visibilitySamples, setVisibilitySamples] = useState(null)
   const [visibilityError, setVisibilityError] = useState('')
@@ -37,10 +37,10 @@ function PlanningPanel() {
   const steps = [
     { id: 'mission', label: 'Información general' },
     { id: 'vehicle', label: 'Vehículo y lanzamiento' },
-    { id: 'site', label: 'Ubicación lunar' },
     ...(missionProfile.conditionalSteps.length
       ? [{ id: 'mission-details', label: 'Configuración de misión' }]
       : []),
+    { id: 'site', label: 'Ubicación lunar' },
     { id: 'forecast', label: 'Fecha y entorno' },
     { id: 'analysis', label: 'Fecha y visibilidad' },
     { id: 'summary', label: 'Resumen de misión' },
@@ -61,7 +61,6 @@ function PlanningPanel() {
   }, [])
   const update = (key, value) => {
     setForm((current) => ({ ...current, [key]: value }))
-    setDownloaded(false)
     setValidationMessage('')
   }
   const selectMissionType = (typeId) => {
@@ -73,15 +72,11 @@ function PlanningPanel() {
       objective: selectedType.objectives.includes(current.objective)
         ? current.objective
         : selectedType.objectives[0],
-      duration: selectedType.durations.includes(current.duration)
-        ? current.duration
-        : selectedType.durations[0],
       payload: selectedType.payloads.includes(current.payload)
         ? current.payload
         : selectedType.payloads[0],
     }))
     setStep(0)
-    setDownloaded(false)
     setValidationMessage('')
   }
 
@@ -129,6 +124,10 @@ function PlanningPanel() {
       setValidationMessage('Escribe un nombre para la misión antes de continuar.')
       return
     }
+    if (currentStep.id === 'mission' && getDurationIssue(form)) {
+      setValidationMessage(getDurationIssue(form))
+      return
+    }
     if (currentStep.id === 'site' && !siteInputsValid) {
       setValidationMessage('Revisa latitud, longitud y altitud del sitio antes de continuar.')
       return
@@ -146,8 +145,8 @@ function PlanningPanel() {
   }
 
   const downloadPlan = () => {
-    if (!form.name.trim() || !siteInputsValid || !dateIsInCoverage || !comparisonDateIsInCoverage) {
-      setValidationMessage('Completa el nombre, las coordenadas y las fechas dentro del intervalo disponible antes de descargar.')
+    if (!form.name.trim() || getDurationIssue(form) || !siteInputsValid || !dateIsInCoverage || !comparisonDateIsInCoverage) {
+      setValidationMessage('Revisa el nombre, duración, coordenadas y fechas antes de descargar el plan.')
       return
     }
     const text = [
@@ -223,14 +222,12 @@ function PlanningPanel() {
     link.click()
     link.remove()
     window.setTimeout(() => URL.revokeObjectURL(url), 1000)
-    setDownloaded(true)
   }
 
   return (
     <div className="planning-wizard">
       <header className="planning-brand">
         <div className="planning-wordmark"><Moon size={18} /><span>moonapp</span></div>
-        <span className="planning-kicker">MISSION PLANNER / LUNAR SOUTH POLE</span>
       </header>
 
       <nav className="planning-stepper" aria-label="Pasos de planificación">
@@ -252,8 +249,6 @@ function PlanningPanel() {
       </nav>
 
       <main className="planning-content">
-        <div className="planning-step-caption">Paso {String(step + 1).padStart(2, '0')} / {String(steps.length).padStart(2, '0')} · {currentStep.label}</div>
-
         {currentStep.id === 'mission' && (
           <MissionStep form={form} missionProfile={missionProfile} update={update} selectMissionType={selectMissionType} />
         )}
@@ -295,7 +290,7 @@ function PlanningPanel() {
         )}
 
         {currentStep.id === 'summary' && (
-          <SummaryStep form={form} missionProfile={missionProfile} isModeledSite={isModeledSite} selectedSample={selectedSample} visibilityError={visibilityError} demoForecast={demoForecast} downloaded={downloaded} downloadPlan={downloadPlan} />
+          <SummaryStep form={form} missionProfile={missionProfile} isModeledSite={isModeledSite} selectedSample={selectedSample} visibilityError={visibilityError} demoForecast={demoForecast} downloadPlan={downloadPlan} />
         )}
 
         <footer className="planning-navigation">

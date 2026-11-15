@@ -1,12 +1,11 @@
-.timeline-topline,
-.timeline-event > small {
+.timeline-topline {
   font-family: var(--mono); letter-spacing: .12em;
 }
 
 /* Pantalla: columna con la barra superior y debajo la línea de tiempo.
-   Las variables --rain-* reservan a la izquierda el espacio de las letras de fondo. */
+   Las variables --rain-* definen dónde están las letras de fondo (las usa también MissionTimeline.css). */
 .timeline-screen {
-  --rain-left: 5.3%;
+  --rain-left: 5.3vw;
   --rain-width: clamp(190px, 17vw, 250px);
   --rain-gap: clamp(32px, 5vw, 80px);
   position: absolute; inset: 0; z-index: 5; overflow: hidden;
@@ -29,33 +28,13 @@
 .timeline-topline { z-index: 2; position: relative; flex: none; display: flex; align-items: center; gap: 17px; margin: 28px 5.3%; color: var(--muted-green); font-size: 8px; }
 .timeline-topline > span { margin-right: auto; }
 
-/* Línea de tiempo (deja libre a la izquierda el espacio de las letras de fondo) */
-.timeline-layout { position: relative; z-index: 2; flex: 1; min-height: 0; display: flex; margin: 0 5.3% 5vh; padding-left: calc(var(--rain-width) + var(--rain-gap)); }
-.timeline-content { flex: 1; align-self: center; max-width: 760px; }
-
-.timeline-track { display: grid; grid-template-columns: repeat(4, 1fr); }
-.timeline-event { position: relative; min-height: 126px; padding: 18px 17px 0 0; border-top: 1px solid var(--dark-forest); }
-.timeline-event:not(:first-child) { padding-left: 15px; }
-.timeline-point { position: absolute; top: -4px; left: 0; width: 7px; height: 7px; border-radius: 50%; background: var(--matrix-green); box-shadow: 0 0 10px var(--matrix-green); }
-.timeline-event > small { display: block; color: var(--terminal-green); font-size: 7px; }
-.timeline-event h3 { font-size: 12px; margin: 10px 0 6px; font-weight: 600; }
-.timeline-event p { color: var(--muted-green); font-size: 9px; line-height: 1.6; margin: 0; max-width: 145px; }
-
 @media (max-width: 800px) {
   .timeline-screen { --rain-width: 150px; --rain-gap: 24px; }
-  .timeline-track { grid-template-columns: 1fr 1fr; gap: 28px 0; }
-  .timeline-event:nth-child(odd) { padding-left: 0; }
-  .timeline-event:nth-child(even) { padding-left: 15px; }
   .timeline-moon { width: 90vw; right: -40%; }
 }
 
 @media (max-width: 560px) {
-  .timeline-screen { --rain-left: 5%; --rain-width: 96px; --rain-gap: 16px; }
+  .timeline-screen { --rain-left: 5vw; --rain-width: 96px; --rain-gap: 16px; }
   .timeline-topline { margin: 18px 5%; gap: 10px; }
-  .timeline-layout { margin: 0 5% 3vh; }
-  .timeline-content { align-self: flex-start; max-height: 100%; overflow-y: auto; }
-  .timeline-track { grid-template-columns: 1fr; gap: 0; }
-  .timeline-event, .timeline-event:nth-child(even) { min-height: 0; padding: 18px 0 18px; }
-  .timeline-event p { font-size: 8px; max-width: none; }
   .timeline-moon { width: 120vw; right: -87%; top: 25%; }
 }

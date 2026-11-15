@@ -1,0 +1,180 @@
+import { useEffect, useLayoutEffect, useRef } from 'react'
+import { motion } from 'framer-motion'
+import { ArrowRight, Rocket } from 'lucide-react'
+import '../../estilos/misiones/MissionTimeline.css'
+
+const SHIP_OFFSET = 26     // px a la derecha del punto de cada evento (queda sobre/bajo su texto)
+const MAX_AMPLITUDE = 110  // px máximos que la nave se separa de la línea
+const TURN_SHARE = 0.26    // largo del giro para cruzar la línea, como fracción de la distancia entre eventos
+
+const clamp = (value, min, max) => Math.min(Math.max(value, min), max)
+
+const prefersReducedMotion = () =>
+  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+// Convierte la rueda del mouse (vertical) en desplazamiento horizontal, con inercia suave.
+// Los gestos horizontales del trackpad y el swipe táctil siguen funcionando de forma nativa.
+function useWheelScroll(ref) {
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return undefined
+
+    let target = el.scrollLeft
+    let frame = 0
+
+    const animate = () => {
+      const diff = target - el.scrollLeft
+      if (Math.abs(diff) < 1) {
+        el.scrollLeft = target
+        frame = 0
+        return
+      }
+      el.scrollLeft += Math.sign(diff) * Math.max(1, Math.abs(diff) * 0.14)
+      frame = requestAnimationFrame(animate)
+    }
+
+    const onWheel = (event) => {
+      if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return
+      event.preventDefault()
+
+      const delta = event.deltaMode === 1 ? event.deltaY * 32 : event.deltaY
+      const max = el.scrollWidth - el.clientWidth
+      if (!frame) target = el.scrollLeft
+      target = clamp(target + delta, 0, max)
+
+      if (prefersReducedMotion()) {
+        el.scrollLeft = target
+        return
+      }
+      if (!frame) frame = requestAnimationFrame(animate)
+    }
+
+    el.addEventListener('wheel', onWheel, { passive: false })
+    return () => {
+      el.removeEventListener('wheel', onWheel)
+      cancelAnimationFrame(frame)
+    }
+  }, [ref])
+}
+
+function MissionTimeline({ events }) {
+  const scrollerRef = useRef(null)
+  const railRef = useRef(null)
+  const shipRef = useRef(null)
+  const hintRef = useRef(null)
+  const eventRefs = useRef([])
+  const geometry = useRef({ stations: [], eventWidth: 0, amplitude: 0 })
+
+  useWheelScroll(scrollerRef)
+
+  // La posición de la nave depende solo del scroll:
+  // progreso 0 → primer evento, progreso 1 → último evento.
+  useLayoutEffect(() => {
+    const scroller = scrollerRef.current
+    const rail = railRef.current
+    const ship = shipRef.current
+    const hint = hintRef.current
+
+    const update = () => {
+      const { stations, eventWidth, amplitude } = geometry.current
+      if (stations.length < 2) return
+
+      const max = scroller.scrollWidth - scroller.clientWidth
+      const progress = max > 0 ? clamp(scroller.scrollLeft / max, 0, 1) : 0
+
+      // s = índice continuo del evento (0, 1, 2, 3 ... con decimales entre uno y otro)
+      const s = progress * (stations.length - 1)
+      const i = Math.min(Math.floor(s), stations.length - 2)
+      const span = stations[i + 1] - stations[i]
+      const travel = (s - i) * span // px recorridos desde el evento i
+
+      // Trayectoria entre el evento i y el i+1:
+      // 1) la nave va recta junto a su evento, del lado contrario al texto;
+      // 2) cruza la línea justo a mitad del hueco entre un texto y el siguiente,
+      //    así nunca pasa por encima de ninguno, sin importar qué tan grande sea el texto;
+      // 3) llega recta al lado contrario del siguiente evento.
+      const crossAt = (eventWidth + span) / 2 - SHIP_OFFSET
+      const half = Math.max(1, Math.min(span * TURN_SHARE, span - crossAt, crossAt)) // mitad del giro
+      const u = clamp((travel - (crossAt - half)) / (2 * half), 0, 1)
+      const ease = u * u * (3 - 2 * u)
+
+      const side = i % 2 === 0 ? 1 : -1 // +1 = abajo de la línea, -1 = arriba
+      const x = stations[i] + SHIP_OFFSET + travel
+      const y = side * amplitude * (1 - 2 * ease)
+
+      // Se inclina según la pendiente del giro y va recta el resto del tiempo
+      const slope = (-side * 6 * amplitude * u * (1 - u)) / half
+      const bank = (Math.atan(slope) * 180) / Math.PI
+
+      // El ícono Rocket apunta a la esquina superior derecha, por eso el +45°
+      ship.style.transform = `translate(${x}px, ${y}px) rotate(${bank + 45}deg)`
+      hint.style.opacity = String(Math.max(0, 1 - progress * 10))
+    }
+
+    // Lee del DOM dónde quedó realmente cada evento (así sigue bien aunque cambie el CSS o el tamaño de pantalla)
+    const measure = () => {
+      const nodes = eventRefs.current.filter(Boolean)
+      geometry.current = {
+        stations: nodes.map((el) => el.offsetLeft),
+        eventWidth: Math.max(0, ...nodes.map((el) => el.offsetWidth)),
+        amplitude: Math.min(MAX_AMPLITUDE, scroller.clientHeight * 0.14),
+      }
+      update()
+    }
+
+    measure()
+    scroller.addEventListener('scroll', update, { passive: true })
+    // Se vuelve a medir si cambia la ventana o el ancho del riel (por ejemplo, al editar --step en el CSS)
+    const observer = new ResizeObserver(measure)
+    observer.observe(scroller)
+    observer.observe(rail)
+
+    return () => {
+      scroller.removeEventListener('scroll', update)
+      observer.disconnect()
+    }
+  }, [events])
+
+  return (
+    <div className="timeline-stage">
+      <div className="timeline-scroller" ref={scrollerRef} tabIndex={0} role="region" aria-label="Línea de tiempo de la misión">
+        <div className="timeline-rail" ref={railRef} style={{ '--count': events.length }}>
+          <span className="timeline-line" />
+
+          {events.map((event, index) => (
+            <motion.article
+              className={`timeline-event ${index % 2 === 0 ? 'is-above' : 'is-below'}`}
+              style={{ '--i': index }}
+              key={event.time}
+              ref={(el) => { eventRefs.current[index] = el }}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.12 }}
+            >
+              <span className="timeline-point" />
+              <small>{event.time}</small>
+              <h3>{event.title}</h3>
+              <p>{event.detail}</p>
+            </motion.article>
+          ))}
+
+          <motion.div
+            className="timeline-ship-anchor"
+            aria-hidden="true"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.9, duration: 0.6 }}
+          >
+            <div className="timeline-ship" ref={shipRef}>
+              <Rocket size={46} strokeWidth={1.2} />
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      <span className="timeline-hint" ref={hintRef} aria-hidden="true">DESLIZA <ArrowRight size={13} /></span>
+    </div>
+  )
+}
+
+export default MissionTimeline
