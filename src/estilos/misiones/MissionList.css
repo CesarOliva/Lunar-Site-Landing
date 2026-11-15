@@ -1,17 +1,18 @@
 .panel-footnote { font-family: var(--mono); letter-spacing: .12em; }
 .mission-list-content { padding: 21px 30px 28px; }
-.panel-description { max-width: 340px; margin: 0 0 23px; color: var(--muted-green); font-size: 11px; line-height: 1.7; }
-.mission-list { display: grid; }
+.mission-list-content > h2 { color: var(--snow); }
+.mission-list-content > h2 em { color: var(--matrix-green); }
+.panel-description { max-width: 340px; margin: 0 0 23px; color: var(--fog); font-size: 11px; line-height: 1.7; }
+.mission-list { display: grid; gap: 8px; }
 .mission-list-item {
   min-height: 88px;
-  padding: 10px 0;
+  padding: 10px 9px;
   display: grid;
   grid-template-columns: 56px 1fr 18px;
   align-items: center;
   gap: 13px;
-  border: 0;
-  border-top: 1px solid var(--dark-forest);
-  background: transparent;
+  border: 1px solid rgba(57, 255, 136, .2);
+  background: rgba(3, 6, 5, .62);
   color: var(--neon-green);
   text-align: left;
   cursor: pointer;
@@ -38,7 +39,7 @@
   .mission-list-content { padding-left: 23px; padding-right: 23px; }
 }
 .mission-list-item:hover,
-.mission-list-item:focus-visible { position: relative; z-index: 1; outline: 1px solid var(--matrix-green); outline-offset: -1px; background: rgba(3, 6, 5, .72); box-shadow: 0 0 18px rgba(57, 255, 136, .08); transform: scale(1.025); }
+.mission-list-item:focus-visible { position: relative; z-index: 1; outline: 1px solid var(--neon-green); outline-offset: -1px; background: rgba(3, 6, 5, .82); box-shadow: 0 0 18px rgba(57, 255, 136, .12); transform: scale(1.025); }
 .mission-list-item:hover .mission-thumb,
 .mission-list-item:focus-visible .mission-thumb { filter: brightness(1.35); }
 .mission-list-item:hover .mission-list-copy strong,

@@ -7,7 +7,7 @@
   overflow: hidden;
   position: relative;
   isolation: isolate;
-  background: radial-gradient(ellipse at 68% 50%, var(--dark-forest) 0%, var(--deep-space) 48%, var(--void-black) 100%);
+  background: #000;
 }
 
 .star-field { position: absolute; inset: 0; z-index: 0; pointer-events: none; }

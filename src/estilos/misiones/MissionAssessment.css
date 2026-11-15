@@ -137,9 +137,26 @@
 .mission-assessment-limits summary,
 .mission-assessment-query summary {
   padding: 12px 0 2px;
-  color: var(--neon-green);
+  color: var(--snow);
   cursor: pointer;
   font-size: .76rem;
+  transition: color .18s ease;
+}
+
+.mission-assessment-limits summary:hover,
+.mission-assessment-query summary:hover {
+  color: var(--matrix-green);
+}
+
+.mission-assessment-limits[open] > summary,
+.mission-assessment-query[open] > summary {
+  animation: menu-option-text-pulse 1.1s ease-in-out infinite;
+}
+
+.mission-assessment-limits summary:focus-visible,
+.mission-assessment-query summary:focus-visible {
+  outline: 1px solid var(--matrix-green);
+  outline-offset: 4px;
 }
 
 .mission-assessment-limits ul {
@@ -299,6 +316,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .mission-assessment-limits[open] > summary,
+  .mission-assessment-query[open] > summary {
+    animation: none;
+    color: var(--matrix-green);
+  }
+
   .mission-assessment-query form > button,
   .mission-alternative-actions button {
     transition: none;
