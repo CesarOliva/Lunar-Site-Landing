@@ -17,11 +17,7 @@ import PanelActions from './componentes/compartidos/PanelActions.jsx'
 import StarField from './componentes/compartidos/StarField.jsx'
 import './estilos/compartidos/App.css'
 
-const ROCKET_EXIT_DURATION = 900
-const ROCKET_PAUSE_DURATION = 500
-const ROCKET_FLIGHT_DURATION = 1000
-const ROCKET_OVERTAKE_DURATION = 700
-const TRANSITION_DURATION = 2200
+const TRANSITION_DURATION = 2000
 
 function App() {
   const [screen, setScreen] = useState('intro')
@@ -39,22 +35,11 @@ function App() {
 
     transitionStarted.current = true
     setScreen('launch')
-    window.setTimeout(() => {
-      setScreen('launch-pause')
-      window.setTimeout(() => {
-        setScreen('flight')
-        window.setTimeout(() => {
-          setScreen('overtake')
-          window.setTimeout(() => {
-            setScreen('transition')
-            window.setTimeout(
-              () => setScreen('home'),
-              TRANSITION_DURATION - ROCKET_OVERTAKE_DURATION
-            )
-          }, ROCKET_OVERTAKE_DURATION)
-        }, ROCKET_FLIGHT_DURATION)
-      }, ROCKET_PAUSE_DURATION)
-    }, ROCKET_EXIT_DURATION)
+  }
+
+  const finishLaunch = () => {
+    setScreen('transition')
+    window.setTimeout(() => setScreen('home'), TRANSITION_DURATION)
   }
 
   const showMission = (mission) => {
@@ -137,6 +122,7 @@ function App() {
           hoveredMission={screen === 'home' ? hoveredMission : null}
           scene={screen === 'home' ? activeScene : null}
           onShowMission={showMission}
+          onLaunchComplete={finishLaunch}
         />
       )}
 
@@ -145,7 +131,7 @@ function App() {
           <IntroScreen key="intro" onStart={startExperience} />
         )}
 
-        {['launch', 'launch-pause', 'flight', 'overtake', 'transition'].includes(screen) && (
+        {['launch', 'transition'].includes(screen) && (
           <TransitionScreen key="transition" />
         )}
 

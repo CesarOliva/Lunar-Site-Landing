@@ -29,14 +29,16 @@ const FOCUSED_CAMERA_DISTANCE = 2
 const MIN_MISSION_ROTATION_DURATION = 1.2
 const MISSION_ROTATION_RADIANS_PER_SECOND = 1.6
 const ROCKET_START_Z = 4.2
-const ROCKET_FLIGHT_START_Z = 5.4
-const ROCKET_TRAVEL_END_X = -1.8
-const ROCKET_TRAVEL_END_Z = 3.4
-const ROCKET_EXIT_DURATION = 0.9
-const ROCKET_FLIGHT_DURATION = 1
-const ROCKET_OVERTAKE_DURATION = 0.7
-const ROCKET_TRAVEL_DURATION = ROCKET_FLIGHT_DURATION + ROCKET_OVERTAKE_DURATION
-const ROCKET_TRAVEL_END_SCALE = 0.28
+const ROCKET_START_X_OFFSET = 0
+const ROCKET_START_FORWARD_OFFSET = 0.28
+const ROCKET_INTRO_POSE_DURATION = 1.1
+const ROCKET_LAUNCH_DURATION = 2.6
+const ROCKET_LAUNCH_PREPARE_DURATION = 0.35
+const ROCKET_SIDE_Z_ROTATION = -Math.PI / 2
+const ROCKET_READY_X_ROTATION = THREE.MathUtils.degToRad(-30)
+const ROCKET_READY_Y_ROTATION = THREE.MathUtils.degToRad(180)
+const ROCKET_READY_Z_ROTATION = THREE.MathUtils.degToRad(-120)
+const ROCKET_READY_SCALE = 1.3
 const MARKER_BOOT_BLINK_DURATION = 1000
 
 // Convierte latitud y longitud lunar en una posición 3D.
@@ -51,13 +53,20 @@ function getMoonPosition(latitude, longitude, radius = MOON_RADIUS) {
   )
 }
 
-function SaturnRocket({ phase }) {
+function SaturnRocket({ phase, onLaunchComplete }) {
   const { scene } = useGLTF(SATURN_V_MODEL)
   const { camera, size } = useThree()
   const motionGroup = useRef()
-  const rollGroup = useRef()
+  const poseGroup = useRef()
   const elapsed = useRef(0)
-  const flightElapsed = useRef(0)
+  const introElapsed = useRef(0)
+  const launchElapsed = useRef(0)
+  const launchCompleteSent = useRef(false)
+  const previousPhase = useRef(null)
+  const launchOrigin = useRef(new THREE.Vector3())
+  const launchStartRotation = useRef(new THREE.Euler(0, 0, ROCKET_SIDE_Z_ROTATION))
+  const launchStartScale = useRef(1)
+  const forwardDirection = useRef(new THREE.Vector3())
   const cameraDistance = INTRO_CAMERA_DISTANCE - ROCKET_START_Z
   const viewHeight = 2
     * cameraDistance
@@ -65,18 +74,8 @@ function SaturnRocket({ phase }) {
   const viewWidth = viewHeight
     * (size.width / Math.max(size.height, 1))
   const rocketLength = Math.min(2.6, Math.max(1.2, viewWidth * 0.52))
-  const flightCameraDistance = INTRO_CAMERA_DISTANCE - ROCKET_FLIGHT_START_Z
-  const flightViewWidth = 2
-    * flightCameraDistance
-    * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))
-    * (size.width / Math.max(size.height, 1))
-  const flightStartX = flightViewWidth / 2 + rocketLength * 0.2
-  const flightHeading = Math.atan2(
-    flightStartX - ROCKET_TRAVEL_END_X,
-    ROCKET_FLIGHT_START_Z - ROCKET_TRAVEL_END_Z
-  )
   const startX = -Math.min(viewWidth * 0.2, rocketLength * 0.52)
-  const exitY = -viewHeight / 2 - rocketLength
+    + ROCKET_START_X_OFFSET
   const rocket = useMemo(() => {
     const clone = scene.clone(true)
     const bounds = new THREE.Box3().setFromObject(clone)
@@ -93,72 +92,150 @@ function SaturnRocket({ phase }) {
   }, [rocketLength, scene])
 
   useFrame((_, delta) => {
-    if (!motionGroup.current || !rollGroup.current) return
+    if (!motionGroup.current || !poseGroup.current) return
 
     elapsed.current += delta
-    rollGroup.current.rotation.y = elapsed.current * 0.07
-
-    if (phase === 'launch') {
-      flightElapsed.current = Math.min(
-        flightElapsed.current + delta,
-        ROCKET_EXIT_DURATION
-      )
-      const progress = flightElapsed.current / ROCKET_EXIT_DURATION
-      const easedProgress = progress * progress * (3 - 2 * progress)
-
-      motionGroup.current.position.set(
-        startX + rocketLength * 0.2 * easedProgress,
-        exitY * easedProgress,
-        ROCKET_START_Z
-      )
+    if (previousPhase.current === null) {
+      poseGroup.current.rotation.order = 'ZYX'
+      poseGroup.current.rotation.set(0, 0, ROCKET_SIDE_Z_ROTATION)
+      motionGroup.current.position.set(startX, 0, ROCKET_START_Z)
       motionGroup.current.scale.setScalar(1)
-      return
+    }
+    if (phase !== previousPhase.current) {
+      if (phase === 'launch') {
+        launchElapsed.current = 0
+        launchCompleteSent.current = false
+        launchOrigin.current.copy(motionGroup.current.position)
+        launchStartRotation.current.copy(poseGroup.current.rotation)
+        launchStartScale.current = motionGroup.current.scale.x
+      }
+      previousPhase.current = phase
     }
 
-    if (phase === 'flight' || phase === 'overtake') {
-      flightElapsed.current = Math.min(
-        flightElapsed.current + delta,
-        ROCKET_TRAVEL_DURATION
+    if (phase === 'intro') {
+      poseGroup.current.rotation.order = 'ZYX'
+      introElapsed.current = Math.min(
+        introElapsed.current + delta,
+        ROCKET_INTRO_POSE_DURATION
       )
-      const progress = flightElapsed.current / ROCKET_TRAVEL_DURATION
+      const progress = introElapsed.current / ROCKET_INTRO_POSE_DURATION
       const easedProgress = progress * progress * (3 - 2 * progress)
 
+      poseGroup.current.rotation.set(
+        ROCKET_READY_X_ROTATION * easedProgress,
+        ROCKET_READY_Y_ROTATION * easedProgress,
+        THREE.MathUtils.lerp(ROCKET_SIDE_Z_ROTATION, ROCKET_READY_Z_ROTATION, easedProgress)
+      )
       motionGroup.current.position.set(
-        THREE.MathUtils.lerp(flightStartX, ROCKET_TRAVEL_END_X, easedProgress),
-        THREE.MathUtils.lerp(-0.42, 0.05, easedProgress),
-        THREE.MathUtils.lerp(ROCKET_FLIGHT_START_Z, ROCKET_TRAVEL_END_Z, easedProgress)
+        startX,
+        Math.sin(elapsed.current * 0.65) * 0.035,
+        ROCKET_START_Z + Math.sin(elapsed.current * 0.48) * 0.012
+      )
+      forwardDirection.current
+        .set(0, 1, 0)
+        .applyEuler(poseGroup.current.rotation)
+        .normalize()
+      motionGroup.current.position.addScaledVector(
+        forwardDirection.current,
+        ROCKET_START_FORWARD_OFFSET
       )
       motionGroup.current.scale.setScalar(
-        THREE.MathUtils.lerp(1, ROCKET_TRAVEL_END_SCALE, easedProgress)
+        THREE.MathUtils.lerp(1, ROCKET_READY_SCALE, easedProgress)
       )
       return
     }
 
-    flightElapsed.current = 0
-    motionGroup.current.position.set(
-      startX,
-      Math.sin(elapsed.current * 0.65) * 0.035,
-      ROCKET_START_Z + Math.sin(elapsed.current * 0.48) * 0.012
+    if (phase === 'launch') {
+      poseGroup.current.rotation.order = 'ZYX'
+      launchElapsed.current = Math.min(launchElapsed.current + delta, ROCKET_LAUNCH_DURATION)
+      const prepareProgress = THREE.MathUtils.clamp(
+        launchElapsed.current / ROCKET_LAUNCH_PREPARE_DURATION,
+        0,
+        1,
+      )
+      const easedPrepareProgress = prepareProgress * prepareProgress * (3 - 2 * prepareProgress)
+
+      poseGroup.current.rotation.set(
+        THREE.MathUtils.lerp(
+          launchStartRotation.current.x,
+          ROCKET_READY_X_ROTATION,
+          easedPrepareProgress,
+        ),
+        THREE.MathUtils.lerp(
+          launchStartRotation.current.y,
+          ROCKET_READY_Y_ROTATION,
+          easedPrepareProgress,
+        ),
+        THREE.MathUtils.lerp(
+          launchStartRotation.current.z,
+          ROCKET_READY_Z_ROTATION,
+          easedPrepareProgress,
+        ),
+      )
+      motionGroup.current.scale.setScalar(
+        THREE.MathUtils.lerp(launchStartScale.current, ROCKET_READY_SCALE, easedPrepareProgress)
+      )
+
+      if (prepareProgress < 1) {
+        motionGroup.current.position.copy(launchOrigin.current)
+        return
+      }
+
+      // La punta del Saturn V apunta a +Y en su espacio local.
+      forwardDirection.current
+        .set(0, 1, 0)
+        .applyEuler(poseGroup.current.rotation)
+        .normalize()
+      const rocketExtent = rocketLength * ROCKET_READY_SCALE * 0.75
+      const horizontalExitDistance = forwardDirection.current.x > 0
+        ? (viewWidth / 2 + rocketExtent - launchOrigin.current.x) / forwardDirection.current.x
+        : forwardDirection.current.x < 0
+          ? (-viewWidth / 2 - rocketExtent - launchOrigin.current.x) / forwardDirection.current.x
+          : 0
+      const verticalExitDistance = forwardDirection.current.y > 0
+        ? (viewHeight / 2 + rocketExtent - launchOrigin.current.y) / forwardDirection.current.y
+        : forwardDirection.current.y < 0
+          ? (-viewHeight / 2 - rocketExtent - launchOrigin.current.y) / forwardDirection.current.y
+          : 0
+      const launchDistance = Math.max(horizontalExitDistance, verticalExitDistance)
+      const travelProgress = THREE.MathUtils.clamp(
+        (launchElapsed.current - ROCKET_LAUNCH_PREPARE_DURATION)
+          / (ROCKET_LAUNCH_DURATION - ROCKET_LAUNCH_PREPARE_DURATION),
+        0,
+        1,
+      )
+      motionGroup.current.position
+        .copy(launchOrigin.current)
+        .addScaledVector(forwardDirection.current, launchDistance * travelProgress ** 2)
+      if (travelProgress >= 1 && !launchCompleteSent.current) {
+        launchCompleteSent.current = true
+        onLaunchComplete?.()
+      }
+      return
+    }
+
+    motionGroup.current.position.set(startX, 0, ROCKET_START_Z)
+    poseGroup.current.rotation.order = 'ZYX'
+    poseGroup.current.rotation.set(
+      ROCKET_READY_X_ROTATION,
+      ROCKET_READY_Y_ROTATION,
+      ROCKET_READY_Z_ROTATION,
     )
-    motionGroup.current.scale.setScalar(1)
+    forwardDirection.current
+      .set(0, 1, 0)
+      .applyEuler(poseGroup.current.rotation)
+      .normalize()
+    motionGroup.current.position.addScaledVector(
+      forwardDirection.current,
+      ROCKET_START_FORWARD_OFFSET
+    )
+    motionGroup.current.scale.setScalar(ROCKET_READY_SCALE)
   })
 
   return (
     <group ref={motionGroup}>
-      <group
-        rotation={phase === 'flight' || phase === 'overtake'
-          ? [0, flightHeading, 0]
-          : [0, 0, 0]}
-      >
-        <group
-          rotation={phase === 'flight' || phase === 'overtake'
-            ? [-Math.PI / 2, 0, 0]
-            : [0, 0, -Math.PI * 0.75]}
-        >
-          <group ref={rollGroup}>
-            <primitive object={rocket} />
-          </group>
-        </group>
+      <group ref={poseGroup}>
+        <primitive object={rocket} />
       </group>
     </group>
   )
@@ -350,6 +427,7 @@ function MoonScene({
   scene,
   phase,
   onShowMission,
+  onLaunchComplete,
   moonGroup,
   dragging,
 }) {
@@ -365,7 +443,7 @@ function MoonScene({
     return 0.82
   }, [size.width])
 
-  const initialCameraDistance = phase === 'intro'
+  const initialCameraDistance = ['intro', 'launch'].includes(phase)
     ? INTRO_CAMERA_DISTANCE
     : HOME_CAMERA_DISTANCE
   const cameraTarget = useRef(
@@ -489,7 +567,7 @@ function MoonScene({
     missionRotationAnimating.current = false
     lookTarget.current.set(0, 0, 0)
 
-    if (['intro', 'launch', 'launch-pause', 'flight'].includes(phase)) {
+    if (['intro', 'launch'].includes(phase)) {
       cameraTarget.current.set(0, 0, INTRO_CAMERA_DISTANCE)
       cameraAnimating.current = false
       return
@@ -552,9 +630,9 @@ function MoonScene({
     <>
       <Lighting scene={scene} />
 
-      {['intro', 'launch', 'flight', 'overtake'].includes(phase) && (
+      {['intro', 'launch'].includes(phase) && (
         <Suspense fallback={null}>
-          <SaturnRocket phase={phase} />
+          <SaturnRocket phase={phase} onLaunchComplete={onLaunchComplete} />
         </Suspense>
       )}
 
@@ -601,6 +679,7 @@ export default function Moon({
   hoveredMission = null,
   scene = null,
   onShowMission,
+  onLaunchComplete,
   phase = 'home',
 }) {
   const moonGroup = useRef()
@@ -665,7 +744,7 @@ export default function Moon({
           position: [
             0,
             0,
-            phase === 'intro' || phase === 'launch'
+            ['intro', 'launch'].includes(phase)
               ? INTRO_CAMERA_DISTANCE
               : HOME_CAMERA_DISTANCE,
           ],
@@ -688,6 +767,7 @@ export default function Moon({
             scene={scene}
             phase={phase}
             onShowMission={onShowMission}
+            onLaunchComplete={onLaunchComplete}
             moonGroup={moonGroup}
             dragging={dragging}
           />
