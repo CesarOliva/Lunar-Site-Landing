@@ -4,7 +4,7 @@
 .mission-list-content { padding: 21px 30px 28px; }
 .panel-description { max-width: 340px; font-size: 11px; line-height: 1.7; color: #00FF66; margin: 0 0 23px; }
 .mission-list { display: grid; }
-.mission-list-item { min-height: 75px; padding: 10px 0; display: grid; grid-template-columns: 56px 1fr 18px; align-items: center; gap: 13px; color: #39FF88; text-align: left; background: transparent; border: 0; border-top: 1px solid #39FF8812; cursor: pointer; }
+.mission-list-item { min-height: 75px; padding: 10px 0; display: grid; grid-template-columns: 56px 1fr 18px; align-items: center; gap: 13px; color: #39FF88; text-align: left; background: transparent; border: 0; border-top: 1px solid #39FF8812; cursor: pointer; transition: background .2s, box-shadow .2s, transform .2s; transform-origin: left center; }
 .mission-list-item:hover .mission-list-copy strong { color: #00FF66; }
 .mission-list-item > svg { color: #477A5C; }
 .mission-thumb { width: 56px; height: 52px; position: relative; overflow: hidden; display: grid; place-items: center; color: #39FF88; background: radial-gradient(circle at 55% 40%, var(--mission-accent), #10231A 66%, #0D1511); }
@@ -31,3 +31,9 @@
 .mission-list-item { color: var(--neon-green); border-top-color: var(--dark-forest); }
 .mission-list-item:hover .mission-list-copy strong { color: var(--matrix-green); }
 .mission-thumb { color: var(--neon-green); background: radial-gradient(circle at 55% 40%, var(--muted-green), var(--dark-forest) 66%, var(--panel-black)); }
+.mission-list-item:hover,
+.mission-list-item:focus-visible { position: relative; z-index: 1; background: rgba(57, 255, 136, .06); box-shadow: inset 2px 0 var(--matrix-green), 0 0 18px rgba(57, 255, 136, .08); transform: scale(1.025); }
+.mission-list-item:hover .mission-thumb,
+.mission-list-item:focus-visible .mission-thumb { filter: brightness(1.35); }
+.mission-list-item:hover .mission-list-copy strong,
+.mission-list-item:focus-visible .mission-list-copy strong { color: var(--neon-green); text-shadow: 0 0 10px rgba(57, 255, 136, .55); }

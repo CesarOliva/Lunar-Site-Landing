@@ -9,6 +9,7 @@ import MissionPreview from './componentes/misiones/MissionPreview.jsx'
 import TimelineScreen from './componentes/misiones/TimelineScreen.jsx'
 import PlanningPanel from './componentes/planificacion/PlanningPanel.jsx'
 import PanelActions from './componentes/compartidos/PanelActions.jsx'
+import StarField from './componentes/compartidos/StarField.jsx'
 import './estilos/compartidos/App.css'
 
 function App() {
@@ -55,7 +56,7 @@ function App() {
 
   return (
     <main className={`app-shell screen-${screen}`}>
-      <div className="star-field" aria-hidden="true" />
+      <StarField />
       <div className="ambient-glow" aria-hidden="true" />
 
       <AnimatePresence mode="wait">

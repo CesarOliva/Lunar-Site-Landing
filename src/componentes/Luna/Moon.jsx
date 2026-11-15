@@ -5,6 +5,7 @@ import {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from 'react'
 
 import * as THREE from 'three'
@@ -21,6 +22,8 @@ import Lighting from './Lighting'
 const MOON_MODEL = '/modelos/Moon_NASA_LRO_8k_Topo_Small.glb'
 
 const MOON_RADIUS = 1.1
+const HOME_CAMERA_DISTANCE = 3.7
+const FOCUSED_CAMERA_DISTANCE = 3.3
 
 // Convierte latitud y longitud lunar en una posición 3D.
 function getMoonPosition(latitude, longitude, radius = MOON_RADIUS) {
@@ -71,13 +74,36 @@ function MissionMarker({ mission, onSelect, selected, moonGroup }) {
 
   const { camera } = useThree()
   const label = useRef()
+  const markerMesh = useRef()
+  const glowMesh = useRef()
+  const [hovered, setHovered] = useState(false)
   const cameraLocalPosition = useMemo(() => new THREE.Vector3(), [])
   const surfaceNormal = useMemo(
     () => position.clone().normalize(),
     [position]
   )
 
-  useFrame(() => {
+  useFrame((_, delta) => {
+    if (markerMesh.current) {
+      const scale = THREE.MathUtils.damp(
+        markerMesh.current.scale.x,
+        hovered ? 1.35 : 1,
+        12,
+        delta
+      )
+      markerMesh.current.scale.setScalar(scale)
+    }
+
+    if (glowMesh.current) {
+      const scale = THREE.MathUtils.damp(
+        glowMesh.current.scale.x,
+        hovered ? 2.3 : 1.8,
+        12,
+        delta
+      )
+      glowMesh.current.scale.setScalar(scale)
+    }
+
     if (!label.current || !moonGroup.current) return
 
     cameraLocalPosition.copy(camera.position)
@@ -95,20 +121,26 @@ function MissionMarker({ mission, onSelect, selected, moonGroup }) {
   return (
     <group position={position}>
       <mesh
-        onClick={(event) => {
-          event.stopPropagation()
-          onSelect(mission)
-        }}
+        ref={markerMesh}
       >
         <sphereGeometry args={[0.022, 16, 16]} />
         <meshBasicMaterial
-          color={selected ? '#FFFFFF' : '#39FF88'}
+          color={selected || hovered ? '#FFFFFF' : '#39FF88'}
           depthTest={true}
         />
       </mesh>
 
       <mesh
+        ref={glowMesh}
         scale={1.8}
+        onPointerOver={(event) => {
+          event.stopPropagation()
+          setHovered(true)
+        }}
+        onPointerOut={(event) => {
+          event.stopPropagation()
+          setHovered(false)
+        }}
         onClick={(event) => {
           event.stopPropagation()
           onSelect(mission)
@@ -116,9 +148,9 @@ function MissionMarker({ mission, onSelect, selected, moonGroup }) {
       >
         <sphereGeometry args={[0.022, 16, 16]} />
         <meshBasicMaterial
-          color="#39FF88"
+          color={hovered ? '#FFFFFF' : '#39FF88'}
           transparent
-          opacity={0.15}
+          opacity={hovered ? 0.28 : 0.15}
           depthWrite={false}
         />
       </mesh>
@@ -133,7 +165,7 @@ function MissionMarker({ mission, onSelect, selected, moonGroup }) {
       >
         <div
           ref={label}
-          className={`moon-marker-label ${selected ? 'active' : ''}`}
+          className={`moon-marker-label ${selected ? 'active' : ''} ${hovered ? 'hovered' : ''}`}
         >
           {mission.number} / {mission.name}
         </div>
@@ -158,7 +190,7 @@ function MoonScene({
     return { position: [0.85, 0, 0], scale: 0.82 }
   }, [size.width])
 
-  const cameraTarget = useRef(new THREE.Vector3(0, 0, 3.7))
+  const cameraTarget = useRef(new THREE.Vector3(0, 0, HOME_CAMERA_DISTANCE))
   const lookTarget = useRef(new THREE.Vector3(0, 0, 0))
 
   const focused = useRef(false)
@@ -168,23 +200,18 @@ function MoonScene({
   const focusMission = useCallback((mission) => {
     if (!moonGroup.current || !mission) return
 
-    const localPosition = getMoonPosition(
-      mission.latitude,
-      mission.longitude,
-      MOON_RADIUS * 1.018
-    )
-
-    // Convierte la posición local a coordenadas del mundo.
     const center = moonGroup.current.getWorldPosition(new THREE.Vector3())
-    const worldPosition = moonGroup.current.localToWorld(localPosition)
-    const direction = worldPosition.clone().sub(center).normalize()
+    const zoomRatio = FOCUSED_CAMERA_DISTANCE / HOME_CAMERA_DISTANCE
 
-    lookTarget.current.copy(worldPosition)
-
-    cameraTarget.current.copy(
-      worldPosition.clone().add(
-        direction.multiplyScalar(2.15)
-      )
+    lookTarget.current.set(
+      center.x * (1 - zoomRatio),
+      center.y * (1 - zoomRatio),
+      center.z * (1 - zoomRatio)
+    )
+    cameraTarget.current.set(
+      lookTarget.current.x,
+      lookTarget.current.y,
+      lookTarget.current.z + FOCUSED_CAMERA_DISTANCE
     )
 
     focused.current = true
@@ -199,7 +226,7 @@ function MoonScene({
       focused.current = false
 
       lookTarget.current.set(0, 0, 0)
-      cameraTarget.current.set(0, 0, 3.7)
+      cameraTarget.current.set(0, 0, HOME_CAMERA_DISTANCE)
       cameraAnimating.current = true
     }
   }, [selectedMission, focusMission])
@@ -213,17 +240,13 @@ function MoonScene({
     if (dragging.current && focused.current) {
       focused.current = false
       cameraAnimating.current = false
-      lookTarget.current.set(0, 0, 0)
-      cameraTarget.current.set(0, 0, 3.7)
-      camera.position.copy(cameraTarget.current)
-      camera.lookAt(lookTarget.current)
     }
 
     if (!focused.current && !dragging.current) {
       group.rotation.y += delta * 0.035
     }
 
-    if (cameraAnimating.current) {
+    if (cameraAnimating.current && !dragging.current) {
       const smooth = 1 - Math.exp(-3.2 * delta)
       camera.position.lerp(cameraTarget.current, smooth)
       camera.lookAt(lookTarget.current)
@@ -334,13 +357,11 @@ export default function Moon({
         }}
         gl={{
           antialias: false,
-          alpha: false,
+          alpha: true,
           powerPreference: 'high-performance',
         }}
         dpr={1}
       >
-        <color attach="background" args={['#000000']} />
-
         <Suspense fallback={null}>
           <MoonScene
             missions={missions}

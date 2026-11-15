@@ -7,24 +7,10 @@
   isolation: isolate;
   background: radial-gradient(ellipse at 68% 50%, #0D1511 0%, #080D0B 42%, #030605 78%);
 }
-.star-field {
-  position: absolute; inset: 0; pointer-events: none;
-  background-image: radial-gradient(1px 1px at 14% 20%, #39FF8888 98%, transparent), radial-gradient(1px 1px at 75% 13%, #39FF8877 98%, transparent), radial-gradient(1px 1px at 43% 82%, #39FF8877 98%, transparent), radial-gradient(1px 1px at 92% 68%, #39FF8899 98%, transparent), radial-gradient(1px 1px at 30% 54%, #39FF8855 98%, transparent);
-  background-size: 410px 330px;
-}
-.star-field::before {
-  position: absolute; inset: 0; pointer-events: none;
-  background-image: radial-gradient(1px 1px at 14% 20%, #39FF8888 98%, transparent), radial-gradient(1px 1px at 75% 13%, #39FF8877 98%, transparent), radial-gradient(1px 1px at 43% 82%, #39FF8877 98%, transparent), radial-gradient(1px 1px at 92% 68%, #39FF8899 98%, transparent), radial-gradient(1px 1px at 30% 54%, #39FF8855 98%, transparent);
-  background-size: 410px 330px;
-}
-.star-field::after {
-  position: absolute; inset: 0; pointer-events: none;
-  background-image: radial-gradient(1px 1px at 14% 20%, #39FF8888 98%, transparent), radial-gradient(1px 1px at 75% 13%, #39FF8877 98%, transparent), radial-gradient(1px 1px at 43% 82%, #39FF8877 98%, transparent), radial-gradient(1px 1px at 92% 68%, #39FF8899 98%, transparent), radial-gradient(1px 1px at 30% 54%, #39FF8855 98%, transparent);
-  background-size: 410px 330px;
-}
-.star-field::before { content: ''; opacity: .46; transform: translate(120px, 42px); background-size: 310px 280px; }
-.star-field::after { content: ''; opacity: .32; transform: translate(-43px, 100px); background-size: 520px 400px; }
-.ambient-glow { position: absolute; width: 52vw; height: 52vw; right: 3%; top: -25%; border-radius: 50%; background: #477A5C; opacity: .07; filter: blur(115px); pointer-events: none; }
+.star-field { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.star-field canvas { display: block; width: 100%; height: 100%; }
+.ambient-glow { position: absolute; z-index: 0; width: 52vw; height: 52vw; right: 3%; top: -25%; border-radius: 50%; background: #477A5C; opacity: .07; filter: blur(115px); pointer-events: none; }
+.intro-screen { z-index: 1; }
 .eyebrow {
   font-family: var(--mono); letter-spacing: .12em;
 }

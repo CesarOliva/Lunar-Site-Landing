@@ -6,8 +6,9 @@
 .home-screen {
   position: absolute;
   inset: 0;
+  z-index: 1;
   overflow: hidden;
-  background: #000000;
+  background: transparent;
 }
 
 /* Contenedor del Canvas 3D */
@@ -18,7 +19,7 @@
   z-index: 0;
   height: 100%;
   width: 100%;
-  background: #000000;
+  background: transparent;
   cursor: grab;
   touch-action: none;
 }
@@ -158,6 +159,19 @@
   color: #FFFFFF;
   border-color: #39FF88;
   opacity: 1;
+}
+
+.moon-marker-label.hovered {
+  color: #FFFFFF;
+  border-color: #39FF88;
+  box-shadow: 0 0 10px rgba(57, 255, 136, 0.35);
+  opacity: 1;
+  transform: scale(1.15);
+  transform-origin: left center;
+}
+
+.moon-marker-label {
+  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 
 /* Adaptación móvil */
