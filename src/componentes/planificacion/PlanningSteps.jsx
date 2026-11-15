@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Check, MapPin } from 'lucide-react'
-import visibilitySite from '../../../Data_Structure/data/visibility-site.json'
+import visibilitySite from '../../../data/visibility-site.json'
 import { formatAngle } from './PlanningVisibility'
 import missionPhoto1 from '../../foto1.jpeg'
 import missionPhoto2 from '../../foto2.jpeg'

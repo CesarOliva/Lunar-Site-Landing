@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Check, ChevronLeft, ChevronRight, Moon } from 'lucide-react'
-import visibilitySite from '../../../Data_Structure/data/visibility-site.json'
+import visibilitySite from '../../../data/visibility-site.json'
 import '../../estilos/planificacion/PlanningPanel.css'
 import {
   CrewStep,

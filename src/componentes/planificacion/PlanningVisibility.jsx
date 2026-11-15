@@ -1,5 +1,5 @@
 import { Earth, Info, MapPin, Sun } from 'lucide-react'
-import visibilityCsvUrl from '../../../Data_Structure/data/visibility/visibility.csv?url'
+import visibilityCsvUrl from '../../../data/visibility/visibility.csv?url'
 
 // --- Datos de visibilidad: cobertura, carga del CSV y utilidades ---
 export const dateTimeMin = '2026-11-14T00:00'
