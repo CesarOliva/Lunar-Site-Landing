@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowRight, Rocket } from 'lucide-react'
 import '../../estilos/misiones/MissionTimeline.css'
@@ -64,6 +64,7 @@ function MissionTimeline({ events }) {
   const hintRef = useRef(null)
   const eventRefs = useRef([])
   const geometry = useRef({ stations: [], eventWidth: 0, amplitude: 0 })
+  const [activeIndex, setActiveIndex] = useState(0)
 
   useWheelScroll(scrollerRef)
 
@@ -84,6 +85,13 @@ function MissionTimeline({ events }) {
 
       // s = índice continuo del evento (0, 1, 2, 3 ... con decimales entre uno y otro)
       const s = progress * (stations.length - 1)
+      const currentIndex = Math.min(
+        stations.length - 1,
+        Math.floor(s + 0.5)
+      )
+      setActiveIndex((current) => (
+        current === currentIndex ? current : currentIndex
+      ))
       const i = Math.min(Math.floor(s), stations.length - 2)
       const span = stations[i + 1] - stations[i]
       const travel = (s - i) * span // px recorridos desde el evento i
@@ -143,13 +151,16 @@ function MissionTimeline({ events }) {
 
           {events.map((event, index) => (
             <motion.article
-              className={`timeline-event ${index % 2 === 0 ? 'is-above' : 'is-below'}`}
+              className={`timeline-event ${index % 2 === 0 ? 'is-above' : 'is-below'} ${activeIndex === index ? 'is-current' : 'is-muted'}`}
               style={{ '--i': index }}
               key={event.time}
               ref={(el) => { eventRefs.current[index] = el }}
               initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.12 }}
+              animate={{ opacity: activeIndex === index ? 1 : 0.3, y: 0 }}
+              transition={{
+                opacity: { duration: 0.24 },
+                y: { duration: 0.4, delay: index * 0.12 },
+              }}
             >
               <span className="timeline-point" />
               <small>{event.time}</small>

@@ -22,6 +22,7 @@ import Lighting from './Lighting'
 const MOON_MODEL = '/modelos/Moon_NASA_LRO_8k_Topo_Small.glb'
 
 const MOON_RADIUS = 1.1
+const INTRO_CAMERA_DISTANCE = 7.5
 const HOME_CAMERA_DISTANCE = 2.8
 const FOCUSED_CAMERA_DISTANCE = 2
 const MIN_MISSION_ROTATION_DURATION = 1.2
@@ -188,6 +189,7 @@ function MoonScene({
   missions,
   selectedMission,
   hoveredMission,
+  phase,
   onShowMission,
   moonGroup,
   dragging,
@@ -200,7 +202,12 @@ function MoonScene({
     return 0.82
   }, [size.width])
 
-  const cameraTarget = useRef(new THREE.Vector3(0, 0, HOME_CAMERA_DISTANCE))
+  const initialCameraDistance = phase === 'intro'
+    ? INTRO_CAMERA_DISTANCE
+    : HOME_CAMERA_DISTANCE
+  const cameraTarget = useRef(
+    new THREE.Vector3(0, 0, initialCameraDistance)
+  )
   const lookTarget = useRef(new THREE.Vector3(0, 0, 0))
 
   const focused = useRef(false)
@@ -256,15 +263,22 @@ function MoonScene({
   useEffect(() => {
     if (selectedMission) {
       focusMission(selectedMission)
-    } else {
-      focused.current = false
-      missionRotationAnimating.current = false
-
-      lookTarget.current.set(0, 0, 0)
-      cameraTarget.current.set(0, 0, HOME_CAMERA_DISTANCE)
-      cameraAnimating.current = true
+      return
     }
-  }, [selectedMission, focusMission])
+
+    focused.current = false
+    missionRotationAnimating.current = false
+    lookTarget.current.set(0, 0, 0)
+
+    if (phase === 'intro') {
+      cameraTarget.current.set(0, 0, INTRO_CAMERA_DISTANCE)
+      cameraAnimating.current = false
+      return
+    }
+
+    cameraTarget.current.set(0, 0, HOME_CAMERA_DISTANCE)
+    cameraAnimating.current = true
+  }, [selectedMission, phase, focusMission])
 
   // Movimiento continuo y suave de la Luna y la cámara.
   useFrame((_, delta) => {
@@ -347,6 +361,7 @@ export default function Moon({
   selectedMission = null,
   hoveredMission = null,
   onShowMission,
+  phase = 'home',
 }) {
   const moonGroup = useRef()
   const container = useRef()
@@ -407,7 +422,11 @@ export default function Moon({
     >
       <Canvas
         camera={{
-          position: [0, 0, HOME_CAMERA_DISTANCE],
+          position: [
+            0,
+            0,
+            phase === 'intro' ? INTRO_CAMERA_DISTANCE : HOME_CAMERA_DISTANCE,
+          ],
           fov: 38,
           near: 0.1,
           far: 100,
@@ -424,6 +443,7 @@ export default function Moon({
             missions={missions}
             selectedMission={selectedMission}
             hoveredMission={hoveredMission}
+            phase={phase}
             onShowMission={onShowMission}
             moonGroup={moonGroup}
             dragging={dragging}

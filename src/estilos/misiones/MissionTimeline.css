@@ -47,9 +47,13 @@
   left: var(--x0);
   right: 0;
   top: 50%;
-  height: 1px;
-  background: var(--matrix-green);
-  opacity: .5;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--matrix-green) 0 14px,
+    transparent 14px 25px
+  );
+  opacity: .65;
   box-shadow: 0 0 8px rgba(3, 6, 5, .8);
 }
 
@@ -58,7 +62,10 @@
   position: absolute;
   left: calc(var(--x0) + var(--i) * var(--step));
   width: var(--event-w);
+  filter: brightness(.58) saturate(.45);
+  transition: filter .24s ease;
 }
+.timeline-event.is-current { filter: none; }
 .timeline-event.is-above { bottom: calc(50% + var(--event-gap)); }
 .timeline-event.is-below { top: calc(50% + var(--event-gap)); }
 

@@ -1,7 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowRight } from 'lucide-react'
-import Moon from '../Luna/Moon'
 import '../../estilos/inicio/HomeScreen.css'
 
 const INTRO_MS = 1000
@@ -133,7 +131,6 @@ function HomeIntro({ onOpenMissions, onOpenPlanning }) {
               <MatrixText text="Misiones históricas" elapsed={elapsed} seed={71} />
             </strong>
           </span>
-          <ArrowRight size={16} className="option-arrow" />
         </button>
 
         <button
@@ -145,7 +142,6 @@ function HomeIntro({ onOpenMissions, onOpenPlanning }) {
               <MatrixText text="Planeación de viaje" elapsed={elapsed} seed={89} />
             </strong>
           </span>
-          <ArrowRight size={16} className="option-arrow" />
         </button>
       </div>
     </motion.div>
@@ -153,11 +149,7 @@ function HomeIntro({ onOpenMissions, onOpenPlanning }) {
 }
 
 function HomeScreen({
-  missions,
-  selectedMission,
-  hoveredMission,
   panelOpen,
-  onShowMission,
   onOpenMissions,
   onOpenPlanning,
 }) {
@@ -169,13 +161,6 @@ function HomeScreen({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.8 }}
     >
-      <Moon
-        missions={missions}
-        selectedMission={selectedMission}
-        hoveredMission={hoveredMission}
-        onShowMission={onShowMission}
-      />
-
       <div className="home-vignette" />
 
       <AnimatePresence>

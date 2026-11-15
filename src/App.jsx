@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { missions } from './data/missions.js'
+import Moon from './componentes/Luna/Moon.jsx'
 import HomeScreen from './componentes/inicio/HomeScreen.jsx'
 import IntroScreen from './componentes/inicio/IntroScreen.jsx'
 import TransitionScreen from './componentes/inicio/TransitionScreen.jsx'
@@ -12,16 +13,22 @@ import PanelActions from './componentes/compartidos/PanelActions.jsx'
 import StarField from './componentes/compartidos/StarField.jsx'
 import './estilos/compartidos/App.css'
 
+const TRANSITION_DURATION = 2200
+
 function App() {
   const [screen, setScreen] = useState('intro')
   const [panel, setPanel] = useState(null)
   const [selectedMission, setSelectedMission] = useState(null)
   const [hoveredMission, setHoveredMission] = useState(null)
   const [slide, setSlide] = useState(0)
+  const transitionStarted = useRef(false)
 
   const startExperience = () => {
+    if (transitionStarted.current) return
+
+    transitionStarted.current = true
     setScreen('transition')
-    window.setTimeout(() => setScreen('home'), 1450)
+    window.setTimeout(() => setScreen('home'), TRANSITION_DURATION)
   }
 
   const showMission = (mission) => {
@@ -64,6 +71,16 @@ function App() {
     <main className={`app-shell screen-${screen}`}>
       <StarField />
 
+      {screen !== 'timeline' && (
+        <Moon
+          phase={screen}
+          missions={screen === 'home' ? missions : []}
+          selectedMission={screen === 'home' ? selectedMission : null}
+          hoveredMission={screen === 'home' ? hoveredMission : null}
+          onShowMission={showMission}
+        />
+      )}
+
       <AnimatePresence mode="wait">
         {screen === 'intro' && (
           <IntroScreen key="intro" onStart={startExperience} />
@@ -76,11 +93,7 @@ function App() {
         {screen === 'home' && (
           <HomeScreen
             key="home"
-            missions={missions}
-            selectedMission={selectedMission}
-            hoveredMission={hoveredMission}
             panelOpen={Boolean(panel)}
-            onShowMission={showMission}
             onOpenMissions={() => setPanel('list')}
             onOpenPlanning={() => setPanel('planning')}
           />
