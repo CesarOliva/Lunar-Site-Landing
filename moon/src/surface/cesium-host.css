@@ -1,0 +1,20 @@
+/* Contenedor del visor de Cesium: llena su contenedor posicionado (cualquier interfaz que lo use). */
+.cesium-host,
+.cesium-host .cesium-viewer,
+.cesium-host .cesium-viewer-cesiumWidgetContainer,
+.cesium-host .cesium-widget,
+.cesium-host .cesium-widget canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.cesium-host {
+  background: #000;
+}
+
+/* Créditos de Cesium/NASA: legibles pero discretos. */
+.cesium-host .cesium-widget-credits {
+  z-index: 1;
+}

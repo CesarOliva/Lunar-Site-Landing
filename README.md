@@ -41,3 +41,10 @@ python lunar_navigator.py compare-sites --csv data/muestras_ejemplo.csv --site-a
 Para comparar dos periodos del mismo sitio, usa `compare-periods` con `--site`, `--start-a`, `--end-a`, `--start-b` y `--end-b`.
 
 Las evaluaciones son un cribado preliminar. La resolución de LOLA no modela rocas, cráteres pequeños, estabilidad de las patas ni condiciones durante toda la ventana de descenso.
+
+## Luna de alta calidad y primera persona (proyecto MOON)
+
+La carpeta `moon/` contiene el proyecto MOON completo (ver `moon/README.md`). La luna principal de la aplicación se
+construye con 256 teselas de NASA Trek. Al seleccionar un punto en el mapa aparece la tarjeta *Explorador lunar*, que abre
+directamente la vista de primera persona (Cesium, imagen WMTS y relieve LOLA de 16 bits) en esas mismas coordenadas.
+Estas funciones usan un proxy `/pds` (ya configurado en `vite.config.js`) y no requieren `lunar_api.py`.

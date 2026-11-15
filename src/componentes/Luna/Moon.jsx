@@ -18,8 +18,8 @@ import {
 } from '@react-three/drei'
 
 import Lighting, { SunLight } from './Lighting'
+import HighQualityMoon from '../../../moon/src/integracion/HighQualityMoon.jsx'
 
-const MOON_MODEL = '/modelos/Moon_NASA_LRO_8k_Topo_Small.glb'
 const SATURN_V_MODEL = '/modelos/Saturn%20V.glb'
 
 const MOON_RADIUS = 1.1
@@ -49,30 +49,6 @@ function getMoonPosition(latitude, longitude, radius = MOON_RADIUS) {
     radius * Math.sin(lat),
     radius * Math.cos(lat) * Math.cos(lon)
   )
-}
-
-// Modelo lunar.
-function MoonModel() {
-  const { scene } = useGLTF(MOON_MODEL)
-
-  const moon = useMemo(() => {
-    const clone = scene.clone(true)
-
-    const box = new THREE.Box3().setFromObject(clone)
-    const center = box.getCenter(new THREE.Vector3())
-    const size = box.getSize(new THREE.Vector3())
-
-    const maxDimension = Math.max(size.x, size.y, size.z)
-
-    if (maxDimension > 0) {
-      clone.position.sub(center)
-      clone.scale.setScalar((MOON_RADIUS * 2) / maxDimension)
-    }
-
-    return clone
-  }, [scene])
-
-  return <primitive object={moon} />
 }
 
 function SaturnRocket({ phase }) {
@@ -587,7 +563,8 @@ function MoonScene({
         scale={moonScale}
       >
         {scene?.sun?.direction_me && <SunLight scene={scene} />}
-        <MoonModel />
+        {/* Luna de 256 teselas de NASA Trek: aparece con un fundido cuando termina de descargarse. */}
+        <HighQualityMoon radius={MOON_RADIUS} />
 
         {scene?.site && selectedMission && (
           Math.abs(scene.site.latitude_deg - selectedMission.latitude) > 0.000001
@@ -720,5 +697,4 @@ export default function Moon({
   )
 }
 
-useGLTF.preload(MOON_MODEL)
 useGLTF.preload(SATURN_V_MODEL)

@@ -116,14 +116,15 @@
 .timeline-ship-anchor { position: absolute; left: 0; top: 50%; width: 0; height: 0; z-index: 3; pointer-events: none; }
 .timeline-ship {
   position: absolute;
-  left: -23px;
-  top: -23px;
-  width: 46px;
-  height: 46px;
-  color: var(--neon-green);
-  filter: drop-shadow(0 0 10px var(--matrix-green));
+  left: clamp(-180px, -11vw, -85px);
+  top: clamp(-93px, -5.67vw, -43.5px);
+  width: clamp(170px, 22vw, 360px);
+  height: clamp(87px, 11.34vw, 186px);
+  /* resplandor verde como el de la nave 2D anterior, siguiendo la silueta del modelo 3D */
+  filter: drop-shadow(0 0 8px rgba(52, 205, 63, .55));
   will-change: transform;
 }
+.timeline-ship-canvas { display: block; width: 100%; height: 100%; }
 
 /* Aviso y controles para avanzar por la línea del tiempo */
 .timeline-footer {

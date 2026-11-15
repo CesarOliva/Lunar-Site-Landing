@@ -11,6 +11,8 @@ import MissionPreview from './componentes/misiones/MissionPreview.jsx'
 import TimelineScreen from './componentes/misiones/TimelineScreen.jsx'
 import PlanningPanel from './componentes/planificacion/PlanningPanel.jsx'
 import CreditosScreen from './componentes/Creditos/CreditosScreen.jsx'
+import SurfaceScreen from './componentes/superficie/SurfaceScreen.jsx'
+import SurfaceInvite from './componentes/superficie/SurfaceInvite.jsx'
 import PanelActions from './componentes/compartidos/PanelActions.jsx'
 import StarField from './componentes/compartidos/StarField.jsx'
 import './estilos/compartidos/App.css'
@@ -29,6 +31,7 @@ function App() {
   const [hoveredMission, setHoveredMission] = useState(null)
   const [slide, setSlide] = useState(0)
   const [creditsBalance, setCreditsBalance] = useState(0)
+  const [surfaceTarget, setSurfaceTarget] = useState(null)
   const transitionStarted = useRef(false)
 
   const startExperience = () => {
@@ -91,6 +94,31 @@ function App() {
     setPanel(null)
   }
 
+  // Punto de la misión seleccionada tal como está en los datos (coordenadas históricas), o las que el usuario
+  // haya elegido en la evaluación del sitio. No se redondea ni se inventa ningún valor.
+  const surfaceTargetFor = (mission, scene) => {
+    const site = scene?.site
+    const latitude = site?.latitude_deg ?? mission.latitude
+    const longitude = site?.longitude_deg ?? mission.longitude
+    const isHistoric = latitude === mission.latitude && longitude === mission.longitude
+    return { mission, latitude, longitude, source: isHistoric ? 'mission' : 'custom' }
+  }
+
+  // Primera persona (Cesium + datos de NASA) directamente en el punto seleccionado.
+  const openSurface = () => {
+    if (!selectedMission) return
+    setHoveredMission(null)
+    setSurfaceTarget(surfaceTargetFor(selectedMission, activeScene))
+    setScreen('surface')
+    setPanel(null)
+  }
+
+  const closeSurface = () => {
+    setSurfaceTarget(null)
+    setScreen('home')
+    setPanel('preview')
+  }
+
   const openTimeline = () => {
     setHoveredMission(null)
     setScreen('timeline')
@@ -101,7 +129,7 @@ function App() {
     <main className={`app-shell screen-${screen}`}>
       <StarField />
 
-      {screen !== 'timeline' && (
+      {!['timeline', 'surface'].includes(screen) && (
         <Moon
           phase={screen}
           missions={screen === 'home' ? missions : []}
@@ -135,6 +163,23 @@ function App() {
         )}
       </AnimatePresence>
 
+      {screen === 'surface' && surfaceTarget && (
+        <SurfaceScreen
+          key={`${surfaceTarget.latitude}/${surfaceTarget.longitude}`}
+          target={surfaceTarget}
+          onClose={closeSurface}
+          onHome={() => { setSurfaceTarget(null); goHome() }}
+        />
+      )}
+
+      {screen === 'home' && panel === 'preview' && selectedMission && (
+        <SurfaceInvite
+          key={selectedMission.id}
+          target={surfaceTargetFor(selectedMission, activeScene)}
+          onOpen={openSurface}
+        />
+      )}
+
       {screen === 'home' && (
         <AnimatePresence>
           {panel && (
@@ -167,6 +212,7 @@ function App() {
                   slide={slide}
                   onSlide={(direction) => setSlide((slide + direction + 3) % 3)}
                   onExplore={openTimeline}
+                  onSurface={openSurface}
                   onSceneChange={setActiveScene}
                 />
               )}

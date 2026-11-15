@@ -1,0 +1,265 @@
+/*
+ * Estilos de la vista de primera persona. Todas las clases llevan el prefijo "moon-sx" y los colores
+ * salen de variables con valor de respaldo, así que el componente no choca con los estilos de la
+ * aplicación que lo aloje y toma su acento (--matrix-green) si existe.
+ */
+.moon-sx {
+  --sx-accent: var(--matrix-green, #c4e577);
+  --sx-accent-soft: color-mix(in srgb, var(--sx-accent) 14%, transparent);
+  --sx-line: color-mix(in srgb, var(--sx-accent) 28%, transparent);
+  --sx-panel: rgba(8, 13, 11, 0.9);
+  --sx-text: var(--snow, #f0f2f5);
+  --sx-muted: var(--fog, #a5afbd);
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  background: #000;
+  font-family: var(--mono, 'DM Mono', Consolas, monospace);
+}
+
+/* Tarjetas de carga / error */
+.moon-sx-card {
+  position: absolute;
+  z-index: 5;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: min(420px, calc(100% - 40px));
+  padding: 13px 16px;
+  border: 1px solid var(--sx-line);
+  border-radius: 5px;
+  background: var(--sx-panel);
+  backdrop-filter: blur(12px);
+  transform: translate(-50%, -50%);
+}
+
+.moon-sx-card > span:last-child {
+  display: grid;
+  gap: 3px;
+}
+
+.moon-sx-card strong {
+  color: var(--sx-text);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.moon-sx-card small {
+  color: var(--sx-muted);
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.moon-sx-spinner {
+  flex: none;
+  width: 17px;
+  height: 17px;
+  border: 1.5px solid var(--sx-accent-soft);
+  border-top-color: var(--sx-accent);
+  border-radius: 50%;
+  animation: moon-sx-spin 850ms linear infinite;
+}
+
+.moon-sx-error {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  border-color: rgba(225, 133, 119, 0.45);
+  background: rgba(21, 16, 18, 0.95);
+}
+
+.moon-sx-error small {
+  color: #d9b8b3;
+}
+
+.moon-sx-error button {
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid rgba(225, 133, 119, 0.45);
+  border-radius: 3px;
+  color: #f2c5bd;
+  background: rgba(225, 133, 119, 0.1);
+  font: inherit;
+  font-size: 9px;
+  cursor: pointer;
+}
+
+@keyframes moon-sx-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* HUD */
+.moon-sx-hud {
+  position: absolute;
+  z-index: 5;
+  top: 18px;
+  right: 18px;
+  display: grid;
+  gap: 12px;
+  width: min(380px, calc(100% - 36px));
+  max-height: calc(100% - 36px);
+  padding: 15px;
+  overflow: auto;
+  border: 1px solid var(--sx-line);
+  border-radius: 5px;
+  background: var(--sx-panel);
+  backdrop-filter: blur(12px);
+  scrollbar-width: thin;
+}
+
+.moon-sx-hud-info {
+  display: grid;
+  gap: 5px;
+}
+
+.moon-sx-hud strong {
+  color: var(--sx-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.moon-sx-title {
+  color: var(--sx-accent);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.moon-sx-hud span,
+.moon-sx-help {
+  color: var(--sx-muted);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.moon-sx-kicker {
+  letter-spacing: 0.13em;
+  font-size: 8px !important;
+}
+
+.moon-sx-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.moon-sx-actions button {
+  min-height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--sx-line);
+  border-radius: 3px;
+  color: var(--sx-accent);
+  background: var(--sx-accent-soft);
+  font: inherit;
+  font-size: 8px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+
+.moon-sx-actions button:last-child {
+  color: var(--sx-text);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.moon-sx-settings {
+  display: grid;
+  gap: 10px;
+}
+
+.moon-sx-settings > summary {
+  color: var(--sx-accent);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.moon-sx-settings[open] > summary {
+  margin-bottom: 10px;
+}
+
+.moon-sx-note {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.moon-sx-slider {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 10px;
+  color: var(--sx-muted);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.moon-sx-slider b {
+  color: var(--sx-accent);
+  font-weight: 600;
+}
+
+.moon-sx-slider input[type='range'] {
+  width: 100%;
+  accent-color: var(--sx-accent);
+}
+
+.moon-sx-slider select {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--sx-line);
+  color: var(--sx-text);
+  background: var(--sx-panel);
+  font: inherit;
+  font-size: 9px;
+}
+
+/* Cruceta de caminata */
+.moon-sx-walk-pad {
+  position: absolute;
+  z-index: 5;
+  bottom: 18px;
+  left: 18px;
+  display: grid;
+  grid-template-columns: repeat(3, 44px);
+  grid-template-rows: repeat(2, 44px);
+  gap: 5px;
+}
+
+.moon-sx-walk {
+  min-width: 44px;
+  min-height: 44px;
+  border: 1px solid var(--sx-line);
+  border-radius: 4px;
+  color: var(--sx-text);
+  background: var(--sx-panel);
+  font-size: 18px;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.moon-sx-walk:active:not(:disabled) {
+  color: var(--sx-accent);
+  border-color: var(--sx-accent);
+  background: var(--sx-accent-soft);
+}
+
+.moon-sx-walk:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.moon-sx-walk-forward { grid-column: 2; grid-row: 1; }
+.moon-sx-walk-left { grid-column: 1; grid-row: 2; }
+.moon-sx-walk-backward { grid-column: 2; grid-row: 2; }
+.moon-sx-walk-right { grid-column: 3; grid-row: 2; }
+
+@media (max-width: 560px) {
+  .moon-sx-hud {
+    top: 10px;
+    right: 10px;
+    width: calc(100% - 20px);
+  }
+}

@@ -6,8 +6,8 @@ import {
   ChevronRight,
   Pause,
   Play,
-  Rocket,
 } from 'lucide-react'
+import TimelineShip from './TimelineShip.jsx'
 import '../../estilos/misiones/MissionTimeline.css'
 
 const SHIP_OFFSET = 26     // px a la derecha del punto de cada evento (queda sobre/bajo su texto)
@@ -257,8 +257,8 @@ function MissionTimeline({ events }) {
       const slope = (-side * 6 * amplitude * u * (1 - u)) / half
       const bank = (Math.atan(slope) * 180) / Math.PI
 
-      // El ícono Rocket apunta a la esquina superior derecha, por eso el +45°
-      ship.style.transform = `translate(${x}px, ${y}px) rotate(${bank + 45}deg)`
+      // La nave 3D se ve de perfil con la nariz a la derecha: con bank = 0 va recta, sin ángulo base que sumar
+      ship.style.transform = `translate(${x}px, ${y}px) rotate(${bank}deg)`
       hint.style.opacity = String(Math.max(0, 1 - progress * 10))
     }
 
@@ -327,7 +327,7 @@ function MissionTimeline({ events }) {
             transition={{ delay: 0.9, duration: 0.6 }}
           >
             <div className="timeline-ship" ref={shipRef}>
-              <Rocket size={46} strokeWidth={1.2} />
+              <TimelineShip />
             </div>
           </motion.div>
         </div>

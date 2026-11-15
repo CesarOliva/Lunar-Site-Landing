@@ -1,9 +1,9 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowUpRight } from 'lucide-react'
+import { ArrowUpRight, Footprints } from 'lucide-react'
 import MissionAssessment from './MissionAssessment.jsx'
 import '../../estilos/misiones/MissionPreview.css'
 
-function MissionPreview({ mission, slide, onSlide, onExplore, onSceneChange }) {
+function MissionPreview({ mission, slide, onSlide, onExplore, onSurface, onSceneChange }) {
   return (
     <div className="preview-content">
       <div className="preview-hero">
@@ -56,6 +56,12 @@ function MissionPreview({ mission, slide, onSlide, onExplore, onSceneChange }) {
         <button className="primary-button explore-button" onClick={onExplore}>
           Explorar misión <ArrowUpRight size={17} />
         </button>
+
+        {onSurface && (
+          <button className="primary-button surface-button" onClick={onSurface}>
+            Explorador lunar · primera persona <Footprints size={17} />
+          </button>
+        )}
       </div>
     </div>
   )

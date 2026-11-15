@@ -44,3 +44,7 @@
 .crew-number { color: var(--terminal-green); }
 
 .preview-hero { background: #000; }
+.surface-button { margin-top: 10px; width: 100%; min-height: 43px; }
+.preview-details .surface-button { border: 1px solid var(--muted-green); background: rgba(3, 6, 5, .72); color: var(--fog); }
+.preview-details .surface-button:hover { border-color: var(--neon-green); background: rgba(3, 6, 5, .9); color: var(--snow); }
+.preview-details .surface-button:focus-visible { outline: 1px solid var(--neon-green); outline-offset: 3px; }
