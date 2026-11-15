@@ -102,6 +102,15 @@
 .timeline-event > small { display: block; font-family: var(--mono); letter-spacing: .12em; color: var(--terminal-green); font-size: var(--fs-date); }
 .timeline-event h3 { font-size: var(--fs-title); line-height: 1.15; margin: 10px 0 8px; font-weight: 600; }
 .timeline-event p { color: var(--snow, #F4FBF6); font-size: var(--fs-desc); line-height: 1.55; margin: 0; }
+.timeline-event-image {
+  display: block;
+  width: 100%;
+  height: 96px;
+  margin-top: 12px;
+  border: 1px solid rgba(71, 122, 92, .42);
+  object-fit: cover;
+  box-shadow: 0 0 16px rgba(3, 6, 5, .45);
+}
 
 /* Nave: su posición y giro los calcula el scroll (ver MissionTimeline.jsx) */
 .timeline-ship-anchor { position: absolute; left: 0; top: 50%; width: 0; height: 0; z-index: 3; pointer-events: none; }
@@ -167,4 +176,18 @@
   .timeline-footer { right: 5vw; gap: 8px; }
   .timeline-hint { font-size: 10px; }
   .timeline-control { width: 27px; height: 27px; }
+  .timeline-event-image { height: 78px; }
+}
+
+@media (max-height: 480px) {
+  .timeline-stage {
+    --event-gap: 14px;
+    --fs-date: 8px;
+    --fs-title: 13px;
+    --fs-desc: 10px;
+    margin-bottom: 0;
+  }
+  .timeline-event h3 { margin: 4px 0 3px; }
+  .timeline-event p { line-height: 1.1; }
+  .timeline-event-image { height: 30px; margin-top: 4px; }
 }
