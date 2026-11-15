@@ -2,6 +2,9 @@
 .panel-top-actions .text-button { margin-right: auto; }
 .icon-button { display: grid; place-items: center; width: 31px; height: 31px; border: 1px solid var(--dark-forest); background: transparent; color: var(--muted-green); cursor: pointer; transition: color .2s, border-color .2s; }
 .icon-button:hover { border-color: var(--matrix-green); color: var(--snow); }
+.credits-button { display: inline-flex; align-items: center; gap: 7px; padding: 8px 10px; border: 1px solid var(--dark-forest); background: rgba(3, 6, 5, .62); color: var(--neon-green); font-size: 10px; cursor: pointer; transition: color .2s, border-color .2s, background .2s; }
+.credits-button span { min-width: 1ch; font-variant-numeric: tabular-nums; text-align: left; }
+.credits-button:hover { border-color: var(--neon-green); background: rgba(3, 6, 5, .82); color: var(--snow); }
 .text-button { display: inline-flex; align-items: center; gap: 9px; padding: 8px 0; border: 0; background: transparent; color: var(--muted-green); font-size: 10px; cursor: pointer; }
 .text-button:hover { color: var(--snow); }
 
