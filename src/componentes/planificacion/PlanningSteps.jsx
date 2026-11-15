@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Check, MapPin } from 'lucide-react'
 import visibilitySite from '../../../Data_Structure/data/visibility-site.json'
 import { formatAngle } from './PlanningVisibility'
@@ -150,6 +151,218 @@ export function ChoiceGroup({ label, options, value, onChange }) {
     </fieldset>
   )
 }
+// --- Propulsión: perfiles cualitativos y trayectoria ilustrativa ---
+const propulsionProfiles = {
+  'Química': { thrust: 5, efficiency: 2, transit: 'Días', seconds: 3, turns: 0, note: 'Un impulso corto y potente lleva la nave directo a la Luna.' },
+  'Eléctrica': { thrust: 1, efficiency: 5, transit: 'Meses', seconds: 7, turns: 4, note: 'Empuje suave y continuo: la nave espira alrededor de la Tierra antes de partir.' },
+  'Híbrida': { thrust: 3, efficiency: 3, transit: 'Semanas', seconds: 5, turns: 1.5, note: 'Un primer impulso fuerte y una fase de empuje suave reducen el combustible.' },
+}
+
+function trajectoryPath(turns) {
+  const earth = { x: 70, y: 100 }
+  const moon = { x: 450, y: 100 }
+  if (turns === 0) return `M ${earth.x + 18} ${earth.y - 8} Q 260 ${earth.y - 100} ${moon.x - 9} ${moon.y - 6}`
+  const steps = Math.round(turns * 40)
+  let path = ''
+  for (let index = 0; index <= steps; index += 1) {
+    const progress = index / steps
+    const angle = -Math.PI / 2 + progress * turns * 2 * Math.PI
+    const radius = 28 + progress * 24
+    path += `${index === 0 ? 'M' : 'L'} ${(earth.x + radius * Math.cos(angle)).toFixed(1)} ${(earth.y + radius * Math.sin(angle)).toFixed(1)} `
+  }
+  const endAngle = -Math.PI / 2 + turns * 2 * Math.PI
+  const above = Math.sin(endAngle) < 0
+  return `${path}Q 260 ${above ? 8 : 192} ${moon.x - 9} ${moon.y + (above ? -6 : 6)}`
+}
+
+function Gauge({ value, max = 5 }) {
+  return (
+    <span className="gauge" aria-hidden="true">
+      {Array.from({ length: max }, (_, index) => <i key={index} className={index < value ? 'is-on' : ''} />)}
+    </span>
+  )
+}
+
+function PropulsionPicker({ value, onChange }) {
+  const profile = propulsionProfiles[value] ?? propulsionProfiles['Química']
+  const path = trajectoryPath(profile.turns)
+  const animate = typeof window !== 'undefined' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  return (
+    <fieldset className="planning-fieldset propulsion-picker">
+      <legend>Sistema de propulsión</legend>
+      <div className="propulsion-layout">
+        <div className="propulsion-options">
+          {Object.entries(propulsionProfiles).map(([name, item]) => (
+            <button className={`propulsion-option ${value === name ? 'is-selected' : ''}`} type="button" key={name} aria-pressed={value === name} onClick={() => onChange(name)}>
+              <strong>{name}</strong>
+              <small>Tránsito: {item.transit.toLowerCase()}</small>
+            </button>
+          ))}
+        </div>
+        <div className="propulsion-panel">
+          <svg className="trajectory" viewBox="0 0 520 200" role="img" aria-label={`Trayectoria ilustrativa con propulsión ${value.toLowerCase()}. ${profile.note}`}>
+            <line className="traj-axis" x1="88" y1="100" x2="441" y2="100" />
+            <circle className="traj-earth" cx="70" cy="100" r="18" />
+            <circle className="traj-moon" cx="450" cy="100" r="8" />
+            <path className="traj-path" key={value} d={path} pathLength="1" />
+            {animate && (
+              <rect className="traj-craft" key={`craft-${value}`} x="-3" y="-3" width="6" height="6">
+                <animateMotion dur={`${profile.seconds}s`} repeatCount="indefinite" path={path} />
+              </rect>
+            )}
+            <text className="traj-label" x="70" y="22" textAnchor="middle">Tierra</text>
+            <text className="traj-label" x="450" y="136" textAnchor="middle">Luna</text>
+          </svg>
+          <div className="propulsion-gauges">
+            <div className="gauge-row"><span>Empuje</span><Gauge value={profile.thrust} /></div>
+            <div className="gauge-row"><span>Eficiencia</span><Gauge value={profile.efficiency} /></div>
+          </div>
+          <p className="planning-note">{profile.note} Valores cualitativos de referencia; el diagrama no está a escala.</p>
+        </div>
+      </div>
+    </fieldset>
+  )
+}
+
+// --- Ventana de lanzamiento: meses dentro del intervalo de datos ---
+const launchMonths = [
+  { id: 'Noviembre 2026', label: 'Noviembre', days: 17 },
+  { id: 'Diciembre 2026', label: 'Diciembre', days: 31 },
+  { id: 'Enero 2027', label: 'Enero', days: 31 },
+  { id: 'Febrero 2027', label: 'Febrero', days: 12 },
+]
+
+function LaunchWindowPicker({ value, onChange }) {
+  const selected = launchMonths.find((month) => month.id === value)
+  return (
+    <fieldset className="planning-fieldset launch-window">
+      <legend>Ventana de lanzamiento (referencia)</legend>
+      <div className="window-strip">
+        {launchMonths.map((month) => (
+          <button className={`window-month ${value === month.id ? 'is-selected' : ''}`} type="button" key={month.id} style={{ flexGrow: month.days }} aria-pressed={value === month.id} onClick={() => onChange(value === month.id ? 'No definida' : month.id)}>
+            <strong>{month.label}</strong>
+            <small>{month.days} días de datos</small>
+          </button>
+        ))}
+      </div>
+      <p className="planning-hint">
+        {selected
+          ? `${selected.id}, dentro del intervalo de datos locales (14 nov 2026 a 12 feb 2027). Pulsa el mes otra vez para quitarlo.`
+          : 'Sin ventana definida. Elige un mes del intervalo de datos locales.'}
+      </p>
+    </fieldset>
+  )
+}
+
+// --- Sitio: mapa polar, distancias y criterios de aterrizaje ---
+const MAP_CENTER = 150
+const MAP_RADIUS = 120
+const MOON_RADIUS_KM = 1737.4
+const KM_PER_DEGREE = (MOON_RADIUS_KM * Math.PI) / 180
+const mapRanges = [1, 5, 10]
+const formatKm = (km) => `${km.toFixed(km < 10 ? 2 : 1)} km`
+
+function polarPoint(latitude, longitude, range) {
+  const colatitude = latitude + 90
+  const distance = Math.min(Math.max(colatitude / range, 0), 1) * MAP_RADIUS
+  const angle = (longitude * Math.PI) / 180
+  return {
+    x: MAP_CENTER + distance * Math.sin(angle),
+    y: MAP_CENTER - distance * Math.cos(angle),
+    inside: colatitude >= 0 && colatitude <= range,
+  }
+}
+
+function distanceKm(latA, lonA, latB, lonB) {
+  const rad = Math.PI / 180
+  const dLat = (latB - latA) * rad
+  const dLon = (lonB - lonA) * rad
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(latA * rad) * Math.cos(latB * rad) * Math.sin(dLon / 2) ** 2
+  return 2 * MOON_RADIUS_KM * Math.asin(Math.min(1, Math.sqrt(a)))
+}
+
+function PolarMap({ form, update, coordinatesValid, range }) {
+  const site = polarPoint(visibilitySite.latitude_deg, visibilitySite.longitude_east_deg, range)
+  const point = coordinatesValid ? polarPoint(Number(form.latitude), Number(form.longitude), range) : null
+  const placeOnMap = (event) => {
+    const box = event.currentTarget.getBoundingClientRect()
+    const x = ((event.clientX - box.left) / box.width) * 300 - MAP_CENTER
+    const y = ((event.clientY - box.top) / box.height) * 300 - MAP_CENTER
+    const distance = Math.min(Math.hypot(x, y) / MAP_RADIUS, 1)
+    const east = ((Math.atan2(x, -y) * 180) / Math.PI + 360) % 360
+    update('site', 'custom')
+    update('latitude', (-90 + distance * range).toFixed(4))
+    update('longitude', east.toFixed(2))
+  }
+  return (
+    <svg className="polar-map" viewBox="0 0 300 300" role="img" aria-label="Mapa del polo sur lunar. Haz clic para colocar un punto propio." onClick={placeOnMap}>
+      <circle className="polar-disc" cx={MAP_CENTER} cy={MAP_CENTER} r={MAP_RADIUS} />
+      {[1, 2, 3].map((step) => (
+        <circle className="polar-ring" key={step} cx={MAP_CENTER} cy={MAP_CENTER} r={(MAP_RADIUS * step) / 4} />
+      ))}
+      <line className="polar-spoke" x1={MAP_CENTER} y1={MAP_CENTER - MAP_RADIUS} x2={MAP_CENTER} y2={MAP_CENTER + MAP_RADIUS} />
+      <line className="polar-spoke" x1={MAP_CENTER - MAP_RADIUS} y1={MAP_CENTER} x2={MAP_CENTER + MAP_RADIUS} y2={MAP_CENTER} />
+      <text className="polar-label" x={MAP_CENTER} y="12" textAnchor="middle">0°</text>
+      <text className="polar-label" x="297" y="154" textAnchor="end">90°</text>
+      <text className="polar-label" x={MAP_CENTER} y="297" textAnchor="middle">180°</text>
+      <text className="polar-label" x="3" y="154">270°</text>
+      {[1, 2, 3, 4].map((step) => (
+        <text className="polar-label" key={step} x={MAP_CENTER + 4} y={MAP_CENTER - (MAP_RADIUS * step) / 4 - 3}>
+          {Number((-90 + (range * step) / 4).toFixed(2))}°
+        </text>
+      ))}
+      <line className="polar-pole" x1={MAP_CENTER - 5} y1={MAP_CENTER} x2={MAP_CENTER + 5} y2={MAP_CENTER} />
+      <line className="polar-pole" x1={MAP_CENTER} y1={MAP_CENTER - 5} x2={MAP_CENTER} y2={MAP_CENTER + 5} />
+      {site.inside && (
+        <g>
+          <rect className="polar-site" x={site.x - 5} y={site.y - 5} width="10" height="10" />
+          <text className="polar-label" x={site.x + 9} y={site.y + 4}>Site 04</text>
+        </g>
+      )}
+      {form.site === 'custom' && point?.inside && (
+        <g>
+          <line className="polar-cross" x1={point.x - 11} y1={point.y} x2={point.x + 11} y2={point.y} />
+          <line className="polar-cross" x1={point.x} y1={point.y - 11} x2={point.x} y2={point.y + 11} />
+          <rect className="polar-point" x={point.x - 4} y={point.y - 4} width="8" height="8" />
+        </g>
+      )}
+    </svg>
+  )
+}
+
+const areaRadii = { 'Radio de 100 m': 8, 'Radio de 500 m': 17, 'Radio de 1 km': 26 }
+const AreaGlyph = ({ option }) => (
+  <svg viewBox="0 0 56 56" aria-hidden="true">
+    <circle className="glyph-line" cx="28" cy="28" r={areaRadii[option] ?? 8} />
+    <circle className="glyph-dot" cx="28" cy="28" r="1.8" />
+  </svg>
+)
+const SlopeGlyph = ({ option }) => {
+  const rise = Math.tan(((parseInt(option, 10) || 0) * Math.PI) / 180) * 44
+  return (
+    <svg viewBox="0 0 56 56" aria-hidden="true">
+      <line className="glyph-ref" x1="6" y1="40" x2="50" y2="40" />
+      <line className="glyph-line" x1="6" y1="40" x2="50" y2={(40 - rise).toFixed(1)} />
+    </svg>
+  )
+}
+
+function GlyphTiles({ label, options, value, onChange, Glyph }) {
+  return (
+    <fieldset className="planning-fieldset">
+      <legend>{label}</legend>
+      <div className="glyph-tiles">
+        {options.map((option) => (
+          <button className={`glyph-tile ${value === option ? 'is-selected' : ''}`} type="button" key={option} aria-pressed={value === option} onClick={() => onChange(option)}>
+            <Glyph option={option} />
+            <span>{option}</span>
+          </button>
+        ))}
+      </div>
+    </fieldset>
+  )
+}
+
 // --- Pasos del asistente ---
 export function MissionStep({ form, missionProfile, update, selectMissionType }) {
   const durationIssue = getDurationIssue(form)
@@ -237,6 +450,7 @@ export function VehicleStep({ form, missionProfile, update }) {
   return (
     <section aria-labelledby="planning-title">
       <h2 id="planning-title">Vehículo y <em>lanzamiento</em></h2>
+      <p className="planning-intro">Define el lanzador y observa cómo cambia la trayectoria al elegir la propulsión.</p>
       <div className="planning-form-grid">
         <label className="planning-label">
           Lanzador / configuración
@@ -253,11 +467,12 @@ export function VehicleStep({ form, missionProfile, update }) {
           onChange={(value) => update('launchSite', value)}
         />
         <ChoiceGroup label="Carga útil" options={missionProfile.payloads} value={form.payload} onChange={(value) => update('payload', value)} />
-        <ChoiceGroup label="Sistema de propulsión" options={['Química', 'Eléctrica', 'Híbrida']} value={form.propulsion} onChange={(value) => update('propulsion', value)} />
-        <label className="planning-label">
-          Ventana de lanzamiento (referencia)
-          <input value={form.launchWindow} placeholder="No definida" onChange={(event) => update('launchWindow', event.target.value)} />
-        </label>
+        <div className="planning-span">
+          <PropulsionPicker value={form.propulsion} onChange={(value) => update('propulsion', value)} />
+        </div>
+        <div className="planning-span">
+          <LaunchWindowPicker value={form.launchWindow} onChange={(value) => update('launchWindow', value)} />
+        </div>
       </div>
       <p className="planning-note">Antecedentes NASA históricos; no indican disponibilidad. Masa, ventana, carga y propulsión no se validan aquí.</p>
     </section>
@@ -265,28 +480,51 @@ export function VehicleStep({ form, missionProfile, update }) {
 }
 
 export function SiteStep({ form, update, updateCoordinate, coordinatesValid, altitudeValid, siteInputsValid }) {
+  const [range, setRange] = useState(1)
+  const latitude = Number(form.latitude)
+  const longitude = Number(form.longitude)
+  const poleKm = coordinatesValid ? (latitude + 90) * KM_PER_DEGREE : null
+  const siteKm = coordinatesValid ? distanceKm(latitude, longitude, visibilitySite.latitude_deg, visibilitySite.longitude_east_deg) : null
+  const outsideMap = coordinatesValid && latitude + 90 > range
   return (
     <section aria-labelledby="planning-title">
       <h2 id="planning-title">Sitio de <em>aterrizaje</em></h2>
-      <p className="planning-intro">Selecciona el sitio con datos de visibilidad LOLA o ingresa unas coordenadas para evaluar otro punto.</p>
-      <div className="site-option-grid">
-        <button className={`site-option ${form.site === 'site04' ? 'is-selected' : ''}`} type="button" aria-pressed={form.site === 'site04'} onClick={() => {
-          update('site', 'site04')
-          updateCoordinate('latitude', String(visibilitySite.latitude_deg))
-          updateCoordinate('longitude', String(visibilitySite.longitude_east_deg))
-        }}>
-          <span className="site-option-icon"><MapPin size={18} /></span>
-          <strong>Shackleton · Site 04</strong>
-          <small>Referencia cartográfica; sus coordenadas están establecidas y bloqueadas.</small>
-          <code>{visibilitySite.latitude_deg}° · {visibilitySite.longitude_east_deg}° E</code>
-          <span className="site-data-badge"><Check size={12} /> Modelo LOLA disponible</span>
-        </button>
-        <button className={`site-option ${form.site === 'custom' ? 'is-selected' : ''}`} type="button" aria-pressed={form.site === 'custom'} onClick={() => update('site', 'custom')}>
-          <span className="site-option-icon"><MapPin size={18} /></span>
-          <strong>Coordenadas propias</strong>
-          <small>Define un punto lunar para tu escenario.</small>
-          <span className="site-custom-note">La visibilidad no se calcula sin datos de terreno y efemérides.</span>
-        </button>
+      <p className="planning-intro">Elige Site 04 o haz clic en el mapa para colocar un punto propio. Las coordenadas se actualizan al instante.</p>
+      <div className="site-explorer">
+        <div className="polar-map-card">
+          <PolarMap form={form} update={update} coordinatesValid={coordinatesValid} range={range} />
+          <div className="map-zoom" role="group" aria-label="Radio del mapa">
+            {mapRanges.map((item) => (
+              <button className={`planning-choice ${range === item ? 'is-selected' : ''}`} type="button" key={item} aria-pressed={range === item} onClick={() => setRange(item)}>
+                {item}° · {Math.round(item * KM_PER_DEGREE)} km
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="site-explorer-side">
+          <button className={`site-option ${form.site === 'site04' ? 'is-selected' : ''}`} type="button" aria-pressed={form.site === 'site04'} onClick={() => {
+            update('site', 'site04')
+            updateCoordinate('latitude', String(visibilitySite.latitude_deg))
+            updateCoordinate('longitude', String(visibilitySite.longitude_east_deg))
+          }}>
+            <span className="site-option-icon"><MapPin size={18} /></span>
+            <strong>Shackleton · Site 04</strong>
+            <small>Referencia cartográfica; sus coordenadas están establecidas y bloqueadas.</small>
+            <code>{visibilitySite.latitude_deg}° · {visibilitySite.longitude_east_deg}° E</code>
+            <span className="site-data-badge"><Check size={12} /> Modelo LOLA disponible</span>
+          </button>
+          <button className={`site-option ${form.site === 'custom' ? 'is-selected' : ''}`} type="button" aria-pressed={form.site === 'custom'} onClick={() => update('site', 'custom')}>
+            <span className="site-option-icon"><MapPin size={18} /></span>
+            <strong>Coordenadas propias</strong>
+            <small>Define un punto lunar para tu escenario.</small>
+            <span className="site-custom-note">La visibilidad no se calcula sin datos de terreno y efemérides.</span>
+          </button>
+          <div className="site-readouts">
+            <div className="site-readout"><span>Distancia al polo sur</span><strong>{poleKm === null ? '—' : formatKm(poleKm)}</strong></div>
+            <div className="site-readout"><span>Distancia a Site 04</span><strong>{siteKm === null ? '—' : formatKm(siteKm)}</strong></div>
+          </div>
+          {outsideMap && <p className="planning-hint">El punto queda fuera de este radio. Amplía el mapa para verlo.</p>}
+        </div>
       </div>
       <div className="planning-coordinate-grid">
         <label className="planning-label">
@@ -308,23 +546,14 @@ export function SiteStep({ form, update, updateCoordinate, coordinatesValid, alt
           Altitud sobre el radio lunar medio (m)
           <input type="number" step="1" value={form.elevation} onChange={(event) => update('elevation', event.target.value)} aria-invalid={!altitudeValid} />
         </label>
-        <ChoiceGroup
-          label="Área de aterrizaje"
-          options={['Radio de 100 m', 'Radio de 500 m', 'Radio de 1 km']}
-          value={form.landingArea}
-          onChange={(value) => update('landingArea', value)}
-        />
-        <ChoiceGroup
-          label="Pendiente máxima admitida"
-          options={['5°', '10°', '15°']}
-          value={form.maxSlope}
-          onChange={(value) => update('maxSlope', value)}
-        />
+        <span />
+        <GlyphTiles label="Área de aterrizaje" options={['Radio de 100 m', 'Radio de 500 m', 'Radio de 1 km']} value={form.landingArea} onChange={(value) => update('landingArea', value)} Glyph={AreaGlyph} />
+        <GlyphTiles label="Pendiente máxima admitida" options={['5°', '10°', '15°']} value={form.maxSlope} onChange={(value) => update('maxSlope', value)} Glyph={SlopeGlyph} />
       </div>
       <p className={`planning-hint ${siteInputsValid ? '' : 'planning-error'}`}>
         {siteInputsValid ? 'Marco planetocéntrico ME · evalúa el área y la pendiente antes de comparar la visibilidad.' : 'Ingresa una latitud válida, longitud este de 0° a 360° y altitud numérica.'}
       </p>
-      <p className="planning-note">Site 04 es una referencia cartográfica, no un sitio aprobado. Área y pendiente son parámetros del escenario, no límites universales NASA.</p>
+      <p className="planning-note">Site 04 es una referencia cartográfica, no un sitio aprobado. Área y pendiente son parámetros del escenario, no límites universales NASA. El mapa usa una proyección polar simplificada.</p>
     </section>
   )
 }
@@ -384,6 +613,8 @@ export function SampleStep({ form, update }) {
   )
 }
 
+const activityLevel = { Baja: 1, Moderada: 2, Elevada: 3 }
+
 export function ForecastStep({ forecast }) {
   if (!forecast) {
     return (
@@ -393,41 +624,53 @@ export function ForecastStep({ forecast }) {
       </section>
     )
   }
+  const { minimum, maximum } = forecast.surface_temperature_c
+  const windows = forecast.communication_windows_demo
+  const windowWidth = Math.min(forecast.communication_hours_demo / windows / 24 * 100, 100 / windows - 2)
 
   return (
     <section aria-labelledby="forecast-title">
       <h2 id="forecast-title">Entorno y <em>riesgos</em></h2>
-      <p className="planning-intro">Vista previa automática para la fecha seleccionada.</p>
+      <p className="planning-intro">Vista previa automática para la fecha seleccionada. Mueve la fecha arriba y las barras cambian.</p>
       <p className="forecast-time">Escenario: {forecast.selected_at_utc.replace('T', ' · ').replace(':00Z', ' UT')}</p>
       <div className="forecast-warning" role="note">
-        <strong>SIMULACIÓN · DATOS FICTICIOS</strong>
+        <strong>Simulación con datos ficticios</strong>
         <span>No es un pronóstico real. La Luna no tiene clima como la Tierra; estos valores solo muestran la futura experiencia del backend.</span>
       </div>
       <div className="forecast-grid">
         <article className="forecast-card">
           <span>Iluminación simulada</span>
           <strong>{forecast.illumination_hours} h</strong>
+          <div className="meter" aria-hidden="true"><i className="meter-fill" style={{ left: 0, width: `${(forecast.illumination_hours / 24) * 100}%` }} /></div>
           <small>de luz en 24 h</small>
         </article>
         <article className="forecast-card">
           <span>Temperatura superficial</span>
-          <strong>{forecast.surface_temperature_c.minimum}° a {forecast.surface_temperature_c.maximum}°C</strong>
-          <small>rango ilustrativo</small>
+          <strong>{minimum}° a {maximum}°C</strong>
+          <div className="meter" aria-hidden="true"><i className="meter-fill" style={{ left: `${((minimum + 200) / 200) * 100}%`, width: `${((maximum - minimum) / 200) * 100}%` }} /></div>
+          <small>rango ilustrativo sobre una escala de -200° a 0°C</small>
         </article>
         <article className="forecast-card">
           <span>Radiación · índice demo</span>
           <strong>{forecast.radiation_index_demo} / 5</strong>
+          <Gauge value={forecast.radiation_index_demo} />
           <small>sin dosis ni evaluación de protección</small>
         </article>
         <article className="forecast-card">
           <span>Micrometeoroides</span>
           <strong>Actividad {forecast.micrometeoroid_activity_demo.toLowerCase()}</strong>
+          <Gauge value={activityLevel[forecast.micrometeoroid_activity_demo] ?? 1} max={3} />
           <small>sin probabilidad de impacto calculada</small>
         </article>
         <article className="forecast-card">
           <span>Comunicaciones simuladas</span>
-          <strong>{forecast.communication_windows_demo} ventanas</strong>
-          <small>{forecast.communication_hours_demo} h · sin validar enlace</small>
+          <strong>{windows} {windows === 1 ? 'ventana' : 'ventanas'}</strong>
+          <div className="meter" aria-hidden="true">
+            {Array.from({ length: windows }, (_, index) => (
+              <i className="meter-block" key={index} style={{ left: `${(index * 100) / windows + 1}%`, width: `${windowWidth}%` }} />
+            ))}
+          </div>
+          <small>{forecast.communication_hours_demo} h repartidas en 24 h · sin validar enlace</small>
         </article>
         <article className="forecast-card">
           <span>Terreno y aterrizaje</span>

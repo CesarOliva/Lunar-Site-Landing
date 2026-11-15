@@ -193,14 +193,66 @@ export function MetricCard({ Icon, label, value, detail, state }) {
   )
 }
 // --- Pasos: fecha, luz y comunicación, comparar escenarios ---
+// --- Recorrido de fechas dentro del intervalo de datos ---
+const rangeStart = Date.parse(`${dateTimeMin}:00Z`)
+const rangeEnd = Date.parse(`${dateTimeMax}:00Z`)
+const rangeHours = Math.round((rangeEnd - rangeStart) / 3600000)
+const hoursToInput = (hours) => new Date(rangeStart + hours * 3600000).toISOString().slice(0, 16)
+const datePresets = [
+  { label: 'Inicio', hours: 0 },
+  { label: '+30 días', hours: 720 },
+  { label: '+60 días', hours: 1440 },
+  { label: 'Fin', hours: rangeHours },
+]
+const monthTicks = (() => {
+  const ticks = []
+  const formatter = new Intl.DateTimeFormat('es-MX', { month: 'short', timeZone: 'UTC' })
+  const first = new Date(rangeStart)
+  let tick = Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + 1, 1)
+  while (tick < rangeEnd) {
+    ticks.push({ label: formatter.format(tick).replace('.', ''), left: ((tick - rangeStart) / (rangeEnd - rangeStart)) * 100 })
+    const next = new Date(tick)
+    tick = Date.UTC(next.getUTCFullYear(), next.getUTCMonth() + 1, 1)
+  }
+  return ticks
+})()
+
 export function DateStep({ form, update, dateIsInCoverage }) {
+  const current = Date.parse(`${form.dateTime}:00Z`)
+  const hasDate = Number.isFinite(current)
+  const offset = hasDate ? Math.min(Math.max(Math.round((current - rangeStart) / 3600000), 0), rangeHours) : 0
   return (
     <section aria-labelledby="date-step-title">
       <h2 id="date-step-title">Fecha y <em>hora</em></h2>
-      <p className="planning-intro">Explora cómo cambia la iluminación y la comunicación directa al mover la fecha de aterrizaje.</p>
+      <p className="planning-intro">Mueve el control para recorrer el intervalo de datos. El entorno de abajo se recalcula al instante.</p>
       <div className="landing-date-card">
-        <label className="planning-label">
-          Fecha y hora del escenario (UTC)
+        <div className="date-readout">
+          <strong>{hasDate ? `${formatUtcDate(current)} · ${formatUtcTime(current)} UT` : 'Fecha sin seleccionar'}</strong>
+          <span>Día {Math.floor(offset / 24) + 1} de {Math.floor(rangeHours / 24) + 1}</span>
+        </div>
+        <input
+          className="date-slider"
+          type="range"
+          min="0"
+          max={rangeHours}
+          step="1"
+          value={offset}
+          aria-label="Recorrer el intervalo de datos por horas"
+          style={{ '--fill': `${(offset / rangeHours) * 100}%` }}
+          onChange={(event) => update('dateTime', hoursToInput(Number(event.target.value)))}
+        />
+        <div className="slider-ticks" aria-hidden="true">
+          {monthTicks.map((tick) => <span key={tick.label + tick.left} style={{ left: `${tick.left}%` }}>{tick.label}</span>)}
+        </div>
+        <div className="date-presets">
+          {datePresets.map((preset) => (
+            <button className={`planning-choice ${offset === preset.hours ? 'is-selected' : ''}`} type="button" key={preset.label} onClick={() => update('dateTime', hoursToInput(preset.hours))}>
+              {preset.label}
+            </button>
+          ))}
+        </div>
+        <label className="planning-label date-exact">
+          Fecha y hora exactas (UTC)
           <input
             type="datetime-local"
             min={dateTimeMin}

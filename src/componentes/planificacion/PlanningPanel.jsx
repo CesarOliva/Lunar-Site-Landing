@@ -277,13 +277,14 @@ function PlanningPanel() {
         <div className="planning-wordmark"><Moon size={18} /><span>moonapp</span></div>
       </header>
 
-      <nav className="planning-stepper" aria-label="Pasos de planificación">
+      <nav className="planning-stepper" aria-label="Pasos de planificación" style={{ '--progress': steps.length > 1 ? step / (steps.length - 1) : 0 }}>
         {steps.map(({ label }, index) => (
           <button
             className={`step-number ${index === step ? 'is-current' : ''} ${index < step ? 'is-complete' : ''}`}
             key={steps[index].id}
             type="button"
             aria-label={`Paso ${index + 1}: ${label}`}
+            title={label}
             aria-current={index === step ? 'step' : undefined}
             onClick={() => {
               if (index !== step && steps[index].id !== 'summary') triggerGlitch()
