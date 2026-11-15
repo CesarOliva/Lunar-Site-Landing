@@ -23,6 +23,25 @@ type SceneBody = {
   terrain_visibility: string
   source?: string
 }
+type LandingAssessmentData = {
+  status: 'favorable' | 'unfavorable' | 'indeterminate'
+  status_label: string
+  coverage: string
+  source?: string
+  source_label?: string
+  reason?: string
+  max_slope_deg?: number
+  slope_limit_deg?: number
+  landing_area_diameter_m?: number
+  profile_radius_km?: number
+  sun_horizon_deg?: number
+  sun_visible_over_terrain?: boolean
+  earth_horizon_deg?: number
+  earth_visible_over_terrain?: boolean
+  resolution_m?: number
+  coordinate_frame?: string
+  limitations?: string[]
+}
 type Scene = {
   site: { latitude_deg: number; longitude_deg: number; altitude_km?: number }
   time_utc: string
@@ -32,6 +51,7 @@ type Scene = {
   response_frame?: string
   coordinate_frame?: string
   cached?: boolean
+  landing_assessment?: LandingAssessmentData
 }
 type CustomScene = Scene & { cached: boolean }
 const missions = missionCatalog.missions as Mission[]
@@ -148,7 +168,39 @@ function AngleReadout({ title, body }: { title: string; body: SceneBody }) {
     <h3>{title}</h3>
     <dl><div><dt>Azimut</dt><dd>{formatAngle(body.azimuth_deg)}</dd></div><div><dt>Elevación</dt><dd>{formatAngle(body.elevation_deg)}</dd></div></dl>
     <p className="geometric-state"><span />{body.above_geometric_horizon ? 'Sobre el horizonte geométrico' : 'Bajo el horizonte geométrico'}</p>
-    <p className="terrain-state">Visibilidad con relieve: <strong>indeterminada</strong></p>
+    <p className="terrain-state">Visibilidad con relieve: <strong>{body.terrain_visibility === 'visible' ? 'visible' : body.terrain_visibility === 'blocked' ? 'bloqueada' : 'indeterminada'}</strong></p>
+  </section>
+}
+
+function LandingAssessment({ scene }: { scene: Scene }) {
+  const assessment = scene.landing_assessment
+  const checks = assessment?.coverage === 'available'
+  const sunVisible = checks && assessment.sun_visible_over_terrain
+  const earthVisible = checks && assessment.earth_visible_over_terrain
+  const passSlope = checks && assessment.max_slope_deg !== undefined && assessment.slope_limit_deg !== undefined && assessment.max_slope_deg <= assessment.slope_limit_deg
+
+  return <section className="landing-assessment" aria-labelledby="landing-assessment-title">
+    <div className="assessment-heading">
+      <div><p>Evaluación puntual</p><h3 id="landing-assessment-title">¿Buen lugar para aterrizar?</h3></div>
+      <span className={`assessment-verdict is-${assessment?.status ?? 'indeterminate'}`}>{assessment?.status_label ?? 'Indeterminado'}</span>
+    </div>
+    {checks ? <>
+      <div className={`geometry-result${assessment.status === 'favorable' ? ' is-positive' : ' is-constrained'}`}>
+        <strong>Perfil base de cribado</strong>
+        <p>Pendiente máxima {assessment.max_slope_deg?.toFixed(2)}°; límite {assessment.slope_limit_deg?.toFixed(1)}° en un área de {assessment.landing_area_diameter_m} m. Horizonte del terreno calculado hasta {assessment.profile_radius_km} km.</p>
+      </div>
+      <div className="assessment-checks">
+        <p className={passSlope ? 'check-pass' : 'check-fail'}><strong>Pendiente</strong><span>{passSlope ? 'Pasa' : 'No pasa'} · {assessment.max_slope_deg?.toFixed(2)}° / {assessment.slope_limit_deg?.toFixed(1)}°</span></p>
+        <p className={sunVisible ? 'check-pass' : 'check-fail'}><strong>Sol sobre relieve</strong><span>{sunVisible ? 'Visible' : 'Bloqueado'} · horizonte {assessment.sun_horizon_deg?.toFixed(2)}°</span></p>
+        <p className={earthVisible ? 'check-pass' : 'check-fail'}><strong>Tierra sobre relieve</strong><span>{earthVisible ? 'Visible' : 'Bloqueada'} · horizonte {assessment.earth_horizon_deg?.toFixed(2)}°</span></p>
+      </div>
+      {assessment.limitations && <details className="assessment-limitations"><summary>Alcance y limitaciones</summary><ul>{assessment.limitations.map((limitation) => <li key={limitation}>{limitation}</li>)}</ul></details>}
+      {assessment.source_label && <a className="assessment-source" href={assessment.source_label} target="_blank" rel="noreferrer">Label y procedencia del DEM LOLA ({assessment.resolution_m} m/píxel)</a>}
+    </> : <>
+      <div className="geometry-result is-constrained"><strong>Faltan datos para evaluarlo</strong><p>{assessment?.reason ?? 'Esta escena no tiene un perfil topográfico evaluado. Envía sus coordenadas como consulta personalizada.'}</p></div>
+      <p className="assessment-footnote">{assessment?.reason ?? 'La evaluación requiere cobertura LOLA local para esta posición.'}</p>
+    </>}
+    <a className="assessment-source" href="https://ntrs.nasa.gov/api/citations/20250003508/downloads/HLS-CONOP-008_Sustained_Phase_HLS_RF_ConOps_Rev_A.pdf?attachment=true" target="_blank" rel="noreferrer">Base del límite de pendiente: preferencia HLS NASA de 5°; no es un requisito universal</a>
   </section>
 }
 
@@ -246,6 +298,7 @@ export default function ApolloExplorer() {
 
         <AngleReadout title="Sol" body={scene.sun} />
         <AngleReadout title="Tierra" body={scene.earth} />
+        <LandingAssessment scene={scene} />
 
         {alternative && <div className="time-note"><strong>Nota de fuente</strong><p>Una cronología de NASA registra {alternative.value.slice(11, 19)} UT, un segundo después de la hora NSSDCA usada aquí.</p><a href={alternative.source} target="_blank" rel="noreferrer">Ver cronología NASA</a></div>}
         {customScene && <p className="cache-note">{customScene.cached ? 'Resultado recuperado de la caché local.' : 'Consulta en tiempo real a JPL Horizons.'}</p>}
@@ -254,16 +307,16 @@ export default function ApolloExplorer() {
           <summary>Fuentes y método</summary>
           {customScene ? <>
             <p>Horizons calcula los ángulos aparentes sin refracción atmosférica desde este sitio lunar. La fecha se interpreta en UTC. La luz del globo usa la dirección solar reconstruida a partir de los ángulos locales en el marco ME.</p>
-            <p>Horizons reporta {customScene.ephemeris_source ?? 'la efeméride indicada por el servicio'} y el marco {customScene.response_frame ?? 'lunar indicado en la respuesta'}. La consulta no transforma marcos. No hay perfiles LOLA locales integrados: la visibilidad con relieve es indeterminada.</p>
+            <p>Horizons reporta {customScene.ephemeris_source ?? 'la efeméride indicada por el servicio'} y el marco {customScene.response_frame ?? 'lunar indicado en la respuesta'}. La consulta no transforma marcos. El relieve se evalúa con un recorte LOLA y se muestra en la tarjeta de cribado.</p>
           </> : <>
             <p>Azimut y elevación aparentes consultados en JPL Horizons para el sitio y la hora del catálogo. La dirección solar del globo se reconstruye desde esos ángulos locales en el marco ME de alta precisión de Horizons.</p>
-            <p>Horizons reportó DE441 y el marco MEAN_ME de alta precisión. El catálogo de coordenadas indica ME/DE421; la escena registra esta diferencia de marco y no afirma una conversión DE441→DE421. La transformación del render usa Y-up: (x, y, z) ME pasa a (x, z, −y).</p>
+            <p>Horizons reportó DE441 y el marco MEAN_ME de alta precisión. El catálogo de coordenadas y LOLA indican ME/DE421; la escena registra esta diferencia de marco y no afirma una conversión DE441→DE421. La transformación del render usa Y-up: (x, y, z) ME pasa a (x, z, −y).</p>
             <p>La luz solo representa la geometría solar global. La textura es visual: sus regiones polares usan rellenos de menor resolución y no se usa para calcular el horizonte local. La esfera no incluye relieve.</p>
           </>}
           <div className="source-links">{mission && <><a href={mission.sources.coordinates} target="_blank" rel="noreferrer">Coordenadas NSSDCA</a><a href={mission.sources.landing_time_utc} target="_blank" rel="noreferrer">Hora NSSDCA</a></>}<a href="https://ssd-api.jpl.nasa.gov/doc/horizons.html" target="_blank" rel="noreferrer">JPL Horizons</a><a href="https://svs.gsfc.nasa.gov/4720/" target="_blank" rel="noreferrer">NASA CGI Moon Kit</a></div>
         </details>
       </aside>
     </section>
-    <p className="apollo-footnote">Los ángulos describen el horizonte geométrico. La visibilidad respecto al relieve queda indeterminada porque el repositorio no contiene perfiles LOLA locales para estas posiciones.</p>
+    <p className="apollo-footnote">Las escenas históricas incluyen un cribado puntual de pendiente y visibilidad con perfiles LOLA. Las consultas personalizadas usan el mismo cálculo en la fecha elegida.</p>
   </main>
 }

@@ -34,19 +34,19 @@ El comparador no consulta Horizons ni calcula perfiles LOLA. No presentes el CSV
 
 ## Escenas históricas Apollo
 
-La vista inicial muestra el globo 3D y las escenas de Apollo 11, 12 y 14. Seleccionar una misión centra su marcador y actualiza juntos la luz global y la ficha. Arrastra para rotar el globo, usa la rueda o pellizca para cambiar el zoom. Si WebGL no está disponible, la ficha y los ángulos siguen visibles.
+La vista inicial muestra el globo 3D y las escenas de Apollo 11, 12, 14, 15, 16 y 17. Seleccionar una misión centra su marcador y actualiza juntos la luz global y la ficha. Arrastra para rotar el globo, usa la rueda o pellizca para cambiar el zoom. Si WebGL no está disponible, la ficha y los ángulos siguen visibles.
 
-Las escenas están en `data/apollo_scenes.json`. Las respuestas JSON originales de cada consulta se conservan en `data/horizons/raw/`. Se pueden regenerar con:
+Las escenas, incluido el veredicto de terreno para cada instante de alunizaje, están en `data/apollo_scenes.json`. Las respuestas JSON originales de Horizons se conservan en `data/horizons/raw/`; los recortes LOLA se guardan en `.cache/lola/`. Se pueden regenerar con:
 
 ```powershell
 python scripts/precompute_apollo_scenes.py
 ```
 
-El script consulta el servicio público de [JPL Horizons](https://ssd-api.jpl.nasa.gov/doc/horizons.html) para obtener las posiciones aparentes del Sol y la Tierra en las horas UT del catálogo. La salida de Horizons usa DE441 y `MEAN_ME (high precision)`; el catálogo registra coordenadas ME/DE421. La interfaz deja visible esta diferencia y no afirma que exista una transformación DE441 a DE421 en este incremento.
+El script consulta el servicio público de [JPL Horizons](https://ssd-api.jpl.nasa.gov/doc/horizons.html) para obtener las posiciones aparentes del Sol y la Tierra en las horas UT del catálogo y evalúa pendiente y horizonte con la grilla LOLA del PDS. Reutiliza las respuestas ya guardadas en `data/horizons/raw/` y los recortes de terreno de `.cache/lola/`. La salida de Horizons usa DE441 y `MEAN_ME (high precision)`; el catálogo y LOLA registran ME/DE421. La interfaz deja visible esta diferencia y no aplica una transformación entre esos marcos.
 
 El globo usa `public/assets/lroc_color_2k.jpg`, mapa visual de NASA SVS [CGI Moon Kit](https://svs.gsfc.nasa.gov/4720/), centrado en longitud 0°. La textura tiene resolución global de 2K y sus regiones polares incluyen rellenos de menor resolución. No contiene relieve geométrico y no se usa para calcular visibilidad local. Crédito: NASA Scientific Visualization Studio; color mosaic de LROC/WAC y datos de LRO.
 
-Los ángulos locales se muestran sobre el horizonte geométrico. Como todavía no hay perfiles LOLA locales para los tres sitios Apollo, la visibilidad con relieve queda indeterminada.
+Para cada escena histórica, la tarjeta **¿Buen lugar para aterrizar?** muestra el resultado preliminar al instante del alunizaje; el estado de visibilidad con relieve para Sol y Tierra viene del perfil LOLA de ese sitio. El filtro usa los mismos límites descritos abajo para las consultas personalizadas.
 
 ## Consultas personalizadas
 
@@ -54,4 +54,8 @@ En **Posición y momento** puedes indicar latitud de −90° a 90°, longitud de
 
 El rango admitido comienza el 20 de enero de 1962 y termina 75 días después del momento actual. La escala de Horizons para observaciones posteriores a 1962 es UTC; la [documentación de Horizons](https://ssd.jpl.nasa.gov/horizons/manual.html) indica que las predicciones de orientación terrestre cubren aproximadamente 78 días hacia delante. Las coordenadas personalizadas se interpretan en ME y no se transforma el marco reportado por Horizons. La caché local persiste en `.cache/horizons.sqlite3` y usa posición, instante, fecha de datos y versión de esquema como clave.
 
-El servicio no calcula ni consulta perfiles LOLA, así que la visibilidad local respecto al relieve permanece indeterminada para cualquier punto personalizado. Los ángulos de Sol y Tierra y su posición sobre el horizonte geométrico sí se muestran.
+La primera evaluación en una ubicación descarga un recorte de la cuadrícula LOLA del PDS y lo guarda en `.cache/lola/`; las siguientes consultas en esa zona reutilizan el recorte. Entre 65° y los polos usa la grilla polar de 120 m/píxel; en latitudes menores usa la global de 236.9 m/píxel. El filtro admite posiciones con datos y cobertura de 50 km completos; fuera de cobertura devuelve **indeterminado**.
+
+La tarjeta **¿Buen lugar para aterrizar?** evalúa el instante seleccionado con un perfil base explícito: pendiente máxima entre celdas vecinas dentro de un círculo de 500 m, límite de 5°, y visibilidad topográfica del Sol y la Tierra en los azimuts consultados. El horizonte se extrae del DEM hasta 50 km y se resume cada 5°. Da **favorable** si pasan los tres criterios, **desfavorable** si falla alguno e **indeterminado** si faltan cobertura o datos.
+
+El límite de 5° usa como referencia la preferencia de orientación publicada para el Human Landing System de NASA, no un requisito universal para cualquier vehículo. Se asume comunicación directa con la Tierra, sin relé. El resultado es un cribado puntual: la grilla de LOLA es interpolada y demasiado gruesa para confirmar rocas, cráteres pequeños o estabilidad de patas; tampoco modela la ventana de descenso ni la duración de iluminación. Los marcos LOLA ME/DE421 y Horizons MEAN_ME/DE441 no se transforman entre sí. Por eso **favorable** significa que pasa este filtro preliminar, no que el lugar haya sido certificado como seguro. [Referencia de orientación HLS NASA](https://ntrs.nasa.gov/api/citations/20250003508/downloads/HLS-CONOP-008_Sustained_Phase_HLS_RF_ConOps_Rev_A.pdf?attachment=true); [productos LOLA PDS](https://pds-geosciences.wustl.edu/missions/lro/lola.htm).

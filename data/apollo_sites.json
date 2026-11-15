@@ -46,6 +46,45 @@
         "landing_time_utc": "https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo14info.html",
         "coordinates": "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html"
       }
+    },
+    {
+      "id": "apollo-15",
+      "mission": "Apollo 15",
+      "site_name": "Hadley Rille / Apennines",
+      "landing_time_utc": "1971-07-30T22:16:29Z",
+      "latitude_deg": 26.13239,
+      "longitude_deg": 3.63330,
+      "frame": "Mean Earth/Polar Axis (ME), DE421",
+      "sources": {
+        "landing_time_utc": "https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo15info.html",
+        "coordinates": "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html"
+      }
+    },
+    {
+      "id": "apollo-16",
+      "mission": "Apollo 16",
+      "site_name": "Descartes",
+      "landing_time_utc": "1972-04-21T02:23:35Z",
+      "latitude_deg": -8.9734,
+      "longitude_deg": 15.5011,
+      "frame": "Mean Earth/Polar Axis (ME), DE421",
+      "sources": {
+        "landing_time_utc": "https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo16info.html",
+        "coordinates": "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html"
+      }
+    },
+    {
+      "id": "apollo-17",
+      "mission": "Apollo 17",
+      "site_name": "Taurus-Littrow",
+      "landing_time_utc": "1972-12-11T19:54:57Z",
+      "latitude_deg": 20.1911,
+      "longitude_deg": 30.7723,
+      "frame": "Mean Earth/Polar Axis (ME), DE421",
+      "sources": {
+        "landing_time_utc": "https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo17info.html",
+        "coordinates": "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html"
+      }
     }
   ]
 }

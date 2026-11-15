@@ -13,11 +13,12 @@ from pathlib import Path
 from typing import Any
 
 from scripts.precompute_apollo_scenes import query_horizons, unit_spherical_direction
+from lunar_terrain import evaluate_terrain
 
 
 ROOT = Path(__file__).resolve().parent
 CACHE_PATH = ROOT / ".cache" / "horizons.sqlite3"
-CACHE_VERSION = 1
+CACHE_VERSION = 3
 MIN_TIME = datetime(1962, 1, 20, tzinfo=timezone.utc)
 CACHE_LOCK = threading.Lock()
 
@@ -155,6 +156,11 @@ def query_scene(latitude: float, longitude: float, instant: datetime) -> dict[st
             records[body] = parsed
 
     scene = make_scene(latitude, longitude, instant, records)
+    scene["landing_assessment"] = evaluate_terrain(latitude, longitude, scene["sun"], scene["earth"])
+    assessment = scene["landing_assessment"]
+    if assessment.get("coverage") == "available":
+        scene["sun"]["terrain_visibility"] = "visible" if assessment["sun_visible_over_terrain"] else "blocked"
+        scene["earth"]["terrain_visibility"] = "visible" if assessment["earth_visible_over_terrain"] else "blocked"
     store_scene(key, scene)
     scene["cached"] = False
     return scene

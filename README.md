@@ -2,7 +2,7 @@
 
 Consulta [FRONTEND.md](FRONTEND.md) para ejecutar el frontend web y ver las fuentes y limitaciones de las escenas históricas.
 
-El proyecto contiene la herramienta de consola, el comparador web, las escenas históricas 3D de Apollo 11, 12 y 14 y consultas web para coordenadas y fechas elegidas. Para usar consultas personalizadas inicia `python lunar_api.py` y `npm run dev` en dos terminales, según [FRONTEND.md](FRONTEND.md). La API y la consola usan Python 3.10 o posterior y la API no instala paquetes adicionales.
+El proyecto contiene la herramienta de consola, el comparador web, las escenas históricas 3D de Apollo 11, 12, 14, 15, 16 y 17 y consultas web para coordenadas y fechas elegidas. Para usar consultas personalizadas inicia `python lunar_api.py` y `npm run dev` en dos terminales, según [FRONTEND.md](FRONTEND.md). La API y la consola usan Python 3.10 o posterior y la API no instala paquetes adicionales.
 
 ## Catálogo
 

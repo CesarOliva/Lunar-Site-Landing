@@ -13,8 +13,12 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
-
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+
+from lunar_terrain import evaluate_terrain
+
+
 CATALOG = ROOT / "data" / "apollo_sites.json"
 SCENES = ROOT / "data" / "apollo_scenes.json"
 RAW_DIR = ROOT / "data" / "horizons" / "raw"
@@ -38,6 +42,27 @@ def unit_spherical_direction(latitude_deg: float, longitude_deg: float, azimuth_
     return [round(component / magnitude, 9) for component in vector]
 
 
+def parse_horizons(raw: bytes, mission_id: str, target: str) -> dict:
+    payload = json.loads(raw)
+    if payload.get("error"):
+        raise ValueError(f"Horizons error for {mission_id}/{target}: {payload['error']}")
+    text = payload.get("result", "")
+    block = text.split("$$SOE", 1)[-1].split("$$EOE", 1)[0].strip()
+    line = next((item for item in block.splitlines() if item.strip()), "")
+    angles = re.search(r"([-+]?\d+(?:\.\d+)?)\s+([-+]?\d+(?:\.\d+)?)\s*$", line)
+    if not angles:
+        raise ValueError(f"No azimuth/elevation row for {mission_id}/{target}")
+    source = re.search(r"Target body name:.*?\{source:\s*([^}]+)\}", text)
+    frame = re.search(r"Center pole/equ:\s*(.*?)\s*\{", text)
+    return {
+        "azimuth_deg": float(angles.group(1)),
+        "elevation_deg": float(angles.group(2)),
+        "ephemeris_source": source.group(1).strip() if source else "not reported",
+        "center_frame": frame.group(1).strip() if frame else "not reported",
+        "response": payload,
+    }
+
+
 def query_horizons(mission_id: str, target: str, site: dict, landing_time: str) -> tuple[bytes, dict]:
     site_coord = f"{site['longitude_deg']},{site['latitude_deg']},0"
     query = {
@@ -59,24 +84,7 @@ def query_horizons(mission_id: str, target: str, site: dict, landing_time: str) 
     request = Request(f"{ENDPOINT}?{urlencode(query)}", headers={"User-Agent": "LunarSiteNavigator/0.1"})
     with urlopen(request, timeout=45) as response:
         raw = response.read()
-    payload = json.loads(raw)
-    if payload.get("error"):
-        raise ValueError(f"Horizons error for {mission_id}/{target}: {payload['error']}")
-    text = payload.get("result", "")
-    block = text.split("$$SOE", 1)[-1].split("$$EOE", 1)[0].strip()
-    line = next((item for item in block.splitlines() if item.strip()), "")
-    angles = re.search(r"([-+]?\d+(?:\.\d+)?)\s+([-+]?\d+(?:\.\d+)?)\s*$", line)
-    if not angles:
-        raise ValueError(f"No azimuth/elevation row for {mission_id}/{target}")
-    source = re.search(r"Target body name:.*?\{source:\s*([^}]+)\}", text)
-    frame = re.search(r"Center pole/equ:\s*(.*?)\s*\{", text)
-    return raw, {
-        "azimuth_deg": float(angles.group(1)),
-        "elevation_deg": float(angles.group(2)),
-        "ephemeris_source": source.group(1).strip() if source else "not reported",
-        "center_frame": frame.group(1).strip() if frame else "not reported",
-        "response": payload,
-    }
+    return raw, parse_horizons(raw, mission_id, target)
 
 
 def build_scene(mission: dict, records: dict[str, dict], raw_paths: dict[str, str]) -> dict:
@@ -105,6 +113,11 @@ def build_scene(mission: dict, records: dict[str, dict], raw_paths: dict[str, st
             "source": record["ephemeris_source"],
             "source_file": raw_paths[body],
         }
+    result["landing_assessment"] = evaluate_terrain(site[0], site[1], result["sun"], result["earth"])
+    assessment = result["landing_assessment"]
+    if assessment.get("coverage") == "available":
+        result["sun"]["terrain_visibility"] = "visible" if assessment["sun_visible_over_terrain"] else "blocked"
+        result["earth"]["terrain_visibility"] = "visible" if assessment["earth_visible_over_terrain"] else "blocked"
     result["response_frame"] = records["sun"]["center_frame"]
     return result
 
@@ -116,12 +129,19 @@ def main() -> int:
     for mission in catalog["missions"]:
         mission_id = mission["id"]
         for target in TARGETS:
-            pending[f"{mission_id}-{target}"] = query_horizons(mission_id, target, mission, mission["landing_time_utc"])
+            key = f"{mission_id}-{target}"
+            raw_path = RAW_DIR / f"{key}.json"
+            if raw_path.exists():
+                raw = raw_path.read_bytes()
+                pending[key] = raw, parse_horizons(raw, mission_id, target)
+            else:
+                pending[key] = query_horizons(mission_id, target, mission, mission["landing_time_utc"])
 
     scenes = {}
     shared_sources: set[str] = set()
     for mission in catalog["missions"]:
         mission_id = mission["id"]
+        print(f"Evaluando terreno: {mission['mission']}...", flush=True)
         records, raw_paths = {}, {}
         for target in TARGETS:
             key = f"{mission_id}-{target}"
@@ -135,7 +155,7 @@ def main() -> int:
         scenes[mission_id] = build_scene(mission, records, raw_paths)
 
     document = {
-        "schema_version": 1,
+        "schema_version": 2,
         "generated_utc": datetime.now(timezone.utc).date().isoformat(),
         "ephemeris": {
             "provider": "NASA/JPL Horizons API",
@@ -147,7 +167,7 @@ def main() -> int:
             "center_frame": "MEAN_ME (high precision), según las respuestas de Horizons",
             "site_coordinates": "SITE_COORD = longitud este, latitud planetocéntrica, altitud km; coordenadas ME del catálogo",
             "apparent_place": "Airless azimuth/elevation; quantity 4; light-time, deflexión gravitacional, aberración estelar, precesión y nutación según Horizons",
-            "horizon_model": "Horizonte geométrico plano de referencia: 0°. Sin perfil LOLA local para estos sitios; visibilidad con relieve indeterminada.",
+            "horizon_model": "NASA LRO LOLA local horizons (50 km radius, 5 degree azimuth bins) and preliminary slope screen at each landing instant.",
             "sun_vector_method": "Se reconstruye la dirección fija a la Luna a partir del azimut y elevación locales, y de las bases este, norte y cenit del sitio en coordenadas ME.",
             "render_axis_mapping": "Three.js Y-up: (x_ME, y_ME, z_ME) -> (x, z, -y). La textura global de NASA está centrada en longitud 0° y orientada norte arriba.",
         },
