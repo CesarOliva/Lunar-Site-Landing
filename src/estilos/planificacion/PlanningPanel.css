@@ -393,3 +393,78 @@
 .planning-next-button:hover { background: var(--neon-green); }
 
 .planning-navigation .planning-error { flex: 1; margin: 0; }
+
+/* Blancos en la paleta (mismas variables que HomeScreen/IntroScreen; mueve a tu archivo de paleta si prefieres) */
+:root { --snow: #F4FBF6; --fog: #C9DCCF; }
+
+.planning-wordmark { color: var(--snow); }
+.planning-brand { border-bottom-color: rgba(255, 255, 255, .12); }
+.planning-kicker,
+.planning-step-caption { color: var(--fog); }
+
+.step-number { color: var(--fog); border-color: rgba(255, 255, 255, .2); }
+
+.planning-content h2 { color: var(--snow); }
+.planning-intro,
+.planning-hint { color: var(--fog); }
+
+.planning-label,
+.planning-fieldset legend { color: var(--fog); }
+.planning-label input,
+.planning-select-shell select { color: var(--snow); border-color: rgba(255, 255, 255, .25); }
+.planning-choice { color: var(--fog); border-color: rgba(255, 255, 255, .22); }
+
+.mission-type-option { color: var(--snow); border-color: rgba(255, 255, 255, .2); }
+.mission-type-letter { background: var(--snow); }
+.mission-type-copy strong { color: var(--snow); }
+.mission-type-copy small,
+.mission-type-requirements { color: var(--fog); }
+.mission-plan-preview { color: var(--fog); }
+.mission-plan-preview strong { color: var(--snow); }
+
+.site-option { color: var(--snow); border-color: rgba(255, 255, 255, .2); }
+.site-option small,
+.site-custom-note { color: var(--fog); }
+.site-option code { color: var(--fog); }
+
+.landing-date-card { border-color: rgba(255, 255, 255, .18); }
+.date-range span { color: var(--fog); }
+.date-range b { color: var(--snow); }
+.planning-callout { border-color: rgba(255, 255, 255, .18); }
+.planning-callout p { color: var(--fog); }
+
+.visibility-topline { color: var(--fog); }
+.sky-card,
+.chart-card,
+.planning-metric,
+.scenario-card,
+.summary-card { border-color: rgba(255, 255, 255, .18); }
+.sky-cardinal { fill: var(--fog); }
+.sky-terrain-mark { stroke: var(--fog); }
+.sky-legend,
+.chart-legend { color: var(--fog); }
+.legend-terrain { color: var(--fog) !important; }
+.metric-heading { color: var(--fog); }
+.planning-metric > small { color: var(--fog); }
+.metric-footnote { color: var(--fog); }
+.chart-heading { color: var(--fog); }
+.chart-label { fill: var(--fog); }
+.chart-zero { stroke: var(--fog); }
+.chart-footnote { color: var(--fog); }
+
+.no-visibility-data { color: var(--fog); border-color: rgba(255, 255, 255, .18); }
+.no-visibility-data strong { color: var(--snow); }
+
+.scenario-label { color: var(--fog); }
+.scenario-card > strong { color: var(--snow); }
+.scenario-card > p { color: var(--fog); }
+.scenario-results span { color: var(--fog); }
+
+.summary-heading span { color: var(--fog); }
+.summary-heading strong { color: var(--snow); }
+.summary-list dt { color: var(--fog); }
+.summary-list dd { color: var(--snow); }
+.summary-visibility span { color: var(--fog); }
+.summary-data-note { color: var(--fog); }
+
+.planning-back-button { color: var(--fog); border-color: rgba(255, 255, 255, .25); }
