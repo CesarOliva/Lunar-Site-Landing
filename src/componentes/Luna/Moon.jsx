@@ -145,11 +145,11 @@ function MissionMarker({
         scale={1.8}
         onPointerOver={(event) => {
           event.stopPropagation()
-          setHovered(true)
+          setPointerHovered(true)
         }}
         onPointerOut={(event) => {
           event.stopPropagation()
-          setHovered(false)
+          setPointerHovered(false)
         }}
         onClick={(event) => {
           event.stopPropagation()
