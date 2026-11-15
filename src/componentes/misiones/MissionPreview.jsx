@@ -1,8 +1,9 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowUpRight } from 'lucide-react'
+import MissionAssessment from './MissionAssessment.jsx'
 import '../../estilos/misiones/MissionPreview.css'
 
-function MissionPreview({ mission, slide, onSlide, onExplore }) {
+function MissionPreview({ mission, slide, onSlide, onExplore, onSceneChange }) {
   return (
     <div className="preview-content">
       <div className="preview-hero" style={{ '--mission-accent': mission.accent }}>
@@ -49,6 +50,8 @@ function MissionPreview({ mission, slide, onSlide, onExplore }) {
           <p>{mission.purpose}</p>
           <p className="mission-description">{mission.description}</p>
         </section>
+
+        <MissionAssessment key={mission.id} mission={mission} onSceneChange={onSceneChange} />
 
         <button className="primary-button explore-button" onClick={onExplore}>
           Explorar misión <ArrowUpRight size={17} />

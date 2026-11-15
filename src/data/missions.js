@@ -9,6 +9,7 @@ export const missions = [
     vehicle: 'Saturn V · Módulo lunar Eagle',
     dates: '16 — 24 julio, 1969',
     landingDate: '20 julio, 1969',
+    landingTimeUtc: '1969-07-20T20:17:40Z',
     site: 'Mar de la Tranquilidad',
     crew: [
       { name: 'Neil Armstrong', role: 'Comandante' },
@@ -20,8 +21,8 @@ export const missions = [
       'La misión llevó a los primeros seres humanos a la Luna. Armstrong y Aldrin exploraron el lugar de alunizaje mientras Collins permanecía en órbita.',
     image: lunarSurface,
     accent: '#e8b880',
-    latitude: 0.6741,
-    longitude: 23.4730,
+    latitude: 0.67416,
+    longitude: 23.47314,
     timeline: [
       { time: '16 JUL 1969', title: 'Despegue', detail: 'El Saturn V despega desde el Centro Espacial Kennedy.' },
       { time: '20 JUL 1969', title: 'Alunizaje', detail: 'Eagle aterriza en el Mar de la Tranquilidad.' },
@@ -36,6 +37,7 @@ export const missions = [
     vehicle: 'Saturn V · Módulo lunar Intrepid',
     dates: '14 — 24 noviembre, 1969',
     landingDate: '19 noviembre, 1969',
+    landingTimeUtc: '1969-11-19T06:54:35Z',
     site: 'Océano de las Tormentas',
     crew: [
       { name: 'Charles Conrad Jr.', role: 'Comandante' },
@@ -47,8 +49,8 @@ export const missions = [
       'Apollo 12 aterrizó cerca de la sonda Surveyor 3. La tripulación instaló instrumentos científicos y recogió muestras para estudiar el terreno.',
     image: lunarSurface,
     accent: '#c4a0db',
-    latitude: -3.0124,
-    longitude: -23.4216,
+    latitude: -3.0128,
+    longitude: -23.4219,
     timeline: [
       { time: '14 NOV 1969', title: 'Despegue', detail: 'Apollo 12 inicia su viaje a la Luna.' },
       { time: '19 NOV 1969', title: 'Alunizaje de precisión', detail: 'Intrepid aterriza cerca de Surveyor 3.' },
@@ -63,6 +65,7 @@ export const missions = [
     vehicle: 'Saturn V · Módulo lunar Antares',
     dates: '31 enero — 9 febrero, 1971',
     landingDate: '5 febrero, 1971',
+    landingTimeUtc: '1971-02-05T09:18:11Z',
     site: 'Formación Fra Mauro',
     crew: [
       { name: 'Alan B. Shepard Jr.', role: 'Comandante' },
@@ -74,8 +77,8 @@ export const missions = [
       'Tras los problemas de Apollo 13, esta misión retomó los alunizajes. La tripulación desplegó experimentos y recorrió el terreno de Fra Mauro.',
     image: lunarSurface,
     accent: '#89b6c8',
-    latitude: -3.6453,
-    longitude: -17.4714,
+    latitude: -3.64589,
+    longitude: -17.47194,
     timeline: [
       { time: '31 ENE 1971', title: 'Despegue', detail: 'Apollo 14 parte rumbo a la Luna.' },
       { time: '5 FEB 1971', title: 'Alunizaje', detail: 'Antares aterriza en la región de Fra Mauro.' },
@@ -90,6 +93,7 @@ export const missions = [
     vehicle: 'Saturn V · Módulo lunar Falcon',
     dates: '26 julio — 7 agosto, 1971',
     landingDate: '30 julio, 1971',
+    landingTimeUtc: '1971-07-30T22:16:29Z',
     site: 'Hadley–Apennine',
     crew: [
       { name: 'David R. Scott', role: 'Comandante' },
@@ -101,8 +105,8 @@ export const missions = [
       'Apollo 15 fue la primera misión de tipo J, enfocada en ciencia de campo. Scott e Irwin recorrieron Hadley–Apennine en el Lunar Roving Vehicle.',
     image: lunarSurface,
     accent: '#d49c70',
-    latitude: 26.1322,
-    longitude: 3.6339,
+    latitude: 26.13239,
+    longitude: 3.63330,
     timeline: [
       { time: '26 JUL 1971', title: 'Despegue', detail: 'El Saturn V despega con una tripulación de tres.' },
       { time: '30 JUL 1971', title: 'Alunizaje', detail: 'Falcon aterriza cerca de Hadley Rille.' },
@@ -117,6 +121,7 @@ export const missions = [
     vehicle: 'Saturn V · Módulo lunar Orion',
     dates: '16 — 27 abril, 1972',
     landingDate: '21 abril, 1972',
+    landingTimeUtc: '1972-04-21T02:23:35Z',
     site: 'Tierras Altas de Descartes',
     crew: [
       { name: 'John W. Young', role: 'Comandante' },
@@ -129,7 +134,7 @@ export const missions = [
     image: lunarSurface,
     accent: '#8fae8a',
     latitude: -8.9734,
-    longitude: 15.5002,
+    longitude: 15.5011,
     timeline: [
       { time: '16 ABR 1972', title: 'Despegue', detail: 'Apollo 16 inicia el viaje desde Florida.' },
       { time: '21 ABR 1972', title: 'Alunizaje', detail: 'Orion aterriza en las tierras altas de Descartes.' },
@@ -144,6 +149,7 @@ export const missions = [
     vehicle: 'Saturn V · Módulo lunar Challenger',
     dates: '7 — 19 diciembre, 1972',
     landingDate: '11 diciembre, 1972',
+    landingTimeUtc: '1972-12-11T19:54:57Z',
     site: 'Valle Taurus–Littrow',
     crew: [
       { name: 'Eugene A. Cernan', role: 'Comandante' },
@@ -155,8 +161,8 @@ export const missions = [
       'La última misión Apollo a la Luna combinó experiencia de piloto y geólogo. La tripulación realizó tres caminatas lunares en Taurus–Littrow.',
     image: lunarSurface,
     accent: '#d4c37d',
-    latitude: 20.1908,
-    longitude: 30.7717,
+    latitude: 20.1911,
+    longitude: 30.7723,
     timeline: [
       { time: '7 DIC 1972', title: 'Despegue', detail: 'Apollo 17 despega en una misión nocturna.' },
       { time: '11 DIC 1972', title: 'Alunizaje', detail: 'Challenger aterriza en el valle Taurus–Littrow.' },

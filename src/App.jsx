@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { missions } from './data/missions.js'
+import sceneCatalog from '../data/apollo_scenes.json'
 import Moon from './componentes/Luna/Moon.jsx'
 import HomeScreen from './componentes/inicio/HomeScreen.jsx'
 import IntroScreen from './componentes/inicio/IntroScreen.jsx'
@@ -20,6 +21,7 @@ function App() {
   const [screen, setScreen] = useState('intro')
   const [panel, setPanel] = useState(null)
   const [selectedMission, setSelectedMission] = useState(null)
+  const [activeScene, setActiveScene] = useState(null)
   const [hoveredMission, setHoveredMission] = useState(null)
   const [slide, setSlide] = useState(0)
   const transitionStarted = useRef(false)
@@ -38,6 +40,7 @@ function App() {
   const showMission = (mission) => {
     setHoveredMission(null)
     setSelectedMission(mission)
+    setActiveScene(sceneCatalog.missions[mission.id])
     setSlide(0)
     setPanel('preview')
   }
@@ -47,6 +50,7 @@ function App() {
     setScreen('home')
     setPanel(null)
     setSelectedMission(null)
+    setActiveScene(null)
   }
 
   const goBack = () => {
@@ -60,6 +64,7 @@ function App() {
     if (panel === 'preview' && screen === 'home') {
       setPanel('list')
       setSelectedMission(null)
+      setActiveScene(null)
       return
     }
     setPanel(null)
@@ -81,6 +86,7 @@ function App() {
           missions={screen === 'home' ? missions : []}
           selectedMission={screen === 'home' ? selectedMission : null}
           hoveredMission={screen === 'home' ? hoveredMission : null}
+          scene={screen === 'home' ? activeScene : null}
           onShowMission={showMission}
         />
       )}
@@ -135,6 +141,7 @@ function App() {
                   slide={slide}
                   onSlide={(direction) => setSlide((slide + direction + 3) % 3)}
                   onExplore={openTimeline}
+                  onSceneChange={setActiveScene}
                 />
               )}
 

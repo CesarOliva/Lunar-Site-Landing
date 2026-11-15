@@ -1,0 +1,310 @@
+.mission-assessment {
+  margin: 30px 0 24px;
+  padding: 18px;
+  border: 1px solid rgba(155, 189, 133, .2);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(30, 39, 31, .78), rgba(14, 19, 17, .92));
+  color: #e8e9df;
+}
+
+.mission-assessment-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.mission-assessment-heading h3 {
+  margin: 0;
+  color: #f0eee3;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.mission-assessment-heading p,
+.mission-assessment-source,
+.mission-assessment-message {
+  margin: 7px 0 0;
+  color: #a5ab9f;
+  font-size: .76rem;
+  line-height: 1.5;
+}
+
+.mission-assessment-status {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  border: 1px solid rgba(216, 194, 123, .3);
+  border-radius: 99px;
+  color: #dfca82;
+  background: rgba(216, 194, 123, .08);
+  font-size: .66rem;
+  font-weight: 650;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.mission-assessment-status.is-favorable {
+  border-color: rgba(145, 190, 125, .35);
+  color: #b3d599;
+  background: rgba(145, 190, 125, .09);
+}
+
+.mission-assessment-status.is-unfavorable {
+  border-color: rgba(220, 143, 112, .4);
+  color: #e5a18a;
+  background: rgba(220, 143, 112, .09);
+}
+
+.mission-assessment-slope {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 18px 0 12px;
+  color: #c1c6ba;
+  font-size: .82rem;
+}
+
+.mission-assessment-slope strong {
+  color: #f0eee3;
+  font-size: 1.25rem;
+  font-weight: 550;
+}
+
+.mission-assessment-slope span {
+  margin-left: auto;
+  color: #899187;
+  font-size: .68rem;
+  text-align: right;
+}
+
+.mission-assessment-angles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mission-assessment-angle {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 7px 12px;
+  padding: 12px;
+  border: 1px solid rgba(210, 216, 199, .1);
+  border-radius: 10px;
+  background: rgba(5, 9, 7, .28);
+  font-size: .77rem;
+}
+
+.mission-assessment-angle strong {
+  grid-column: 1 / -1;
+  color: #e8e9df;
+  font-size: .83rem;
+  font-weight: 600;
+}
+
+.mission-assessment-angle > span {
+  color: #b8bdb1;
+  white-space: nowrap;
+}
+
+.mission-assessment-angle small {
+  grid-column: 1 / -1;
+  color: #d4bd79;
+}
+
+.mission-assessment-angle small.is-visible {
+  color: #abc98e;
+}
+
+.mission-assessment-angle small.is-blocked {
+  color: #e4a08a;
+}
+
+.mission-assessment-source {
+  margin-top: 12px;
+  font-size: .68rem;
+}
+
+.mission-assessment-reason {
+  margin: 16px 0 0;
+  color: #d5ba7a;
+  font-size: .8rem;
+  line-height: 1.55;
+}
+
+.mission-assessment-limits,
+.mission-assessment-query {
+  margin-top: 14px;
+  border-top: 1px solid rgba(210, 216, 199, .12);
+}
+
+.mission-assessment-limits summary,
+.mission-assessment-query summary {
+  padding: 12px 0 2px;
+  color: #c0c7b8;
+  cursor: pointer;
+  font-size: .76rem;
+}
+
+.mission-assessment-limits ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: #92998c;
+  font-size: .7rem;
+  line-height: 1.55;
+}
+
+.mission-assessment-link {
+  display: inline-block;
+  margin-top: 11px;
+  color: #bfd89e;
+  font-size: .72rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.mission-assessment-query form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px;
+  margin-top: 14px;
+}
+
+.mission-assessment-query label {
+  display: grid;
+  gap: 6px;
+  color: #aeb5a8;
+  font-size: .69rem;
+}
+
+.mission-assessment-query input {
+  width: 100%;
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid rgba(210, 216, 199, .18);
+  border-radius: 7px;
+  outline: none;
+  background: rgba(5, 9, 7, .5);
+  color: #eceee3;
+  color-scheme: dark;
+  font: inherit;
+}
+
+.mission-assessment-query input:focus {
+  border-color: rgba(174, 204, 145, .65);
+}
+
+.mission-assessment-query .mission-assessment-date {
+  grid-column: 1 / -1;
+}
+
+.mission-assessment-query form > button,
+.mission-alternative-actions button {
+  min-height: 38px;
+  padding: 9px 12px;
+  border: 1px solid rgba(172, 202, 141, .35);
+  border-radius: 7px;
+  background: rgba(143, 177, 115, .12);
+  color: #dce9cf;
+  cursor: pointer;
+  font: inherit;
+  font-size: .74rem;
+  transition: background .18s ease, border-color .18s ease;
+}
+
+.mission-assessment-query form > button:hover,
+.mission-alternative-actions button:hover {
+  border-color: rgba(172, 202, 141, .65);
+  background: rgba(143, 177, 115, .2);
+}
+
+.mission-assessment-query button:disabled {
+  cursor: wait;
+  opacity: .55;
+}
+
+.mission-assessment-error {
+  margin: 12px 0 0;
+  color: #e4a08a;
+  font-size: .75rem;
+  line-height: 1.5;
+}
+
+.mission-alternative-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.mission-assessment-message {
+  color: #d4bd79;
+}
+
+.mission-alternatives {
+  display: grid;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.mission-alternatives button {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid rgba(210, 216, 199, .14);
+  border-radius: 8px;
+  background: rgba(5, 9, 7, .34);
+  color: #e3e7db;
+  cursor: pointer;
+  text-align: left;
+}
+
+.mission-alternatives button:hover {
+  border-color: rgba(172, 202, 141, .5);
+}
+
+.mission-alternatives button strong {
+  font-size: .77rem;
+  font-weight: 550;
+}
+
+.mission-alternatives button span,
+.mission-alternatives small,
+.mission-alternatives > p {
+  color: #a3aa9d;
+  font-size: .69rem;
+}
+
+@media (max-width: 480px) {
+  .mission-assessment {
+    padding: 14px;
+  }
+
+  .mission-assessment-heading {
+    flex-direction: column;
+  }
+
+  .mission-assessment-slope {
+    flex-wrap: wrap;
+  }
+
+  .mission-assessment-slope span {
+    width: 100%;
+    margin-left: 0;
+    text-align: left;
+  }
+
+  .mission-assessment-angle {
+    grid-template-columns: 1fr;
+  }
+
+  .mission-assessment-angle > span {
+    white-space: normal;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mission-assessment-query form > button,
+  .mission-alternative-actions button {
+    transition: none;
+  }
+}

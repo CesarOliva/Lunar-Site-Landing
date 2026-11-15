@@ -4,7 +4,7 @@
 .mission-list-content { padding: 21px 30px 28px; }
 .panel-description { max-width: 340px; font-size: 11px; line-height: 1.7; color: #00FF66; margin: 0 0 23px; }
 .mission-list { display: grid; }
-.mission-list-item { min-height: 75px; padding: 10px 0; display: grid; grid-template-columns: 56px 1fr 18px; align-items: center; gap: 13px; color: #39FF88; text-align: left; background: transparent; border: 0; border-top: 1px solid #39FF8812; cursor: pointer; transition: background .2s, box-shadow .2s, transform .2s; transform-origin: left center; }
+.mission-list-item { min-height: 88px; padding: 10px 0; display: grid; grid-template-columns: 56px 1fr 18px; align-items: center; gap: 13px; color: #39FF88; text-align: left; background: transparent; border: 0; border-top: 1px solid #39FF8812; cursor: pointer; transition: background .2s, box-shadow .2s, transform .2s; transform-origin: left center; }
 .mission-list-item:hover .mission-list-copy strong { color: #00FF66; }
 .mission-list-item > svg { color: #477A5C; }
 .mission-thumb { width: 56px; height: 52px; position: relative; overflow: hidden; display: grid; place-items: center; color: #39FF88; background: radial-gradient(circle at 55% 40%, var(--mission-accent), #10231A 66%, #0D1511); }
@@ -16,6 +16,9 @@
 .mission-list-copy small { color: #477A5C; font: 7px var(--mono); letter-spacing: .08em; margin-bottom: 4px; }
 .mission-list-copy strong { font-size: 12px; font-weight: 600; transition: color .2s; }
 .mission-list-copy em { color: #00FF66; font-size: 9px; font-style: normal; margin-top: 4px; }
+.mission-assessment-badge { display: inline-block; margin-top: 6px; color: var(--terminal-green); font: 7px var(--mono); letter-spacing: .045em; }
+.mission-assessment-badge.is-unfavorable { color: #e69472; }
+.mission-assessment-badge.is-indeterminate { color: #b8ae82; }
 .panel-footnote { display: flex; align-items: center; gap: 8px; color: #477A5C; font-size: 7px; margin: 19px 0 3px; }
 .panel-footnote svg { color: #00FF66; }
 

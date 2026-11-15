@@ -725,8 +725,11 @@ export function SummaryStep({ form, missionProfile, isModeledSite, selectedSampl
         {isModeledSite && visibilityError && (
           <p className="planning-error summary-data-note" role="alert">{visibilityError}</p>
         )}
-        {!isModeledSite && (
-          <p className="summary-data-note">No hay cálculo de visibilidad para las coordenadas personalizadas.</p>
+        {!isModeledSite && !selectedSample && (
+          <p className="summary-data-note" role={visibilityError ? 'alert' : undefined}>{visibilityError || 'No hay cálculo de visibilidad para las coordenadas personalizadas.'}</p>
+        )}
+        {!isModeledSite && selectedSample?.horizonBasis === 'geometric' && (
+          <p className="summary-data-note">La cobertura LOLA es indeterminada en este sitio; los estados solo usan el horizonte geométrico.</p>
         )}
       </div>
       <button className="download-plan-button" type="button" onClick={downloadPlan}>

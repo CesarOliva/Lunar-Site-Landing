@@ -11,7 +11,7 @@ function parseVisibilityCsv(csv) {
   csv.trim().split(/\r?\n/).slice(1).forEach((line) => {
     const [time, object, azimuth, elevation, terrain, difference, state] = line.split(',')
     const sampleTime = Date.parse(time)
-    const sample = visibilityByTime.get(sampleTime) ?? { time: sampleTime }
+    const sample = visibilityByTime.get(sampleTime) ?? { time: sampleTime, horizonBasis: 'terrain' }
     sample[object] = {
       azimuth: Number(azimuth),
       elevation: Number(elevation),
@@ -194,30 +194,26 @@ export function MetricCard({ Icon, label, value, detail, state }) {
 }
 // --- Pasos: fecha, luz y comunicación, comparar escenarios ---
 // --- Recorrido de fechas dentro del intervalo de datos ---
-const rangeStart = Date.parse(`${dateTimeMin}:00Z`)
-const rangeEnd = Date.parse(`${dateTimeMax}:00Z`)
-const rangeHours = Math.round((rangeEnd - rangeStart) / 3600000)
-const hoursToInput = (hours) => new Date(rangeStart + hours * 3600000).toISOString().slice(0, 16)
-const datePresets = [
-  { label: 'Inicio', hours: 0 },
-  { label: '+30 días', hours: 720 },
-  { label: '+60 días', hours: 1440 },
-  { label: 'Fin', hours: rangeHours },
-]
-const monthTicks = (() => {
-  const ticks = []
+export function DateStep({ form, update, dateIsInCoverage, maxDateTime }) {
+  const rangeStart = Date.parse(`${dateTimeMin}:00Z`)
+  const rangeEnd = Date.parse(`${maxDateTime}:00Z`)
+  const rangeHours = Math.max(1, Math.round((rangeEnd - rangeStart) / 3600000))
+  const hoursToInput = (hours) => new Date(rangeStart + hours * 3600000).toISOString().slice(0, 16)
+  const datePresets = [
+    { label: 'Inicio', hours: 0 },
+    { label: '+30 días', hours: 720 },
+    { label: '+60 días', hours: 1440 },
+    { label: 'Fin', hours: rangeHours },
+  ].filter((preset) => preset.hours <= rangeHours)
+  const monthTicks = []
   const formatter = new Intl.DateTimeFormat('es-MX', { month: 'short', timeZone: 'UTC' })
   const first = new Date(rangeStart)
   let tick = Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + 1, 1)
   while (tick < rangeEnd) {
-    ticks.push({ label: formatter.format(tick).replace('.', ''), left: ((tick - rangeStart) / (rangeEnd - rangeStart)) * 100 })
+    monthTicks.push({ label: formatter.format(tick).replace('.', ''), left: ((tick - rangeStart) / (rangeEnd - rangeStart)) * 100 })
     const next = new Date(tick)
     tick = Date.UTC(next.getUTCFullYear(), next.getUTCMonth() + 1, 1)
   }
-  return ticks
-})()
-
-export function DateStep({ form, update, dateIsInCoverage }) {
   const current = Date.parse(`${form.dateTime}:00Z`)
   const hasDate = Number.isFinite(current)
   const offset = hasDate ? Math.min(Math.max(Math.round((current - rangeStart) / 3600000), 0), rangeHours) : 0
@@ -256,14 +252,14 @@ export function DateStep({ form, update, dateIsInCoverage }) {
           <input
             type="datetime-local"
             min={dateTimeMin}
-            max={dateTimeMax}
+            max={maxDateTime}
             value={form.dateTime}
             onChange={(event) => update('dateTime', event.target.value)}
           />
         </label>
         <div className="date-range">
-          <span>INICIO DE DATOS <b>14 NOV 2026</b></span>
-          <span>FIN DE DATOS <b>12 FEB 2027</b></span>
+          <span>INICIO DISPONIBLE <b>{formatUtcDate(rangeStart).toUpperCase()}</b></span>
+          <span>FIN DISPONIBLE <b>{formatUtcDate(rangeEnd).toUpperCase()}</b></span>
         </div>
       </div>
       <div className="planning-callout">
@@ -275,35 +271,42 @@ export function DateStep({ form, update, dateIsInCoverage }) {
   )
 }
 
-export function VisibilityStep({ form, isModeledSite, visibilityError, visibilitySamples, selectedSample, daySamples }) {
+export function VisibilityStep({ form, isModeledSite, visibilityError, visibilityLoading, visibilitySamples, selectedSample, daySamples, onRetry }) {
+  const sampleIsTerrainBased = selectedSample?.horizonBasis !== 'geometric'
   return (
     <section aria-labelledby="visibility-step-title">
       <h2 id="visibility-step-title">Luz y <em>comunicación</em></h2>
       <p className="planning-intro">Posición geométrica respecto al horizonte local; no estima energía ni calidad del enlace.</p>
-      {!isModeledSite || (isModeledSite && visibilityError) || !selectedSample ? (
+      {!selectedSample ? (
         <div className="no-visibility-data">
-          {isModeledSite && visibilityError ? <Info size={21} /> : <MapPin size={21} />}
+          {visibilityError ? <Info size={21} /> : <MapPin size={21} />}
           <strong>
-            {isModeledSite && visibilityError
+            {visibilityError
               ? 'No se pudieron cargar las muestras'
-              : !isModeledSite
-                ? 'Sin datos calculados para este sitio'
-                : visibilitySamples === null
+              : visibilityLoading
+                ? 'Calculando visibilidad para este sitio'
+                : !isModeledSite
+                  ? 'No hay una muestra calculada para este sitio'
+                  : visibilitySamples === null
                   ? 'Cargando muestras de visibilidad'
                   : 'No hay una muestra para este instante'}
           </strong>
           <span>
-            {(isModeledSite && visibilityError) || (!isModeledSite
-              ? 'El modelo actual cubre únicamente Shackleton Site 04. No se estiman valores para coordenadas propias.'
-              : 'Comprueba el archivo de visibilidad de Site 04 y vuelve a abrir la planificación.')}
+            {visibilityError || (visibilityLoading
+              ? 'Consultando Horizons y el perfil topográfico LOLA.'
+              : !isModeledSite
+                ? 'Revisa las coordenadas, la elevación y que el servicio lunar esté disponible.'
+                : 'Comprueba el archivo de visibilidad de Site 04 y vuelve a abrir la planificación.')}
           </span>
+          {visibilityError && !isModeledSite && <button className="planning-choice" type="button" onClick={onRetry}>Reintentar cálculo</button>}
         </div>
       ) : (
         <>
           <div className="visibility-topline">
-            <span><MapPin size={14} /> Site 04 · Shackleton</span>
+            <span><MapPin size={14} /> {isModeledSite ? 'Site 04 · Shackleton' : `${Number(form.latitude).toFixed(4)}°, ${Number(form.longitude).toFixed(4)}° E · ${form.elevation} m`}</span>
             <span>{formatUtcDate(selectedSample.time)} · {formatUtcTime(selectedSample.time)} UT</span>
           </div>
+          {!sampleIsTerrainBased && <p className="planning-hint">LOLA no tiene cobertura suficiente en este punto. Los estados muestran solo el horizonte geométrico; el relieve queda indeterminado. {selectedSample.terrainReason}</p>}
           <div className="visibility-grid">
             <div className="sky-card">
               <SkyDiagram sample={selectedSample} />
@@ -311,30 +314,30 @@ export function VisibilityStep({ form, isModeledSite, visibilityError, visibilit
                 <span className="legend-sun"><i /> Sol</span>
                 <span className="legend-earth"><i /> Tierra</span>
                 <span className="legend-horizon"><i /> horizonte 0°</span>
-                <span className="legend-terrain"><i /> horizonte LOLA</span>
+                <span className="legend-terrain"><i /> {sampleIsTerrainBased ? 'horizonte LOLA' : 'horizonte geométrico'}</span>
               </div>
             </div>
             <div className="metrics-stack">
               <MetricCard
                 Icon={Sun}
                 label="Iluminación solar"
-                value={selectedSample.sun.state === 'visible' ? 'Visible' : 'Oculto'}
+                value={selectedSample.sun.state === 'visible' ? (sampleIsTerrainBased ? 'Visible' : 'Sobre horizonte') : (sampleIsTerrainBased ? 'Oculto' : 'Bajo horizonte')}
                 detail={`Elevación ${formatAngle(selectedSample.sun.elevation)} · margen ${formatAngle(selectedSample.sun.difference)}`}
                 state={selectedSample.sun.state}
               />
               <MetricCard
                 Icon={Earth}
                 label="Enlace directo a Tierra"
-                value={selectedSample.earth.state === 'visible' ? 'Visible' : 'Oculta'}
+                value={selectedSample.earth.state === 'visible' ? (sampleIsTerrainBased ? 'Visible' : 'Sobre horizonte') : (sampleIsTerrainBased ? 'Oculta' : 'Bajo horizonte')}
                 detail={`Elevación ${formatAngle(selectedSample.earth.elevation)} · margen ${formatAngle(selectedSample.earth.difference)}`}
                 state={selectedSample.earth.state}
               />
-              <p className="metric-footnote">La visibilidad geométrica no estima generación eléctrica ni calidad del enlace.</p>
+              <p className="metric-footnote">{sampleIsTerrainBased ? 'La visibilidad sobre relieve no estima generación eléctrica ni calidad del enlace.' : 'La visibilidad geométrica no confirma una línea de vista libre de relieve, ni estima energía o calidad del enlace.'}</p>
             </div>
           </div>
           <div className="chart-card">
             <div className="chart-heading">
-              <span>Margen sobre horizonte durante el día</span>
+              <span>{sampleIsTerrainBased ? 'Margen sobre horizonte LOLA durante el día' : 'Elevación sobre horizonte geométrico durante el día'}</span>
               <div className="chart-legend"><span className="legend-sun"><i /> Sol</span><span className="legend-earth"><i /> Tierra</span></div>
             </div>
             <VisibilityChart samples={daySamples} date={form.dateTime.slice(0, 10)} />
@@ -346,7 +349,7 @@ export function VisibilityStep({ form, isModeledSite, visibilityError, visibilit
   )
 }
 
-export function CompareStep({ form, update, isModeledSite, visibilityError, visibilitySamples, comparisonSamples }) {
+export function CompareStep({ form, update, isModeledSite, maxDateTime, visibilityError, visibilityLoading, visibilitySamples, comparisonSamples, onRetry }) {
   const renderScenario = (sample, date, label) => {
     if (!sample || !date) {
       return (
@@ -356,9 +359,11 @@ export function CompareStep({ form, update, isModeledSite, visibilityError, visi
           <p>
             {!date
               ? 'Selecciona una fecha para consultar este escenario.'
-              : !isModeledSite
-                ? 'Sin datos calculados para estas coordenadas.'
-                : visibilityError || (visibilitySamples === null
+              : visibilityError || (visibilityLoading
+                ? 'Calculando efemérides y perfil topográfico…'
+                : !isModeledSite
+                  ? 'No hay una muestra disponible para este sitio y fecha.'
+                  : visibilitySamples === null
                   ? 'Cargando muestras de visibilidad…'
                   : 'No se encontró una muestra para este instante.')}
           </p>
@@ -389,14 +394,14 @@ export function CompareStep({ form, update, isModeledSite, visibilityError, visi
       <p className="planning-intro">Compara dos fechas para el mismo sitio y la misma hora UTC.</p>
       <label className="planning-label compare-date-input">
         Fecha alternativa
-        <input type="date" min={dateTimeMin.slice(0, 10)} max={dateTimeMax.slice(0, 10)} value={form.compareDate} onChange={(event) => update('compareDate', event.target.value)} />
+        <input type="date" min={dateTimeMin.slice(0, 10)} max={maxDateTime.slice(0, 10)} value={form.compareDate} onChange={(event) => update('compareDate', event.target.value)} />
       </label>
-      {visibilityError && <p className="planning-error" role="alert">{visibilityError}</p>}
+      {visibilityError && <p className="planning-error" role="alert">{visibilityError} {!isModeledSite && <button className="planning-choice" type="button" onClick={onRetry}>Reintentar</button>}</p>}
       <div className="scenario-grid">
         {renderScenario(comparisonSamples[0], form.dateTime.slice(0, 10), 'ESCENARIO A · FECHA ORIGINAL')}
         {renderScenario(comparisonSamples[1], form.compareDate, 'ESCENARIO B · FECHA ALTERNATIVA')}
       </div>
-      <p className="planning-hint">Los resultados comparan el centro aparente de cada cuerpo con el horizonte LOLA de Site 04. Las fechas son muestras discretas, no una predicción de potencia o rendimiento de radio.</p>
+      <p className="planning-hint">{isModeledSite ? 'Los resultados comparan el centro aparente de cada cuerpo con el horizonte LOLA de Site 04.' : comparisonSamples.some((sample) => sample?.horizonBasis === 'geometric') ? 'Sin cobertura LOLA, los estados solo comparan con el horizonte geométrico; la obstrucción del relieve es indeterminada.' : 'Los resultados comparan el centro aparente de cada cuerpo con el perfil de horizonte LOLA del sitio.'} Las muestras son horarias y no predicen potencia o rendimiento de radio.</p>
     </section>
   )
 }

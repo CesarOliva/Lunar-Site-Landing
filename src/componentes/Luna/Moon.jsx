@@ -17,7 +17,7 @@ import {
   useGLTF,
 } from '@react-three/drei'
 
-import Lighting from './Lighting'
+import Lighting, { SunLight } from './Lighting'
 
 const MOON_MODEL = '/modelos/Moon_NASA_LRO_8k_Topo_Small.glb'
 const SATURN_V_MODEL = '/modelos/Saturn%20V.glb'
@@ -299,11 +299,32 @@ function MissionMarker({
   )
 }
 
+function CustomMarker({ latitude, longitude }) {
+  const position = useMemo(
+    () => getMoonPosition(latitude, longitude, MOON_RADIUS * 1.022),
+    [latitude, longitude]
+  )
+
+  return (
+    <group position={position}>
+      <mesh>
+        <sphereGeometry args={[0.028, 16, 16]} />
+        <meshBasicMaterial color="#F4D78A" />
+      </mesh>
+      <mesh scale={2.1}>
+        <sphereGeometry args={[0.028, 16, 16]} />
+        <meshBasicMaterial color="#F4D78A" transparent opacity={0.22} depthWrite={false} />
+      </mesh>
+    </group>
+  )
+}
+
 // Escena completa de la Luna.
 function MoonScene({
   missions,
   selectedMission,
   hoveredMission,
+  scene,
   phase,
   onShowMission,
   moonGroup,
@@ -393,12 +414,12 @@ function MoonScene({
   }, [missions, phase, selectedMission?.id])
 
   // Prepara un acercamiento cinematográfico.
-  const focusMission = useCallback((mission) => {
-    if (!moonGroup.current || !mission) return
+  const focusMission = useCallback((location) => {
+    if (!moonGroup.current || !location) return
 
     const missionDirection = getMoonPosition(
-      mission.latitude,
-      mission.longitude
+      location.latitude_deg ?? location.latitude,
+      location.longitude_deg ?? location.longitude
     ).normalize()
     missionRotationTarget.current.setFromUnitVectors(
       missionDirection,
@@ -435,8 +456,9 @@ function MoonScene({
 
   // Permite enfocar misiones seleccionadas desde otros componentes.
   useEffect(() => {
-    if (selectedMission) {
-      focusMission(selectedMission)
+    const location = scene?.site ?? selectedMission
+    if (location) {
+      focusMission(location)
       return
     }
 
@@ -452,7 +474,7 @@ function MoonScene({
 
     cameraTarget.current.set(0, 0, HOME_CAMERA_DISTANCE)
     cameraAnimating.current = true
-  }, [selectedMission, phase, focusMission])
+  }, [selectedMission, scene?.site?.latitude_deg, scene?.site?.longitude_deg, phase, focusMission])
 
   // Movimiento continuo y suave de la Luna y la cámara.
   useFrame((_, delta) => {
@@ -505,7 +527,7 @@ function MoonScene({
 
   return (
     <>
-      <Lighting />
+      <Lighting scene={scene} />
 
       {(phase === 'intro' || phase === 'launch') && (
         <Suspense fallback={null}>
@@ -517,13 +539,23 @@ function MoonScene({
         ref={moonGroup}
         scale={moonScale}
       >
+        {scene?.sun?.direction_me && <SunLight scene={scene} />}
         <MoonModel />
+
+        {scene?.site && selectedMission && (
+          Math.abs(scene.site.latitude_deg - selectedMission.latitude) > 0.000001
+          || Math.abs(scene.site.longitude_deg - selectedMission.longitude) > 0.000001
+        ) && <CustomMarker latitude={scene.site.latitude_deg} longitude={scene.site.longitude_deg} />}
 
         {missions.map((mission, index) => (
           <MissionMarker
             key={mission.id}
             mission={mission}
-            selected={selectedMission?.id === mission.id}
+            selected={selectedMission?.id === mission.id && (
+              !scene?.site
+              || (Math.abs(scene.site.latitude_deg - mission.latitude) <= 0.000001
+                && Math.abs(scene.site.longitude_deg - mission.longitude) <= 0.000001)
+            )}
             highlighted={hoveredMission?.id === mission.id}
             onSelect={onShowMission}
             moonGroup={moonGroup}
@@ -543,6 +575,7 @@ export default function Moon({
   missions = [],
   selectedMission = null,
   hoveredMission = null,
+  scene = null,
   onShowMission,
   phase = 'home',
 }) {
@@ -628,6 +661,7 @@ export default function Moon({
             missions={missions}
             selectedMission={selectedMission}
             hoveredMission={hoveredMission}
+            scene={scene}
             phase={phase}
             onShowMission={onShowMission}
             moonGroup={moonGroup}

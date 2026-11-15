@@ -1,5 +1,12 @@
-import { ArrowUpRight, Sparkles } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
+import sceneCatalog from '../../../data/apollo_scenes.json'
 import '../../estilos/misiones/MissionList.css'
+
+const assessmentLabels = {
+  favorable: 'FAVORABLE',
+  unfavorable: 'DESFAVORABLE',
+  indeterminate: 'SIN DATOS SUFICIENTES',
+}
 
 function MissionList({ missions, onSelect, onHover }) {
   return (
@@ -7,7 +14,10 @@ function MissionList({ missions, onSelect, onHover }) {
       <h2>Misiones<br /><em>históricas</em></h2>
       <p className="panel-description">Seis expediciones Apollo que hicieron historia en la superficie lunar.</p>
       <div className="mission-list">
-        {missions.map((mission) => (
+        {missions.map((mission) => {
+          const assessment = sceneCatalog.missions[mission.id]?.landing_assessment
+          const status = assessment?.status ?? 'indeterminate'
+          return (
           <button
             className="mission-list-item"
             key={mission.id}
@@ -16,10 +26,16 @@ function MissionList({ missions, onSelect, onHover }) {
             onMouseLeave={() => onHover(null)}
           >
             <span className="mission-thumb" style={{ '--mission-accent': mission.accent }}><span>{mission.number}</span></span>
-            <span className="mission-list-copy"><small>APOLLO · {mission.landingDate.toUpperCase()}</small><strong>{mission.name}</strong><em>{mission.site}</em></span>
+            <span className="mission-list-copy">
+              <small>APOLLO · {mission.landingDate.toUpperCase()}</small>
+              <strong>{mission.name}</strong>
+              <em>{mission.site}</em>
+              <span className={`mission-assessment-badge is-${status}`}>{assessmentLabels[status]}</span>
+            </span>
             <ArrowUpRight size={16} />
           </button>
-        ))}
+          )
+        })}
       </div>
     </div>
   )

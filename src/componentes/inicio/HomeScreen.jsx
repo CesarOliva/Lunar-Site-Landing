@@ -143,6 +143,7 @@ function HomeIntro({ onOpenMissions, onOpenPlanning }) {
             </strong>
           </span>
         </button>
+
       </div>
     </motion.div>
   )

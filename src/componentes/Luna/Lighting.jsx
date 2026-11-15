@@ -1,23 +1,18 @@
+export function SunLight({ scene }) {
+  const sunDirection = scene?.sun?.direction_me
+  if (!sunDirection) return null
 
-export default function Lighting() {
+  const [meX, meY, meZ] = sunDirection
+  // Usa la misma permutación ME que los marcadores del globo.
+  return <directionalLight position={[meY, meZ, meX]} intensity={3.2} color="#FFF4DF" />
+}
+
+export default function Lighting({ scene }) {
   return (
     <>
-      {/* Iluminación ambiental muy tenue */}
       <ambientLight intensity={0.055} />
-
-      {/* Luz solar principal */}
-      <directionalLight
-        position={[5, 2.5, 5]}
-        intensity={3.2}
-        color="#FFF4DF"
-      />
-
-      {/* Luz secundaria extremadamente tenue */}
-      <hemisphereLight
-        skyColor="#18202B"
-        groundColor="#000000"
-        intensity={0.035}
-      />
+      {!scene?.sun?.direction_me && <directionalLight position={[5, 2.5, 5]} intensity={3.2} color="#FFF4DF" />}
+      <hemisphereLight skyColor="#18202B" groundColor="#000000" intensity={0.035} />
     </>
   )
 }
