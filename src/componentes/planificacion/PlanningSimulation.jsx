@@ -5,6 +5,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { Pause, Play, RotateCcw, X } from 'lucide-react'
 // Ajusta esta ruta a tu modelo. Puedes asignar un modelo distinto a cada tipo de misión.
 const shipModelUrl = '/modelos/nave.glb'
+const lunarModelUrl = '/modelos/Moon_NASA_LRO_8k_Topo_Small.glb'
 
 const shipModels = {
   robotic: shipModelUrl,
@@ -165,9 +166,26 @@ export default function PlanningSimulation({ form, missionProfile, onClose }) {
     )
     earthGrid.position.copy(EARTH)
     scene.add(earthGrid)
-    const moon = new THREE.Mesh(new THREE.SphereGeometry(MOON_RADIUS, 40, 28), new THREE.MeshStandardMaterial({ color: 0xc9dccf, roughness: 1 }))
-    moon.position.copy(MOON)
-    scene.add(moon)
+    const moonFallback = new THREE.Mesh(new THREE.SphereGeometry(MOON_RADIUS, 40, 28), new THREE.MeshStandardMaterial({ color: 0xc9dccf, roughness: 1 }))
+    moonFallback.position.copy(MOON)
+    scene.add(moonFallback)
+    new GLTFLoader().load(lunarModelUrl, (gltf) => {
+      if (disposed) return
+      const moonModel = gltf.scene
+      const bounds = new THREE.Box3().setFromObject(moonModel)
+      const center = bounds.getCenter(new THREE.Vector3())
+      const size = bounds.getSize(new THREE.Vector3())
+      const diameter = Math.max(size.x, size.y, size.z)
+      const moon = new THREE.Group()
+      moonModel.position.sub(center)
+      if (diameter > 0) moonModel.scale.setScalar((MOON_RADIUS * 2) / diameter)
+      moon.position.copy(MOON)
+      moon.add(moonModel)
+      scene.remove(moonFallback)
+      moonFallback.geometry.dispose()
+      moonFallback.material.dispose()
+      scene.add(moon)
+    }, undefined, () => {})
 
     const route = buildRoute(form.propulsion, latitude, longitude)
     const pathPoints = route.transit.getPoints(TRAIL_POINTS)
