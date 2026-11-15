@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { ChevronDown } from 'lucide-react'
 import sceneCatalog from '../../../data/apollo_scenes.json'
 import '../../estilos/misiones/MissionAssessment.css'
 
@@ -112,53 +113,56 @@ function MissionAssessment({ mission, onSceneChange }) {
   }
 
   return (
-    <section className="mission-assessment" aria-labelledby={`assessment-${mission.id}`}>
-      <div className="mission-assessment-heading">
-        <div>
-          <h3 id={`assessment-${mission.id}`}>Condiciones del alunizaje</h3>
+    <details className="mission-assessment" aria-labelledby={`assessment-${mission.id}`}>
+      <summary className="mission-assessment-heading">
+        <h3 id={`assessment-${mission.id}`}>Condiciones del alunizaje</h3>
+        <ChevronDown className="mission-assessment-chevron" size={18} aria-hidden="true" />
+      </summary>
+
+      <div className="mission-assessment-content">
+        <div className="mission-assessment-meta">
           <p>{assessedLive ? 'Consulta con Horizons para el punto y momento elegidos' : `Fecha cálculada · ${currentScene.time_utc.slice(0, 10)} · ${currentScene.time_utc.slice(11, 16)} UT`}</p>
+          <span className={`mission-assessment-status is-${status}`}>{statusLabel}</span>
         </div>
-        <span className={`mission-assessment-status is-${status}`}>{statusLabel}</span>
+        {assessment?.coverage === 'available' ? <>
+          <p className="mission-assessment-slope">Pendiente máxima <strong>{assessment.max_slope_deg.toFixed(2)}°</strong><span>límite {assessment.slope_limit_deg.toFixed(1)}° · área {assessment.landing_area_diameter_m} m</span></p>
+          <div className="mission-assessment-angles">
+            <Angle label="Sol" body={currentScene.sun} />
+            <Angle label="Tierra" body={currentScene.earth} />
+          </div>
+          <p className="mission-assessment-source">{`La grilla LOLA tiene celdas de ${assessment.resolution_m} m aprox.; el horizonte busca relieve hasta ${assessment.profile_radius_km} km, cada ${assessment.azimuth_step_deg}\u00b0 de azimut.`}</p>
+          {assessment.limitations?.length > 0 && <details className="mission-assessment-limits"><summary>Alcance del cálculo</summary><ul>{assessment.limitations.map((item) => <li key={item}>{item}</li>)}</ul></details>}
+        </> : <p className="mission-assessment-reason">{assessment?.reason ?? 'No hay cobertura LOLA suficiente para evaluar este sitio.'}</p>}
+
+        <details className="mission-assessment-query">
+          <summary>Evaluar otra fecha o coordenadas</summary>
+          <form onSubmit={(event) => { event.preventDefault(); void evaluateSite() }}>
+            <label>Latitud (°)<input type="number" min="-90" max="90" step="0.000001" required value={latitude} onChange={(event) => setLatitude(event.target.value)} /></label>
+            <label>Longitud · este positivo (°)<input type="number" min="-180" max="180" step="0.000001" required value={longitude} onChange={(event) => setLongitude(event.target.value)} /></label>
+            <label className="mission-assessment-date">Fecha y hora UTC<input type="datetime-local" min="1962-01-20T00:00" step="1" required value={dateTime} onChange={(event) => setDateTime(event.target.value)} /></label>
+            <button type="submit" disabled={loading || Boolean(searching)}>{loading ? 'Calculando…' : 'Consultar evaluación'}</button>
+          </form>
+          {loading && <p className="mission-assessment-message" role="status">Consultando efemérides y perfil topográfico…</p>}
+          {error && <p className="mission-assessment-error" role="alert">{error}</p>}
+          {assessedLive && status === 'unfavorable' && <div className="mission-alternative-actions">
+            <button type="button" disabled={loading || Boolean(searching)} onClick={() => void findAlternatives('location')}>{searching === 'location' ? 'Buscando…' : 'Buscar punto cercano viable'}</button>
+            <button type="button" disabled={loading || Boolean(searching)} onClick={() => void findAlternatives('date')}>{searching === 'date' ? 'Buscando…' : 'Buscar otra fecha'}</button>
+          </div>}
+          {searching && <p className="mission-assessment-message" role="status">{searching === 'location' ? 'Buscando en un radio de 5 km…' : 'Buscando horas dentro de ±7 días…'}</p>}
+          {alternatives && <div className="mission-alternatives" aria-live="polite">
+            {alternatives.mode === 'location' ? alternatives.candidates.map((candidate) => <button type="button" key={`${candidate.latitude_deg}-${candidate.longitude_deg}`} onClick={() => chooseLocation(candidate)}>
+              <strong>{candidate.latitude_deg.toFixed(5)}°, {candidate.longitude_deg.toFixed(5)}°</strong>
+              <span>{(candidate.distance_m / 1000).toFixed(1)} km · pendiente {candidate.max_slope_deg.toFixed(2)}°</span>
+            </button>) : alternatives.candidates.map((candidate) => <button type="button" key={candidate.time_utc} onClick={() => chooseDate(candidate)}>
+              <strong>{candidate.time_utc.slice(0, 10)} · {candidate.time_utc.slice(11, 16)} UTC</strong>
+              <span>{Math.abs(candidate.delta_hours)} h {candidate.delta_hours < 0 ? 'antes' : 'después'}</span>
+            </button>)}
+            {alternatives.reason && <p>{alternatives.reason}</p>}
+            {alternatives.mode === 'location' && alternatives.candidates.length > 0 && <small>Al seleccionar un punto, Horizons confirma la posición exacta.</small>}
+          </div>}
+        </details>
       </div>
-
-      {assessment?.coverage === 'available' ? <>
-        <p className="mission-assessment-slope">Pendiente máxima <strong>{assessment.max_slope_deg.toFixed(2)}°</strong><span>límite {assessment.slope_limit_deg.toFixed(1)}° · área {assessment.landing_area_diameter_m} m</span></p>
-        <div className="mission-assessment-angles">
-          <Angle label="Sol" body={currentScene.sun} />
-          <Angle label="Tierra" body={currentScene.earth} />
-        </div>
-        <p className="mission-assessment-source">{`La grilla LOLA tiene celdas de ${assessment.resolution_m} m aprox.; el horizonte busca relieve hasta ${assessment.profile_radius_km} km, cada ${assessment.azimuth_step_deg}\u00b0 de azimut.`}</p>
-        {assessment.limitations?.length > 0 && <details className="mission-assessment-limits"><summary>Alcance del cálculo</summary><ul>{assessment.limitations.map((item) => <li key={item}>{item}</li>)}</ul></details>}
-      </> : <p className="mission-assessment-reason">{assessment?.reason ?? 'No hay cobertura LOLA suficiente para evaluar este sitio.'}</p>}
-
-      <details className="mission-assessment-query">
-        <summary>Evaluar otra fecha o coordenadas</summary>
-        <form onSubmit={(event) => { event.preventDefault(); void evaluateSite() }}>
-          <label>Latitud (°)<input type="number" min="-90" max="90" step="0.000001" required value={latitude} onChange={(event) => setLatitude(event.target.value)} /></label>
-          <label>Longitud · este positivo (°)<input type="number" min="-180" max="180" step="0.000001" required value={longitude} onChange={(event) => setLongitude(event.target.value)} /></label>
-          <label className="mission-assessment-date">Fecha y hora UTC<input type="datetime-local" min="1962-01-20T00:00" step="1" required value={dateTime} onChange={(event) => setDateTime(event.target.value)} /></label>
-          <button type="submit" disabled={loading || Boolean(searching)}>{loading ? 'Calculando…' : 'Consultar evaluación'}</button>
-        </form>
-        {loading && <p className="mission-assessment-message" role="status">Consultando efemérides y perfil topográfico…</p>}
-        {error && <p className="mission-assessment-error" role="alert">{error}</p>}
-        {assessedLive && status === 'unfavorable' && <div className="mission-alternative-actions">
-          <button type="button" disabled={loading || Boolean(searching)} onClick={() => void findAlternatives('location')}>{searching === 'location' ? 'Buscando…' : 'Buscar punto cercano viable'}</button>
-          <button type="button" disabled={loading || Boolean(searching)} onClick={() => void findAlternatives('date')}>{searching === 'date' ? 'Buscando…' : 'Buscar otra fecha'}</button>
-        </div>}
-        {searching && <p className="mission-assessment-message" role="status">{searching === 'location' ? 'Buscando en un radio de 5 km…' : 'Buscando horas dentro de ±7 días…'}</p>}
-        {alternatives && <div className="mission-alternatives" aria-live="polite">
-          {alternatives.mode === 'location' ? alternatives.candidates.map((candidate) => <button type="button" key={`${candidate.latitude_deg}-${candidate.longitude_deg}`} onClick={() => chooseLocation(candidate)}>
-            <strong>{candidate.latitude_deg.toFixed(5)}°, {candidate.longitude_deg.toFixed(5)}°</strong>
-            <span>{(candidate.distance_m / 1000).toFixed(1)} km · pendiente {candidate.max_slope_deg.toFixed(2)}°</span>
-          </button>) : alternatives.candidates.map((candidate) => <button type="button" key={candidate.time_utc} onClick={() => chooseDate(candidate)}>
-            <strong>{candidate.time_utc.slice(0, 10)} · {candidate.time_utc.slice(11, 16)} UTC</strong>
-            <span>{Math.abs(candidate.delta_hours)} h {candidate.delta_hours < 0 ? 'antes' : 'después'}</span>
-          </button>)}
-          {alternatives.reason && <p>{alternatives.reason}</p>}
-          {alternatives.mode === 'location' && alternatives.candidates.length > 0 && <small>Al seleccionar un punto, Horizons confirma la posición exacta.</small>}
-        </div>}
-      </details>
-    </section>
+    </details>
   )
 }
 
