@@ -23,6 +23,7 @@ import {
   getDaySamples,
   getNearestSample,
   loadVisibilitySamples,
+  formatAngle,
   VisibilityStep,
 } from './PlanningVisibility'
 
@@ -60,7 +61,6 @@ function PlanningPanel() {
   const [glitchActive, setGlitchActive] = useState(
     () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   )
-  const [ambientGlitch, setAmbientGlitch] = useState(false)
   const glitchFrame = useRef(null)
   const [form, setForm] = useState(initialForm)
   const [validationMessage, setValidationMessage] = useState('')
@@ -109,21 +109,6 @@ function PlanningPanel() {
   useEffect(() => () => {
     if (glitchFrame.current !== null) {
       window.cancelAnimationFrame(glitchFrame.current)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
-
-    let glitchTimer
-    const interval = window.setInterval(() => {
-      setAmbientGlitch(true)
-      glitchTimer = window.setTimeout(() => setAmbientGlitch(false), 500)
-    }, 2500)
-
-    return () => {
-      window.clearInterval(interval)
-      window.clearTimeout(glitchTimer)
     }
   }, [])
 
@@ -297,83 +282,30 @@ function PlanningPanel() {
     setStep((current) => Math.min(current + 1, steps.length - 1))
   }
 
-  const downloadPlan = () => {
+  const downloadPlan = async () => {
     if (!form.name.trim() || getDurationIssue(form) || !siteInputsValid || !dateIsInCoverage || !comparisonDateIsInCoverage) {
       setValidationMessage('Revisa el nombre, duración, coordenadas y fechas antes de descargar el plan.')
       return
     }
-    const text = [
-      'PLAN DE MISIÓN LUNAR',
-      '====================',
-      '',
-      'MISIÓN',
-      `Nombre: ${form.name.trim()}`,
-      `Perfil: ${missionProfile.label}`,
-      `Objetivo: ${form.objective}`,
-      `Duración seleccionada: ${form.duration}`,
-      `Requisitos considerados: ${missionProfile.requirements.join(', ')}`,
-      '',
-      'VEHÍCULO Y LANZAMIENTO',
-      `Lanzador/configuración: ${form.vehicle || 'Sin definir'}`,
-      `Masa de carga útil: ${form.mass ? `${form.mass} kg` : 'Sin definir'}`,
-      `Lugar: ${form.launchSite}`,
-      `Carga útil: ${form.payload}`,
-      `Propulsión: ${form.propulsion}`,
-      `Ventana de lanzamiento (referencia): ${form.launchWindow}`,
-      'Nota: el antecedente de un lugar no confirma disponibilidad ni compatibilidad.',
-      '',
-      'SITIO LUNAR',
-      `Sitio: ${isModeledSite ? visibilitySite.name : 'Coordenadas personalizadas'}`,
-      `Latitud: ${Number(form.latitude)}°`,
-      `Longitud este: ${Number(form.longitude)}°`,
-      `Elevación: ${Number(form.elevation)} m`,
-      `Área de aterrizaje: ${form.landingArea}`,
-      `Pendiente máxima seleccionada: ${form.maxSlope}`,
-      '',
-      'FECHA Y HORA',
-      `Escenario de aterrizaje: ${form.dateTime.replace('T', ' ')} UTC`,
-      `Fecha alternativa: ${form.compareDate} ${form.dateTime.slice(11, 16)} UTC`,
-      '',
-      'ENTORNO Y RIESGOS (SIMULACIÓN FICTICIA)',
-      'Estos valores son ficticios y no representan un pronóstico, medición NASA ni evaluación de seguridad.',
-      '',
-      'VISIBILIDAD GEOMÉTRICA',
-      `Base del horizonte: ${selectedSample?.horizonBasis === 'geometric' ? 'geométrico; relieve LOLA indeterminado' : 'perfil topográfico LOLA'}`,
-      selectedSample
-        ? `Sol: ${selectedSample.sun.state === 'visible' ? 'visible' : 'oculto'}, elevación ${selectedSample.sun.elevation.toFixed(1)}°`
-        : 'Sol: sin datos calculados para este escenario.',
-      selectedSample
-        ? `Tierra: ${selectedSample.earth.state === 'visible' ? 'visible' : 'oculta'}, elevación ${selectedSample.earth.elevation.toFixed(1)}°`
-        : 'Tierra: sin datos calculados para este escenario.',
-      comparisonSamples[1]
-        ? `Escenario alternativo (${form.compareDate}): Sol ${comparisonSamples[1].sun.state === 'visible' ? 'visible' : 'oculto'}; Tierra ${comparisonSamples[1].earth.state === 'visible' ? 'visible' : 'oculta'}.`
-        : 'Escenario alternativo: sin datos calculados.',
-      'La visibilidad geométrica no estima generación eléctrica ni calidad del enlace de comunicaciones.',
-      '',
-      'CONFIGURACIÓN CONDICIONAL',
-      ...(missionProfile.conditionalSteps.includes('crew')
-        ? [`Tripulación: ${form.crewSize}`, `Plan EVA: ${form.evaPlan}`, `Soporte vital: ${form.lifeSupport}`, `Control ambiental: ${form.habitatControl}`]
-        : []),
-      ...(missionProfile.conditionalSteps.includes('logistics')
-        ? [`Suministros: ${form.supplies}`, `Redundancia energética: ${form.redundancy}`, `ISRU: ${form.isru}`]
-        : []),
-      ...(missionProfile.conditionalSteps.includes('sample')
-        ? [`Material objetivo: ${form.sampleTarget}`, `Recolección: ${form.sampleCollection}`, `Sistema de retorno: ${form.sampleReturn}`]
-        : []),
-    ].join('\n')
-    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = 'plan-lunar.txt'
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    window.setTimeout(() => URL.revokeObjectURL(url), 1000)
+    setValidationMessage('')
+    try {
+      const { downloadMissionPlanPdf } = await import('./downloadMissionPlanPdf.js')
+      await downloadMissionPlanPdf({
+        form,
+        missionProfile,
+        siteName: isModeledSite ? visibilitySite.name : 'Coordenadas personalizadas',
+        selectedSample,
+        formatAngle,
+      })
+    } catch (error) {
+      setValidationMessage(
+        `No se pudo generar el PDF: ${error instanceof Error ? error.message : 'error inesperado.'}`
+      )
+    }
   }
 
   return (
-    <div ref={wizardRef} className={`planning-wizard ${glitchActive ? 'is-glitching' : ''} ${ambientGlitch ? 'is-ambient-glitching' : ''}`}>
+    <div ref={wizardRef} className={`planning-wizard ${glitchActive ? 'is-glitching' : ''}`}>
       <header className="planning-brand">
         <div className="planning-wordmark"><Moon size={18} /><span>moonapp</span></div>
       </header>
