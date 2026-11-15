@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Check, ChevronLeft, ChevronRight } from 'lucide-react'
 import visibilitySite from '../../../data/visibility-site.json'
 import '../../estilos/planificacion/PlanningPanel.css'
-import OddityLogo from '../compartidos/OddityLogo.jsx'
 import {
   CrewStep,
   ForecastStep,
@@ -307,10 +306,6 @@ function PlanningPanel() {
 
   return (
     <div ref={wizardRef} className={`planning-wizard ${glitchActive ? 'is-glitching' : ''}`}>
-      <header className="planning-brand">
-        <div className="planning-wordmark"><OddityLogo /></div>
-      </header>
-
       <nav className="planning-stepper" aria-label="Pasos de planificación" style={{ '--progress': steps.length > 1 ? step / (steps.length - 1) : 0 }}>
         {steps.map(({ label }, index) => (
           <button

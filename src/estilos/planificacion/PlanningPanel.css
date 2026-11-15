@@ -19,25 +19,6 @@
   font-family: var(--planning-font);
 }
 
-.planning-brand {
-  min-height: 58px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  border-bottom: 1px solid rgba(0, 184, 92, .13);
-}
-
-.planning-wordmark {
-  width: 126px;
-  display: flex;
-  align-items: center;
-}
-
-.planning-wordmark .oddity-logo-crop {
-  width: 120px;
-}
-
 .planning-stepper {
   display: flex;
   gap: 7px;
@@ -463,8 +444,6 @@
 /* Blancos en la paleta (mismas variables que HomeScreen/IntroScreen; mueve a tu archivo de paleta si prefieres) */
 :root { --snow: #F4FBF6; --fog: #C9DCCF; --warning: #ff8a1f; --planning-font: 'DM Sans', sans-serif; }
 
-.planning-wordmark { color: var(--snow); }
-.planning-brand { border-bottom-color: rgba(255, 255, 255, .12); }
 .step-number { color: var(--fog); border-color: rgba(255, 255, 255, .2); }
 
 .planning-content h2 { color: var(--snow); }
@@ -630,8 +609,7 @@
   animation: planning-scan-glitch .65s steps(1, end) both;
 }
 
-.planning-wizard.is-glitching .planning-stepper,
-.planning-wizard.is-glitching .planning-brand {
+.planning-wizard.is-glitching .planning-stepper {
   animation: planning-screen-glitch .65s steps(1, end) both;
 }
 
@@ -712,7 +690,6 @@
   .planning-wizard.is-glitching .planning-content,
   .planning-wizard.is-glitching .planning-content::after,
   .planning-wizard.is-glitching .planning-stepper,
-  .planning-wizard.is-glitching .planning-brand,
   .planning-wizard.is-glitching .planning-content :is(
     .mission-type-option, .site-option, .landing-date-card, .planning-callout,
     .planning-metric, .sky-card, .chart-card, .scenario-card, .summary-card,
