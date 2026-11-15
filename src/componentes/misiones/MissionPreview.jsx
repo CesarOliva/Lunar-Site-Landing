@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
 import '../../estilos/misiones/MissionPreview.css'
 
 function MissionPreview({ mission, slide, onSlide, onExplore }) {
@@ -17,16 +17,20 @@ function MissionPreview({ mission, slide, onSlide, onExplore }) {
             transition={{ duration: 0.35 }}
           />
         </AnimatePresence>
-        <span className="hero-tag"><span className="live-dot" /> {mission.site.toUpperCase()}</span>
-        <div className="hero-controls">
-          <span>0{slide + 1} <i /> 03</span>
-          <button onClick={() => onSlide(-1)} aria-label="Imagen anterior"><ChevronLeft size={17} /></button>
-          <button onClick={() => onSlide(1)} aria-label="Imagen siguiente"><ChevronRight size={17} /></button>
+        <div className="hero-indicators" role="group" aria-label="Imágenes de la misión">
+          {Array.from({ length: 3 }, (_, index) => (
+            <button
+              className={`hero-indicator ${slide === index ? 'is-active' : ''}`}
+              key={index}
+              aria-label={`Ver imagen ${index + 1}`}
+              aria-pressed={slide === index}
+              onClick={() => onSlide(index - slide)}
+            />
+          ))}
         </div>
       </div>
       <div className="preview-details">
-        <span className="mission-kicker">MISIÓN {mission.number} <i /> ARCHIVO NASA</span>
-        <h2>{mission.name}</h2>
+        <h2>{mission.name} - Misión {mission.number}</h2>
         <p className="mission-dates"><span>FECHAS DE MISIÓN</span>{mission.dates}</p>
 
         <section className="detail-section">
