@@ -14,6 +14,7 @@ const SHIP_OFFSET = 26     // px a la derecha del punto de cada evento (queda so
 const MAX_AMPLITUDE = 110  // px máximos que la nave se separa de la línea
 const TURN_SHARE = 0.26    // largo del giro para cruzar la línea, como fracción de la distancia entre eventos
 const AUTOPLAY_SEGMENT_MS = 5500
+const CHEVRON_ANIMATION_MS = 1000
 
 const clamp = (value, min, max) => Math.min(Math.max(value, min), max)
 
@@ -71,6 +72,7 @@ function MissionTimeline({ events }) {
   const shipRef = useRef(null)
   const hintRef = useRef(null)
   const eventRefs = useRef([])
+  const chevronAnimationRef = useRef(0)
   const geometry = useRef({ stations: [], eventWidth: 0, amplitude: 0 })
   const [activeIndex, setActiveIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -81,7 +83,13 @@ function MissionTimeline({ events }) {
     const scroller = scrollerRef.current
     if (!scroller) return undefined
 
-    const stopPlayback = () => setIsPlaying(false)
+    const stopPlayback = () => {
+      setIsPlaying(false)
+      if (chevronAnimationRef.current) {
+        cancelAnimationFrame(chevronAnimationRef.current)
+        chevronAnimationRef.current = 0
+      }
+    }
     scroller.addEventListener('wheel', stopPlayback, { passive: true })
     scroller.addEventListener('pointerdown', stopPlayback)
     scroller.addEventListener('touchstart', stopPlayback, { passive: true })
@@ -90,6 +98,12 @@ function MissionTimeline({ events }) {
       scroller.removeEventListener('wheel', stopPlayback)
       scroller.removeEventListener('pointerdown', stopPlayback)
       scroller.removeEventListener('touchstart', stopPlayback)
+    }
+  }, [])
+
+  useEffect(() => () => {
+    if (chevronAnimationRef.current) {
+      cancelAnimationFrame(chevronAnimationRef.current)
     }
   }, [])
 
@@ -162,10 +176,39 @@ function MissionTimeline({ events }) {
     const current = Math.round(progress * (events.length - 1))
     const targetIndex = clamp(current + direction, 0, events.length - 1)
 
-    scroller.scrollTo({
-      left: (max * targetIndex) / (events.length - 1),
-      behavior: prefersReducedMotion() ? 'auto' : 'smooth',
-    })
+    const start = scroller.scrollLeft
+    const target = (max * targetIndex) / (events.length - 1)
+
+    if (prefersReducedMotion() || Math.abs(target - start) < 1) {
+      scroller.scrollLeft = target
+      return
+    }
+
+    if (chevronAnimationRef.current) {
+      cancelAnimationFrame(chevronAnimationRef.current)
+    }
+
+    let startedAt
+    const animate = (timestamp) => {
+      if (startedAt === undefined) startedAt = timestamp
+
+      const progress = clamp(
+        (timestamp - startedAt) / CHEVRON_ANIMATION_MS,
+        0,
+        1
+      )
+      const eased = progress * progress * (3 - 2 * progress)
+      scroller.scrollLeft = start + (target - start) * eased
+
+      if (progress < 1) {
+        chevronAnimationRef.current = window.requestAnimationFrame(animate)
+      } else {
+        scroller.scrollLeft = target
+        chevronAnimationRef.current = 0
+      }
+    }
+
+    chevronAnimationRef.current = window.requestAnimationFrame(animate)
   }
 
   // La posición de la nave depende solo del scroll:
@@ -266,6 +309,13 @@ function MissionTimeline({ events }) {
               <small>{event.time}</small>
               <h3>{event.title}</h3>
               <p>{event.detail}</p>
+              <img
+                className="timeline-event-image"
+                src={event.image.src}
+                alt={event.image.alt}
+                loading="lazy"
+                decoding="async"
+              />
             </motion.article>
           ))}
 

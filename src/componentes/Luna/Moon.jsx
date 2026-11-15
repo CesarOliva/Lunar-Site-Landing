@@ -29,8 +29,14 @@ const FOCUSED_CAMERA_DISTANCE = 2
 const MIN_MISSION_ROTATION_DURATION = 1.2
 const MISSION_ROTATION_RADIANS_PER_SECOND = 1.6
 const ROCKET_START_Z = 4.2
-const ROCKET_END_Z = 2.2
-const ROCKET_FLIGHT_DURATION = 1.05
+const ROCKET_FLIGHT_START_Z = 5.4
+const ROCKET_TRAVEL_END_X = -1.8
+const ROCKET_TRAVEL_END_Z = 3.4
+const ROCKET_EXIT_DURATION = 0.9
+const ROCKET_FLIGHT_DURATION = 1
+const ROCKET_OVERTAKE_DURATION = 0.7
+const ROCKET_TRAVEL_DURATION = ROCKET_FLIGHT_DURATION + ROCKET_OVERTAKE_DURATION
+const ROCKET_TRAVEL_END_SCALE = 0.28
 const MARKER_BOOT_BLINK_DURATION = 1000
 
 // Convierte latitud y longitud lunar en una posición 3D.
@@ -77,13 +83,24 @@ function SaturnRocket({ phase }) {
   const elapsed = useRef(0)
   const flightElapsed = useRef(0)
   const cameraDistance = INTRO_CAMERA_DISTANCE - ROCKET_START_Z
-  const viewWidth = 2
+  const viewHeight = 2
     * cameraDistance
     * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))
+  const viewWidth = viewHeight
     * (size.width / Math.max(size.height, 1))
-  const rocketLength = Math.min(2, Math.max(0.85, viewWidth * 0.42))
+  const rocketLength = Math.min(2.6, Math.max(1.2, viewWidth * 0.52))
+  const flightCameraDistance = INTRO_CAMERA_DISTANCE - ROCKET_FLIGHT_START_Z
+  const flightViewWidth = 2
+    * flightCameraDistance
+    * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))
+    * (size.width / Math.max(size.height, 1))
+  const flightStartX = flightViewWidth / 2 + rocketLength * 0.2
+  const flightHeading = Math.atan2(
+    flightStartX - ROCKET_TRAVEL_END_X,
+    ROCKET_FLIGHT_START_Z - ROCKET_TRAVEL_END_Z
+  )
   const startX = -Math.min(viewWidth * 0.2, rocketLength * 0.52)
-  const endX = viewWidth / 2 + rocketLength / 2 + 0.25
+  const exitY = -viewHeight / 2 - rocketLength
   const rocket = useMemo(() => {
     const clone = scene.clone(true)
     const bounds = new THREE.Box3().setFromObject(clone)
@@ -108,16 +125,35 @@ function SaturnRocket({ phase }) {
     if (phase === 'launch') {
       flightElapsed.current = Math.min(
         flightElapsed.current + delta,
-        ROCKET_FLIGHT_DURATION
+        ROCKET_EXIT_DURATION
       )
-      const progress = flightElapsed.current / ROCKET_FLIGHT_DURATION
+      const progress = flightElapsed.current / ROCKET_EXIT_DURATION
       const easedProgress = progress * progress * (3 - 2 * progress)
-      const arc = Math.sin(progress * Math.PI) * 0.28
 
       motionGroup.current.position.set(
-        THREE.MathUtils.lerp(startX, endX, easedProgress),
-        arc + easedProgress * 0.4,
-        THREE.MathUtils.lerp(ROCKET_START_Z, ROCKET_END_Z, easedProgress)
+        startX + rocketLength * 0.2 * easedProgress,
+        exitY * easedProgress,
+        ROCKET_START_Z
+      )
+      motionGroup.current.scale.setScalar(1)
+      return
+    }
+
+    if (phase === 'flight' || phase === 'overtake') {
+      flightElapsed.current = Math.min(
+        flightElapsed.current + delta,
+        ROCKET_TRAVEL_DURATION
+      )
+      const progress = flightElapsed.current / ROCKET_TRAVEL_DURATION
+      const easedProgress = progress * progress * (3 - 2 * progress)
+
+      motionGroup.current.position.set(
+        THREE.MathUtils.lerp(flightStartX, ROCKET_TRAVEL_END_X, easedProgress),
+        THREE.MathUtils.lerp(-0.42, 0.05, easedProgress),
+        THREE.MathUtils.lerp(ROCKET_FLIGHT_START_Z, ROCKET_TRAVEL_END_Z, easedProgress)
+      )
+      motionGroup.current.scale.setScalar(
+        THREE.MathUtils.lerp(1, ROCKET_TRAVEL_END_SCALE, easedProgress)
       )
       return
     }
@@ -128,13 +164,24 @@ function SaturnRocket({ phase }) {
       Math.sin(elapsed.current * 0.65) * 0.035,
       ROCKET_START_Z + Math.sin(elapsed.current * 0.48) * 0.012
     )
+    motionGroup.current.scale.setScalar(1)
   })
 
   return (
     <group ref={motionGroup}>
-      <group rotation={[0, 0, -Math.PI / 2]}>
-        <group ref={rollGroup}>
-          <primitive object={rocket} />
+      <group
+        rotation={phase === 'flight' || phase === 'overtake'
+          ? [0, flightHeading, 0]
+          : [0, 0, 0]}
+      >
+        <group
+          rotation={phase === 'flight' || phase === 'overtake'
+            ? [-Math.PI / 2, 0, 0]
+            : [0, 0, -Math.PI * 0.75]}
+        >
+          <group ref={rollGroup}>
+            <primitive object={rocket} />
+          </group>
         </group>
       </group>
     </group>
@@ -466,7 +513,7 @@ function MoonScene({
     missionRotationAnimating.current = false
     lookTarget.current.set(0, 0, 0)
 
-    if (phase === 'intro' || phase === 'launch') {
+    if (['intro', 'launch', 'launch-pause', 'flight'].includes(phase)) {
       cameraTarget.current.set(0, 0, INTRO_CAMERA_DISTANCE)
       cameraAnimating.current = false
       return
@@ -529,7 +576,7 @@ function MoonScene({
     <>
       <Lighting scene={scene} />
 
-      {(phase === 'intro' || phase === 'launch') && (
+      {['intro', 'launch', 'flight', 'overtake'].includes(phase) && (
         <Suspense fallback={null}>
           <SaturnRocket phase={phase} />
         </Suspense>

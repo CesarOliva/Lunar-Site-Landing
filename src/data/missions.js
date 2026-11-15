@@ -1,6 +1,25 @@
 const lunarSurface =
   'https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&w=1400&q=85'
 
+const timelineIllustrations = {
+  launch: {
+    src: '/images/timeline/saturn-v-launch.jpg',
+    alt: 'Cohete Saturn V durante el despegue, fotografía de archivo NASA.',
+  },
+  landing: {
+    src: '/images/timeline/lunar-module-surface.jpg',
+    alt: 'Astronautas junto al módulo lunar en la superficie, archivo NASA.',
+  },
+  exploration: {
+    src: '/images/timeline/lunar-exploration.jpg',
+    alt: 'Astronauta caminando sobre la superficie lunar, archivo NASA.',
+  },
+  return: {
+    src: '/images/timeline/apollo-splashdown.jpg',
+    alt: 'Recuperación de una tripulación Apollo tras el amerizaje, archivo NASA.',
+  },
+}
+
 export const missions = [
   {
     id: 'apollo-11',
@@ -24,10 +43,10 @@ export const missions = [
     latitude: 0.67416,
     longitude: 23.47314,
     timeline: [
-      { time: '16 JUL 1969', title: 'Despegue', detail: 'El Saturn V despega desde el Centro Espacial Kennedy.' },
-      { time: '20 JUL 1969', title: 'Alunizaje', detail: 'Eagle aterriza en el Mar de la Tranquilidad.' },
-      { time: '21 JUL 1969', title: 'Primeros pasos', detail: 'Armstrong y Aldrin realizan actividad extravehicular.' },
-      { time: '24 JUL 1969', title: 'Regreso a la Tierra', detail: 'La tripulación ameriza en el océano Pacífico.' },
+      { time: '16 JUL 1969', title: 'Despegue', detail: 'El Saturn V despega desde el Centro Espacial Kennedy.', image: timelineIllustrations.launch },
+      { time: '20 JUL 1969', title: 'Alunizaje', detail: 'Eagle aterriza en el Mar de la Tranquilidad.', image: timelineIllustrations.landing },
+      { time: '21 JUL 1969', title: 'Primeros pasos', detail: 'Armstrong y Aldrin realizan actividad extravehicular.', image: timelineIllustrations.exploration },
+      { time: '24 JUL 1969', title: 'Regreso a la Tierra', detail: 'La tripulación ameriza en el océano Pacífico.', image: timelineIllustrations.return },
     ],
   },
   {
@@ -52,10 +71,10 @@ export const missions = [
     latitude: -3.0128,
     longitude: -23.4219,
     timeline: [
-      { time: '14 NOV 1969', title: 'Despegue', detail: 'Apollo 12 inicia su viaje a la Luna.' },
-      { time: '19 NOV 1969', title: 'Alunizaje de precisión', detail: 'Intrepid aterriza cerca de Surveyor 3.' },
-      { time: '19–20 NOV 1969', title: 'Exploración', detail: 'Conrad y Bean completan dos caminatas lunares.' },
-      { time: '24 NOV 1969', title: 'Amerizaje', detail: 'La tripulación regresa al océano Pacífico.' },
+      { time: '14 NOV 1969', title: 'Despegue', detail: 'Apollo 12 inicia su viaje a la Luna.', image: timelineIllustrations.launch },
+      { time: '19 NOV 1969', title: 'Alunizaje de precisión', detail: 'Intrepid aterriza cerca de Surveyor 3.', image: timelineIllustrations.landing },
+      { time: '19–20 NOV 1969', title: 'Exploración', detail: 'Conrad y Bean completan dos caminatas lunares.', image: timelineIllustrations.exploration },
+      { time: '24 NOV 1969', title: 'Amerizaje', detail: 'La tripulación regresa al océano Pacífico.', image: timelineIllustrations.return },
     ],
   },
   {
@@ -80,10 +99,10 @@ export const missions = [
     latitude: -3.64589,
     longitude: -17.47194,
     timeline: [
-      { time: '31 ENE 1971', title: 'Despegue', detail: 'Apollo 14 parte rumbo a la Luna.' },
-      { time: '5 FEB 1971', title: 'Alunizaje', detail: 'Antares aterriza en la región de Fra Mauro.' },
-      { time: '5–6 FEB 1971', title: 'Trabajo en superficie', detail: 'Shepard y Mitchell realizan dos caminatas lunares.' },
-      { time: '9 FEB 1971', title: 'Regreso', detail: 'La tripulación ameriza en el Pacífico Sur.' },
+      { time: '31 ENE 1971', title: 'Despegue', detail: 'Apollo 14 parte rumbo a la Luna.', image: timelineIllustrations.launch },
+      { time: '5 FEB 1971', title: 'Alunizaje', detail: 'Antares aterriza en la región de Fra Mauro.', image: timelineIllustrations.landing },
+      { time: '5–6 FEB 1971', title: 'Trabajo en superficie', detail: 'Shepard y Mitchell realizan dos caminatas lunares.', image: timelineIllustrations.exploration },
+      { time: '9 FEB 1971', title: 'Regreso', detail: 'La tripulación ameriza en el Pacífico Sur.', image: timelineIllustrations.return },
     ],
   },
   {
@@ -108,10 +127,10 @@ export const missions = [
     latitude: 26.13239,
     longitude: 3.63330,
     timeline: [
-      { time: '26 JUL 1971', title: 'Despegue', detail: 'El Saturn V despega con una tripulación de tres.' },
-      { time: '30 JUL 1971', title: 'Alunizaje', detail: 'Falcon aterriza cerca de Hadley Rille.' },
-      { time: '30 JUL — 2 AGO', title: 'Exploración móvil', detail: 'La tripulación recorre el terreno en el rover lunar.' },
-      { time: '7 AGO 1971', title: 'Amerizaje', detail: 'Apollo 15 concluye con el regreso de la tripulación.' },
+      { time: '26 JUL 1971', title: 'Despegue', detail: 'El Saturn V despega con una tripulación de tres.', image: timelineIllustrations.launch },
+      { time: '30 JUL 1971', title: 'Alunizaje', detail: 'Falcon aterriza cerca de Hadley Rille.', image: timelineIllustrations.landing },
+      { time: '30 JUL — 2 AGO', title: 'Exploración móvil', detail: 'La tripulación recorre el terreno en el rover lunar.', image: timelineIllustrations.exploration },
+      { time: '7 AGO 1971', title: 'Amerizaje', detail: 'Apollo 15 concluye con el regreso de la tripulación.', image: timelineIllustrations.return },
     ],
   },
   {
@@ -136,10 +155,10 @@ export const missions = [
     latitude: -8.9734,
     longitude: 15.5011,
     timeline: [
-      { time: '16 ABR 1972', title: 'Despegue', detail: 'Apollo 16 inicia el viaje desde Florida.' },
-      { time: '21 ABR 1972', title: 'Alunizaje', detail: 'Orion aterriza en las tierras altas de Descartes.' },
-      { time: '21–23 ABR 1972', title: 'Ciencia de campo', detail: 'Young y Duke exploran la superficie con el rover.' },
-      { time: '27 ABR 1972', title: 'Regreso a la Tierra', detail: 'La tripulación ameriza en el Pacífico.' },
+      { time: '16 ABR 1972', title: 'Despegue', detail: 'Apollo 16 inicia el viaje desde Florida.', image: timelineIllustrations.launch },
+      { time: '21 ABR 1972', title: 'Alunizaje', detail: 'Orion aterriza en las tierras altas de Descartes.', image: timelineIllustrations.landing },
+      { time: '21–23 ABR 1972', title: 'Ciencia de campo', detail: 'Young y Duke exploran la superficie con el rover.', image: timelineIllustrations.exploration },
+      { time: '27 ABR 1972', title: 'Regreso a la Tierra', detail: 'La tripulación ameriza en el Pacífico.', image: timelineIllustrations.return },
     ],
   },
   {
@@ -164,10 +183,10 @@ export const missions = [
     latitude: 20.1911,
     longitude: 30.7723,
     timeline: [
-      { time: '7 DIC 1972', title: 'Despegue', detail: 'Apollo 17 despega en una misión nocturna.' },
-      { time: '11 DIC 1972', title: 'Alunizaje', detail: 'Challenger aterriza en el valle Taurus–Littrow.' },
-      { time: '11–14 DIC 1972', title: 'Exploración lunar', detail: 'Cernan y Schmitt realizan tres caminatas científicas.' },
-      { time: '19 DIC 1972', title: 'Fin de la misión', detail: 'La tripulación ameriza en el océano Pacífico.' },
+      { time: '7 DIC 1972', title: 'Despegue', detail: 'Apollo 17 despega en una misión nocturna.', image: timelineIllustrations.launch },
+      { time: '11 DIC 1972', title: 'Alunizaje', detail: 'Challenger aterriza en el valle Taurus–Littrow.', image: timelineIllustrations.landing },
+      { time: '11–14 DIC 1972', title: 'Exploración lunar', detail: 'Cernan y Schmitt realizan tres caminatas científicas.', image: timelineIllustrations.exploration },
+      { time: '19 DIC 1972', title: 'Fin de la misión', detail: 'La tripulación ameriza en el océano Pacífico.', image: timelineIllustrations.return },
     ],
   },
 ]
