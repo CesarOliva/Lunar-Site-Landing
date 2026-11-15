@@ -4,6 +4,27 @@ import '../../estilos/misiones/MissionAssessment.css'
 
 const utcValue = (value) => `${value.length === 16 ? `${value}:00` : value}Z`
 
+async function readApiResponse(response) {
+  const body = await response.text()
+  if (!body.trim()) {
+    throw new Error(response.ok
+      ? 'El servicio lunar respondi\u00f3 sin datos. Comprueba que lunar_api.py siga activo e int\u00e9ntalo de nuevo.'
+      : `El servicio lunar no devolvi\u00f3 detalles (HTTP ${response.status}). Comprueba que lunar_api.py siga activo.`)
+  }
+
+  let result
+  try {
+    result = JSON.parse(body)
+  } catch {
+    throw new Error(`El servicio lunar devolvi\u00f3 una respuesta no v\u00e1lida (HTTP ${response.status}). Comprueba que lunar_api.py siga activo.`)
+  }
+
+  if (!response.ok) {
+    throw new Error(result.error ?? `Error de consulta (${response.status}).`)
+  }
+  return result
+}
+
 function Angle({ label, body }) {
   const visible = body.terrain_visibility === 'visible'
   const blocked = body.terrain_visibility === 'blocked'
@@ -45,8 +66,7 @@ function MissionAssessment({ mission, onSceneChange }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ latitude_deg: lat, longitude_deg: lon, time_utc: time }),
       })
-      const result = await response.json()
-      if (!response.ok) throw new Error(result.error ?? `Error de consulta (${response.status}).`)
+      const result = await readApiResponse(response)
       setScene(result)
       onSceneChange?.(result)
       setLatitude(String(result.site.latitude_deg))
@@ -74,8 +94,7 @@ function MissionAssessment({ mission, onSceneChange }) {
           time_utc: currentScene.time_utc,
         }),
       })
-      const result = await response.json()
-      if (!response.ok) throw new Error(result.error ?? `Error de búsqueda (${response.status}).`)
+      const result = await readApiResponse(response)
       setAlternatives(result)
     } catch (searchError) {
       setError(searchError instanceof Error ? searchError.message : 'No se pudieron buscar alternativas.')
