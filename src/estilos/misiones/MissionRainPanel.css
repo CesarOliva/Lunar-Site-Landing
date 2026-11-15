@@ -1,17 +1,19 @@
-/* Panel izquierdo de la línea de tiempo: dos columnas estilo lluvia de Matrix */
+/* Letras estilo lluvia de Matrix integradas al fondo de la línea de tiempo.
+   Ocupan todo el alto de la pantalla, sin caja, borde ni fondo propio. */
 
 .rain-panel {
   --rain-head: #eafff2;  /* letra líder de cada gota */
   --rain-size: 24;       /* tamaño de letra en px (sin unidad) */
   --rain-speed: 48;      /* velocidad de caída en px por segundo */
-  position: relative;
-  flex: 0 0 clamp(190px, 17vw, 250px);
-  min-height: 320px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--rain-left, 5.3%);   /* se define en TimelineScreen.css */
+  width: var(--rain-width, 250px);
+  z-index: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  overflow: hidden;
-  border: 1px solid var(--dark-forest);
-  background: linear-gradient(180deg, rgba(8, 13, 11, .78), rgba(16, 35, 26, .42));
+  pointer-events: none;
 }
 
 /* Texto solo para lectores de pantalla */
@@ -27,15 +29,15 @@
   border: 0;
 }
 
-/* Cada columna recorta lo que sale y lo desvanece arriba y abajo */
+/* Cada columna recorta lo que sale y lo desvanece en los bordes de la pantalla */
 .rain-column {
   position: relative;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
-  mask-image: linear-gradient(180deg, transparent 0%, #000 16%, #000 84%, transparent 100%);
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 20%, #000 82%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 20%, #000 82%, transparent 100%);
 }
 
-/* Pista en movimiento: va absoluta para no afectar la altura del panel */
+/* Pista en movimiento: va absoluta para no afectar el layout */
 .rain-track {
   position: absolute;
   top: 0;
@@ -107,11 +109,11 @@
 }
 
 @media (max-width: 800px) {
-  .rain-panel { flex-basis: 150px; --rain-size: 20; }
+  .rain-panel { --rain-size: 20; }
 }
 
 @media (max-width: 560px) {
-  .rain-panel { flex-basis: 96px; --rain-size: 16; }
+  .rain-panel { --rain-size: 16; }
 }
 
 /* Sin animación si la persona prefiere menos movimiento */

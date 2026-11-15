@@ -7,6 +7,10 @@ function TimelineScreen({ mission, onBack, onHome }) {
   return (
     <motion.section className="timeline-screen" initial={{ opacity: 0, x: 25 }} animate={{ opacity: 1, x: 0 }}>
       <div className="timeline-moon" />
+
+      {/* Letras de fondo: ocupan toda la pantalla, detrás de todo el contenido */}
+      <MissionRainPanel mission={mission} />
+
       <div className="timeline-topline">
         <button className="icon-button" onClick={onBack} aria-label="Regresar"><ArrowLeft size={18} /></button>
         <span></span>
@@ -14,8 +18,6 @@ function TimelineScreen({ mission, onBack, onHome }) {
       </div>
 
       <div className="timeline-layout">
-        <MissionRainPanel mission={mission} />
-
         <div className="timeline-content">
           <div className="timeline-track">
             {mission.timeline.map((event, index) => (
