@@ -20,6 +20,7 @@ import {
 import Lighting from './Lighting'
 
 const MOON_MODEL = '/modelos/Moon_NASA_LRO_8k_Topo_Small.glb'
+const SATURN_V_MODEL = '/modelos/Saturn%20V.glb'
 
 const MOON_RADIUS = 1.1
 const INTRO_CAMERA_DISTANCE = 7.5
@@ -27,6 +28,10 @@ const HOME_CAMERA_DISTANCE = 2.8
 const FOCUSED_CAMERA_DISTANCE = 2
 const MIN_MISSION_ROTATION_DURATION = 1.2
 const MISSION_ROTATION_RADIANS_PER_SECOND = 1.6
+const ROCKET_START_Z = 4.2
+const ROCKET_END_Z = 2.2
+const ROCKET_FLIGHT_DURATION = 1.05
+const MARKER_BOOT_BLINK_DURATION = 1000
 
 // Convierte latitud y longitud lunar en una posición 3D.
 function getMoonPosition(latitude, longitude, radius = MOON_RADIUS) {
@@ -64,6 +69,78 @@ function MoonModel() {
   return <primitive object={moon} />
 }
 
+function SaturnRocket({ phase }) {
+  const { scene } = useGLTF(SATURN_V_MODEL)
+  const { camera, size } = useThree()
+  const motionGroup = useRef()
+  const rollGroup = useRef()
+  const elapsed = useRef(0)
+  const flightElapsed = useRef(0)
+  const cameraDistance = INTRO_CAMERA_DISTANCE - ROCKET_START_Z
+  const viewWidth = 2
+    * cameraDistance
+    * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))
+    * (size.width / Math.max(size.height, 1))
+  const rocketLength = Math.min(2, Math.max(0.85, viewWidth * 0.42))
+  const startX = -Math.min(viewWidth * 0.2, rocketLength * 0.52)
+  const endX = viewWidth / 2 + rocketLength / 2 + 0.25
+  const rocket = useMemo(() => {
+    const clone = scene.clone(true)
+    const bounds = new THREE.Box3().setFromObject(clone)
+    const center = bounds.getCenter(new THREE.Vector3())
+    const dimensions = bounds.getSize(new THREE.Vector3())
+
+    if (dimensions.y > 0) {
+      const scale = rocketLength / dimensions.y
+      clone.scale.setScalar(scale)
+      clone.position.copy(center).multiplyScalar(-scale)
+    }
+
+    return clone
+  }, [rocketLength, scene])
+
+  useFrame((_, delta) => {
+    if (!motionGroup.current || !rollGroup.current) return
+
+    elapsed.current += delta
+    rollGroup.current.rotation.y = elapsed.current * 0.07
+
+    if (phase === 'launch') {
+      flightElapsed.current = Math.min(
+        flightElapsed.current + delta,
+        ROCKET_FLIGHT_DURATION
+      )
+      const progress = flightElapsed.current / ROCKET_FLIGHT_DURATION
+      const easedProgress = progress * progress * (3 - 2 * progress)
+      const arc = Math.sin(progress * Math.PI) * 0.28
+
+      motionGroup.current.position.set(
+        THREE.MathUtils.lerp(startX, endX, easedProgress),
+        arc + easedProgress * 0.4,
+        THREE.MathUtils.lerp(ROCKET_START_Z, ROCKET_END_Z, easedProgress)
+      )
+      return
+    }
+
+    flightElapsed.current = 0
+    motionGroup.current.position.set(
+      startX,
+      Math.sin(elapsed.current * 0.65) * 0.035,
+      ROCKET_START_Z + Math.sin(elapsed.current * 0.48) * 0.012
+    )
+  })
+
+  return (
+    <group ref={motionGroup}>
+      <group rotation={[0, 0, -Math.PI / 2]}>
+        <group ref={rollGroup}>
+          <primitive object={rocket} />
+        </group>
+      </group>
+    </group>
+  )
+}
+
 // Marcador individual de misión.
 function MissionMarker({
   mission,
@@ -71,6 +148,9 @@ function MissionMarker({
   selected,
   highlighted,
   moonGroup,
+  bootBlinking,
+  ambientBlinking,
+  index,
 }) {
   const position = useMemo(
     () => getMoonPosition(
@@ -85,6 +165,10 @@ function MissionMarker({
   const label = useRef()
   const markerMesh = useRef()
   const glowMesh = useRef()
+  const markerMaterial = useRef()
+  const glowMaterial = useRef()
+  const bootElapsed = useRef(0)
+  const ambientElapsed = useRef(0)
   const [pointerHovered, setPointerHovered] = useState(false)
   const hovered = pointerHovered || highlighted
   const cameraLocalPosition = useMemo(() => new THREE.Vector3(), [])
@@ -94,24 +178,51 @@ function MissionMarker({
   )
 
   useFrame((_, delta) => {
+    let lightLevel = 1
+
+    if (!selected && !hovered && bootBlinking) {
+      bootElapsed.current += delta
+      const rapidPulse = Math.sin(
+        bootElapsed.current * (34 + index * 2.5) + index * 4.1
+      )
+      const slowPulse = Math.sin(bootElapsed.current * 13.7 + index * 2.3)
+      lightLevel = rapidPulse + slowPulse * 0.25 > 0.35 ? 1 : 0.08
+    } else if (!selected && !hovered && ambientBlinking) {
+      ambientElapsed.current += delta
+      const pulse = Math.sin(
+        ambientElapsed.current * 34 + index * 3.7
+      )
+      lightLevel = pulse > 0.1 ? 1 : 0.08
+    } else {
+      ambientElapsed.current = 0
+    }
+
     if (markerMesh.current) {
       const scale = THREE.MathUtils.damp(
         markerMesh.current.scale.x,
-        hovered ? 1.35 : 1,
+        (hovered ? 1.35 : 1) * (0.55 + lightLevel * 0.45),
         12,
         delta
       )
       markerMesh.current.scale.setScalar(scale)
     }
 
+    if (markerMaterial.current) {
+      markerMaterial.current.opacity = selected || hovered ? 1 : lightLevel
+    }
+
     if (glowMesh.current) {
       const scale = THREE.MathUtils.damp(
         glowMesh.current.scale.x,
-        hovered ? 2.3 : 1.8,
+        (hovered ? 2.3 : 1.8) * (0.55 + lightLevel * 0.45),
         12,
         delta
       )
       glowMesh.current.scale.setScalar(scale)
+    }
+
+    if (glowMaterial.current) {
+      glowMaterial.current.opacity = (hovered ? 0.28 : 0.15) * lightLevel
     }
 
     if (!label.current || !moonGroup.current) return
@@ -135,8 +246,11 @@ function MissionMarker({
       >
         <sphereGeometry args={[0.022, 16, 16]} />
         <meshBasicMaterial
+          ref={markerMaterial}
           color={selected || hovered ? '#FFFFFF' : '#39FF88'}
+          transparent
           depthTest={true}
+          depthWrite={false}
         />
       </mesh>
 
@@ -158,6 +272,7 @@ function MissionMarker({
       >
         <sphereGeometry args={[0.022, 16, 16]} />
         <meshBasicMaterial
+          ref={glowMaterial}
           color={hovered ? '#FFFFFF' : '#39FF88'}
           transparent
           opacity={hovered ? 0.28 : 0.15}
@@ -195,6 +310,10 @@ function MoonScene({
   dragging,
 }) {
   const { camera, size } = useThree()
+  const [bootBlinking, setBootBlinking] = useState(false)
+  const [ambientBlinkingMissions, setAmbientBlinkingMissions] = useState(
+    () => new Set()
+  )
   const moonScale = useMemo(() => {
     if (size.width <= 560) return 0.55
     if (size.width <= 800) return 0.68
@@ -217,6 +336,61 @@ function MoonScene({
   const missionRotationElapsed = useRef(0)
   const missionRotationDuration = useRef(MIN_MISSION_ROTATION_DURATION)
   const missionRotationAnimating = useRef(false)
+
+  useEffect(() => {
+    if (phase !== 'home' || missions.length === 0) {
+      setBootBlinking(false)
+      return undefined
+    }
+
+    setBootBlinking(true)
+    const timer = window.setTimeout(
+      () => setBootBlinking(false),
+      MARKER_BOOT_BLINK_DURATION
+    )
+
+    return () => window.clearTimeout(timer)
+  }, [missions, phase])
+
+  useEffect(() => {
+    setAmbientBlinkingMissions(new Set())
+    if (phase !== 'home' || missions.length === 0) return undefined
+
+    let nextBlinkTimer
+    let finishBlinkTimer
+    const scheduleBlink = () => {
+      nextBlinkTimer = window.setTimeout(() => {
+        const candidates = missions.filter(
+          (mission) => mission.id !== selectedMission?.id
+        )
+        const count = Math.min(
+          candidates.length,
+          Math.random() < 0.3 ? 2 : 1
+        )
+
+        for (let index = candidates.length - 1; index > 0; index -= 1) {
+          const swapIndex = Math.floor(Math.random() * (index + 1))
+          const candidate = candidates[index]
+          candidates[index] = candidates[swapIndex]
+          candidates[swapIndex] = candidate
+        }
+
+        setAmbientBlinkingMissions(
+          new Set(candidates.slice(0, count).map((mission) => mission.id))
+        )
+        finishBlinkTimer = window.setTimeout(() => {
+          setAmbientBlinkingMissions(new Set())
+          scheduleBlink()
+        }, 500)
+      }, 2800 + Math.random() * 4000)
+    }
+
+    scheduleBlink()
+    return () => {
+      window.clearTimeout(nextBlinkTimer)
+      window.clearTimeout(finishBlinkTimer)
+    }
+  }, [missions, phase, selectedMission?.id])
 
   // Prepara un acercamiento cinematográfico.
   const focusMission = useCallback((mission) => {
@@ -270,7 +444,7 @@ function MoonScene({
     missionRotationAnimating.current = false
     lookTarget.current.set(0, 0, 0)
 
-    if (phase === 'intro') {
+    if (phase === 'intro' || phase === 'launch') {
       cameraTarget.current.set(0, 0, INTRO_CAMERA_DISTANCE)
       cameraAnimating.current = false
       return
@@ -333,13 +507,19 @@ function MoonScene({
     <>
       <Lighting />
 
+      {(phase === 'intro' || phase === 'launch') && (
+        <Suspense fallback={null}>
+          <SaturnRocket phase={phase} />
+        </Suspense>
+      )}
+
       <group
         ref={moonGroup}
         scale={moonScale}
       >
         <MoonModel />
 
-        {missions.map((mission) => (
+        {missions.map((mission, index) => (
           <MissionMarker
             key={mission.id}
             mission={mission}
@@ -347,6 +527,9 @@ function MoonScene({
             highlighted={hoveredMission?.id === mission.id}
             onSelect={onShowMission}
             moonGroup={moonGroup}
+            bootBlinking={bootBlinking}
+            ambientBlinking={ambientBlinkingMissions.has(mission.id)}
+            index={index}
           />
         ))}
       </group>
@@ -425,7 +608,9 @@ export default function Moon({
           position: [
             0,
             0,
-            phase === 'intro' ? INTRO_CAMERA_DISTANCE : HOME_CAMERA_DISTANCE,
+            phase === 'intro' || phase === 'launch'
+              ? INTRO_CAMERA_DISTANCE
+              : HOME_CAMERA_DISTANCE,
           ],
           fov: 38,
           near: 0.1,
@@ -455,3 +640,4 @@ export default function Moon({
 }
 
 useGLTF.preload(MOON_MODEL)
+useGLTF.preload(SATURN_V_MODEL)

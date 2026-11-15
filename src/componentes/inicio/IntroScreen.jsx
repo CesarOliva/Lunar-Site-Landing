@@ -29,6 +29,7 @@ function IntroScreen({ onStart }) {
     <motion.section
       className="intro-screen"
       aria-label="Presiona cualquier tecla o desplázate para acercarte a la Luna"
+      onClick={onStart}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

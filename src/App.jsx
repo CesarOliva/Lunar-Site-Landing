@@ -13,6 +13,7 @@ import PanelActions from './componentes/compartidos/PanelActions.jsx'
 import StarField from './componentes/compartidos/StarField.jsx'
 import './estilos/compartidos/App.css'
 
+const ROCKET_LAUNCH_DURATION = 1150
 const TRANSITION_DURATION = 2200
 
 function App() {
@@ -27,8 +28,11 @@ function App() {
     if (transitionStarted.current) return
 
     transitionStarted.current = true
-    setScreen('transition')
-    window.setTimeout(() => setScreen('home'), TRANSITION_DURATION)
+    setScreen('launch')
+    window.setTimeout(() => {
+      setScreen('transition')
+      window.setTimeout(() => setScreen('home'), TRANSITION_DURATION)
+    }, ROCKET_LAUNCH_DURATION)
   }
 
   const showMission = (mission) => {
@@ -86,7 +90,7 @@ function App() {
           <IntroScreen key="intro" onStart={startExperience} />
         )}
 
-        {screen === 'transition' && (
+        {(screen === 'launch' || screen === 'transition') && (
           <TransitionScreen key="transition" />
         )}
 
