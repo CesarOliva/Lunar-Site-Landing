@@ -1,13 +1,17 @@
 import { Check, MapPin } from 'lucide-react'
 import visibilitySite from '../../../Data_Structure/data/visibility-site.json'
 import { formatAngle } from './PlanningVisibility'
+import missionPhoto1 from '../../foto1.jpeg'
+import missionPhoto2 from '../../foto2.jpeg'
+import missionPhoto3 from '../../foto3.jpeg'
+import missionPhoto4 from '../../foto4.jpeg'
 
 // --- Datos del formulario ---
 export const missionTypes = [
   {
     id: 'robotic',
     letter: 'A',
-    photo: 'src/foto1.jpeg',
+    photo: missionPhoto1,
     label: 'Misión robótica no tripulada',
     description: 'Un aterrizador o rover opera de forma autónoma en el polo sur, sin tripulación a bordo. Navega, toma mediciones y envía datos a la Tierra de forma continua. Es la opción más económica y de menor riesgo para explorar zonas de sombra permanente y estudiar el hielo o el terreno.',
     objectives: ['Estudio de hielo', 'Mapeo del terreno', 'Experimentos científicos'],
@@ -19,7 +23,7 @@ export const missionTypes = [
   {
     id: 'crewed-short',
     letter: 'B',
-    photo: 'src/foto2.jpeg',
+    photo: missionPhoto2,
     label: 'Misión tripulada de corta duración',
     description: 'Una tripulación aterriza, explora la superficie durante una estancia breve y regresa. Incluye un módulo habitable, trajes para actividad extravehicular y soporte vital para pocos días. Permite hacer trabajo científico directo con menor exposición y menor consumo de recursos.',
     objectives: ['Estudio de hielo', 'Mapeo del terreno', 'Recolección de muestras'],
@@ -31,7 +35,7 @@ export const missionTypes = [
   {
     id: 'crewed-long',
     letter: 'C',
-    photo: 'src/foto3.jpeg',
+    photo: missionPhoto3,
     label: 'Misión tripulada de larga duración',
     description: 'Una tripulación mantiene una presencia prolongada en la superficie, con un hábitat estable y rutinas de trabajo. Requiere suministros y energía redundantes, protección contra la radiación y, si es posible, aprovechar recursos lunares. Es la misión más compleja y la que más prepara el camino para una base permanente.',
     objectives: ['Estudio de hielo', 'Mapeo del terreno', 'Uso de recursos lunares'],
@@ -43,7 +47,7 @@ export const missionTypes = [
   {
     id: 'sample-return',
     letter: 'D',
-    photo: 'src/foto4.jpeg',
+    photo: missionPhoto4,
     label: 'Misión robótica con retorno de muestras',
     description: 'Un sistema robótico recolecta material lunar, como hielo, regolito o roca, y lo almacena. Después un vehículo de ascenso lo saca de la Luna y una cápsula lo devuelve a la Tierra. Permite analizar las muestras en laboratorio sin enviar personas.',
     objectives: ['Muestras de hielo', 'Muestras del regolito', 'Muestras de roca'],
@@ -154,7 +158,7 @@ export function MissionStep({ form, missionProfile, update, selectMissionType })
     update('duration', days.trim() === '' ? '' : formatDays(days))
   }
   return (
-    <section aria-labelledby="planning-title">
+    <section className="mission-step" aria-labelledby="planning-title">
       <h2 id="planning-title">Planeación <em>de viaje</em></h2>
       <label className="planning-label mission-name-field">
         Nombre de la misión
@@ -172,8 +176,8 @@ export function MissionStep({ form, missionProfile, update, selectMissionType })
               onClick={() => selectMissionType(type.id)}
             >
               <span className="mission-type-photo">
-                <span>{type.photo}</span>
-                <img src={`/${type.photo}`} alt="" onError={(event) => { event.currentTarget.style.display = 'none' }} />
+                <span>{type.label}</span>
+                <img src={type.photo} alt={type.label} onError={(event) => { event.currentTarget.style.display = 'none' }} />
               </span>
               <span className="mission-type-letter">{type.letter}</span>
               <span className="mission-type-copy">
@@ -438,11 +442,14 @@ export function ForecastStep({ forecast }) {
 
 export function SummaryStep({ form, missionProfile, isModeledSite, selectedSample, visibilityError, demoForecast, downloadPlan }) {
   return (
-    <section aria-labelledby="planning-title">
+    <section className="summary-step" aria-labelledby="planning-title">
       <h2 id="planning-title">Resumen de <em>misión</em></h2>
       <p className="planning-intro">Revisa la configuración y descarga el plan.</p>
       <div className="summary-card">
-        <div className="summary-heading"><div><span>PLAN DE MISIÓN</span><strong>{form.name || 'Misión sin nombre'}</strong></div></div>
+        <div className="summary-hero">
+          <img className="summary-mission-photo" src={missionProfile.photo} alt={missionProfile.label} />
+          <div className="summary-heading"><div><span>PLAN DE MISIÓN</span><strong>{form.name || 'Misión sin nombre'}</strong></div></div>
+        </div>
         <dl className="summary-list">
           <div><dt>Perfil</dt><dd>{missionProfile.label}</dd></div>
           <div><dt>Objetivo</dt><dd>{form.objective} · {form.duration}</dd></div>

@@ -125,6 +125,7 @@
 }
 
 .menu-option {
+  position: relative;
   width: 100%;
   display: flex;
   justify-content: flex-start;
@@ -136,6 +137,26 @@
   border: 0;
   cursor: pointer;
   transition: color 0.25s;
+}
+
+.menu-option::before {
+  position: absolute;
+  top: 50%;
+  left: -22px;
+  color: var(--matrix-green);
+  content: '>';
+  font-family: var(--mono);
+  font-size: 15px;
+  opacity: 0;
+  transform: translate(-4px, -50%);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  pointer-events: none;
+}
+
+.menu-option:hover::before,
+.menu-option:focus-visible::before {
+  opacity: 1;
+  transform: translate(0, -50%);
 }
 
 .menu-option:hover strong,

@@ -86,6 +86,21 @@
 }
 
 .planning-content h2 em { color: var(--terminal-green); font-style: normal; }
+.planning-content h2::before {
+  margin-right: .5em;
+  color: var(--terminal-green);
+  content: '>';
+  font-size: .78em;
+  font-weight: 600;
+  letter-spacing: 0;
+  vertical-align: .08em;
+}
+.planning-content h2 em {
+  text-decoration: underline;
+  text-decoration-color: var(--terminal-green);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
+}
 .planning-intro,
 .planning-hint {
   max-width: 760px;
@@ -367,27 +382,61 @@
 .status-negative svg,
 .status-negative b { color: #ffad79; }
 
-.summary-card { max-width: 650px; padding: 17px; }
+.summary-card { max-width: 100%; padding: 22px; }
+.summary-hero { display: grid; grid-template-columns: minmax(220px, .8fr) minmax(0, 1fr); align-items: center; gap: 22px; }
+.summary-mission-photo { display: block; width: 100%; height: 220px; object-fit: cover; border: 1px solid rgba(255, 255, 255, .18); }
 .summary-heading { display: flex; align-items: center; gap: 11px; padding-bottom: 14px; border-bottom: 1px solid rgba(71, 122, 92, .25); color: var(--matrix-green); }
 .summary-heading div { display: grid; gap: 5px; }
-.summary-heading span { color: var(--muted-green); font-size: 8px; letter-spacing: .08em; }
-.summary-heading strong { color: var(--neon-green); font-size: 13px; font-weight: 500; }
-.summary-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px 22px; margin: 15px 0; }
+.summary-heading span { color: var(--muted-green); font-size: 12px; letter-spacing: .08em; }
+.summary-heading strong { color: var(--neon-green); font-size: 22px; font-weight: 500; }
+.summary-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; margin: 20px 0; }
 .summary-list div { min-width: 0; }
-.summary-list dt { margin-bottom: 5px; color: var(--muted-green); font-size: 8px; }
-.summary-list dd { margin: 0; overflow-wrap: anywhere; color: #bdc9c0; font-size: 9px; line-height: 1.5; }
+.summary-list dt { margin-bottom: 5px; color: var(--muted-green); font-size: 13px; }
+.summary-list dd { margin: 0; overflow-wrap: anywhere; color: #bdc9c0; font-size: 15px; line-height: 1.6; }
 .summary-visibility { display: flex; flex-wrap: wrap; gap: 10px 20px; padding-top: 13px; border-top: 1px solid rgba(71, 122, 92, .25); }
-.summary-visibility span { display: inline-flex; align-items: center; gap: 5px; color: #a7b8ac; font-size: 9px; }
+.summary-visibility span { display: inline-flex; align-items: center; gap: 5px; color: #a7b8ac; font-size: 14px; }
 .summary-visibility span:first-child svg,
 .summary-visibility span:first-child b { color: #ffd166; }
 .summary-visibility span:last-child svg,
 .summary-visibility span:last-child b { color: #74c8ff; }
 .summary-visibility b { font-weight: 400; }
-.summary-data-note { margin: 12px 0 0; color: var(--muted-green); font-size: 11px; line-height: 1.6; }
+.summary-data-note { margin: 12px 0 0; color: var(--muted-green); font-size: 14px; line-height: 1.6; }
 .download-plan-button { min-height: 42px; display: inline-flex; align-items: center; gap: 11px; margin-top: 14px; padding: 0 14px; border: 1px solid var(--matrix-green); background: var(--matrix-green); color: var(--void-black); cursor: pointer; font: 11px var(--planning-font); }
 .download-plan-button:hover { background: var(--neon-green); }
 .download-plan-button svg:last-child { margin-left: 8px; }
-.download-confirmation { color: var(--matrix-green); font-size: 12px; }
+.download-confirmation { color: var(--matrix-green); font-size: 14px; }
+
+.summary-step > .planning-intro,
+.summary-step .summary-mission-photo,
+.summary-step .summary-heading,
+.summary-step .summary-list > div,
+.summary-step .summary-visibility,
+.summary-step .summary-data-note,
+.summary-step > .download-plan-button {
+  animation: summary-reveal .55s ease both;
+}
+.summary-step > .planning-intro { animation-delay: .06s; }
+.summary-step .summary-mission-photo { animation-delay: .12s; }
+.summary-step .summary-heading { animation-delay: .2s; }
+.summary-step .summary-list > div:nth-child(1) { animation-delay: .25s; }
+.summary-step .summary-list > div:nth-child(2) { animation-delay: .3s; }
+.summary-step .summary-list > div:nth-child(3) { animation-delay: .35s; }
+.summary-step .summary-list > div:nth-child(4) { animation-delay: .4s; }
+.summary-step .summary-list > div:nth-child(5) { animation-delay: .45s; }
+.summary-step .summary-list > div:nth-child(6) { animation-delay: .5s; }
+.summary-step .summary-list > div:nth-child(7) { animation-delay: .55s; }
+.summary-step .summary-list > div:nth-child(8) { animation-delay: .6s; }
+.summary-step .summary-list > div:nth-child(9) { animation-delay: .65s; }
+.summary-step .summary-list > div:nth-child(10) { animation-delay: .7s; }
+.summary-step .summary-list > div:nth-child(11) { animation-delay: .75s; }
+.summary-step .summary-visibility { animation-delay: .8s; }
+.summary-step .summary-data-note { animation-delay: .85s; }
+.summary-step > .download-plan-button { animation-delay: .9s; }
+
+@keyframes summary-reveal {
+  from { opacity: 0; filter: blur(5px); transform: translateY(12px); }
+  to { opacity: 1; filter: blur(0); transform: translateY(0); }
+}
 
 .planning-navigation { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 19px; padding-top: 13px; border-top: 1px solid rgba(71, 122, 92, .2); }
 .planning-back-button,
@@ -526,6 +575,35 @@
 @media (max-width: 640px) {
   .mission-type-option { grid-template-columns: 26px minmax(0, 1fr) 18px; }
   .mission-type-photo { grid-column: 1 / -1; width: 100%; height: 180px; }
+  .summary-hero { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .summary-mission-photo { height: 190px; }
+  .summary-card { padding: 16px; }
+}
+
+.mission-step .mission-name-field {
+  font-size: 14px;
+  line-height: 1.5;
+}
+.mission-step .mission-name-field input {
+  min-height: 46px;
+  font-size: 16px;
+}
+.mission-step .planning-fieldset legend {
+  font-size: 14px;
+}
+.mission-step .planning-choice {
+  min-height: 40px;
+  padding: 6px 12px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.mission-step .duration-input {
+  min-height: 46px;
+  font-size: 18px;
+}
+.mission-step .planning-hint,
+.mission-step .planning-warning {
+  font-size: 13px;
 }
 
 .planning-wizard.is-glitching .planning-content {
@@ -619,6 +697,16 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .summary-step > .planning-intro,
+  .summary-step .summary-mission-photo,
+  .summary-step .summary-heading,
+  .summary-step .summary-list > div,
+  .summary-step .summary-visibility,
+  .summary-step .summary-data-note,
+  .summary-step > .download-plan-button {
+    animation: none;
+  }
+
   .planning-wizard.is-glitching .planning-content,
   .planning-wizard.is-glitching .planning-content::after,
   .planning-wizard.is-glitching .planning-stepper,

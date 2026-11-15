@@ -67,7 +67,7 @@ function PlanningPanel() {
   useEffect(() => {
     if (!glitchActive) return undefined
 
-    const timer = window.setTimeout(() => setGlitchActive(false), 650)
+    const timer = window.setTimeout(() => setGlitchActive(false), 0)
     return () => window.clearTimeout(timer)
   }, [glitchActive])
 
@@ -84,7 +84,7 @@ function PlanningPanel() {
     const interval = window.setInterval(() => {
       setAmbientGlitch(true)
       glitchTimer = window.setTimeout(() => setAmbientGlitch(false), 500)
-    }, 6000)
+    }, 2500)
 
     return () => {
       window.clearInterval(interval)
@@ -187,7 +187,7 @@ function PlanningPanel() {
       return
     }
     setValidationMessage('')
-    triggerGlitch()
+    if (currentStep.id !== 'analysis') triggerGlitch()
     setStep((current) => Math.min(current + 1, steps.length - 1))
   }
 
@@ -286,7 +286,7 @@ function PlanningPanel() {
             aria-label={`Paso ${index + 1}: ${label}`}
             aria-current={index === step ? 'step' : undefined}
             onClick={() => {
-              if (index !== step) triggerGlitch()
+              if (index !== step && steps[index].id !== 'summary') triggerGlitch()
               setStep(index)
               setValidationMessage('')
             }}
