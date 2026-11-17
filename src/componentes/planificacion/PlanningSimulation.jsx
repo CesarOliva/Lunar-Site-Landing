@@ -25,9 +25,9 @@ const MOON_RADIUS = 1.2
 const TRAIL_POINTS = 300
 
 const transitProfiles = {
-  'Química': { turns: 0, seconds: 6, note: 'Un impulso corto y potente lleva la nave directo a la Luna.' },
-  'Eléctrica': { turns: 4, seconds: 12, note: 'Empuje suave y continuo: la nave espira alrededor de la Tierra antes de partir.' },
-  'Híbrida': { turns: 2, seconds: 9, note: 'Un primer impulso fuerte y una fase de empuje suave reducen el combustible.' },
+  'Chemical': { turns: 0, seconds: 6, note: 'A short, powerful burn takes the ship straight to the Moon.' },
+  'Electric': { turns: 4, seconds: 12, note: 'Gentle, continuous thrust: the ship spirals around the Earth before departing.' },
+  'Hybrid': { turns: 2, seconds: 9, note: 'A strong first burn followed by a gentle-thrust phase reduces the fuel.' },
 }
 
 const ease = (value) => value * value * (3 - 2 * value)
@@ -45,7 +45,7 @@ function buildRoute(propulsion, latitude, longitude) {
     EARTH.clone().add(new THREE.Vector3(2.4, 1.2, 0)),
     leo,
   )
-  const profile = transitProfiles[propulsion] ?? transitProfiles['Química']
+  const profile = transitProfiles[propulsion] ?? transitProfiles['Chemical']
   const points = [leo]
   if (profile.turns > 0) {
     points.length = 0
@@ -64,13 +64,13 @@ function buildRoute(propulsion, latitude, longitude) {
 }
 
 function buildPhases(propulsion, hasSample) {
-  const profile = transitProfiles[propulsion] ?? transitProfiles['Química']
+  const profile = transitProfiles[propulsion] ?? transitProfiles['Chemical']
   const list = [
-    { id: 'launch', label: 'Lanzamiento', seconds: 3 },
-    { id: 'transit', label: 'Tránsito translunar', seconds: profile.seconds },
-    { id: 'descent', label: 'Descenso', seconds: 4 },
-    { id: 'ops', label: 'Operaciones', seconds: 4 },
-    ...(hasSample ? [{ id: 'return', label: 'Retorno de muestras', seconds: 7 }] : []),
+    { id: 'launch', label: 'Launch', seconds: 3 },
+    { id: 'transit', label: 'Translunar transit', seconds: profile.seconds },
+    { id: 'descent', label: 'Descent', seconds: 4 },
+    { id: 'ops', label: 'Operations', seconds: 4 },
+    ...(hasSample ? [{ id: 'return', label: 'Sample return', seconds: 7 }] : []),
   ]
   let time = 0
   return list.map((phase) => {
@@ -97,12 +97,12 @@ function poseAt(route, phase, u) {
 }
 
 function captionFor(id, form, latitude, longitude, day) {
-  const profile = transitProfiles[form.propulsion] ?? transitProfiles['Química']
-  if (id === 'launch') return `${form.vehicle || 'El lanzador'} despega desde ${form.launchSite}. Ventana de referencia: ${form.launchWindow}.`
-  if (id === 'transit') return `Propulsión ${form.propulsion.toLowerCase()}. ${profile.note}`
-  if (id === 'descent') return `Descenso hacia ${latitude.toFixed(4)}°, ${longitude.toFixed(2)}° E, con un área de aterrizaje de ${form.landingArea.replace('Radio de ', 'radio ')} y pendiente máxima de ${form.maxSlope}.`
-  if (id === 'ops') return `${form.objective}. Día ${day} de ${form.durationDays} (${form.payload.toLowerCase()}).`
-  return `${form.sampleReturn} lleva ${form.sampleTarget.toLowerCase()} de vuelta a la Tierra.`
+  const profile = transitProfiles[form.propulsion] ?? transitProfiles['Chemical']
+  if (id === 'launch') return `${form.vehicle || 'The launcher'} lifts off from ${form.launchSite}. Reference window: ${form.launchWindow}.`
+  if (id === 'transit') return `${form.propulsion} propulsion. ${profile.note}`
+  if (id === 'descent') return `Descent toward ${latitude.toFixed(4)}°, ${longitude.toFixed(2)}° E, with a landing area of ${form.landingArea.replace('Radius ', 'radius ')} and a maximum slope of ${form.maxSlope}.`
+  if (id === 'ops') return `${form.objective}. Day ${day} of ${form.durationDays} (${form.payload.toLowerCase()}).`
+  return `${form.sampleReturn} carries ${form.sampleTarget.toLowerCase()} back to Earth.`
 }
 
 function disposeScene(scene) {
@@ -315,17 +315,17 @@ export default function PlanningSimulation({ form, missionProfile, onClose }) {
   }
 
   return (
-    <div className="sim-card" role="region" aria-label="Simulación de la misión">
+    <div className="sim-card" role="region" aria-label="Mission simulation">
       <div className="sim-header">
-        <strong>Simulación: {form.name || 'misión sin nombre'}</strong>
-        <button className="sim-close" type="button" onClick={onClose}><X size={16} /> Cerrar</button>
+        <strong>Simulation: {form.name || 'unnamed mission'}</strong>
+        <button className="sim-close" type="button" onClick={onClose}><X size={16} /> Close</button>
       </div>
       <div className="sim-stage" ref={mountRef} />
       <div className="sim-bar" aria-hidden="true"><i style={{ width: `${progress}%` }} /></div>
       <div className="sim-controls">
         <button className="planning-choice is-selected sim-play" type="button" onClick={toggle}>
           {playing ? <Pause size={14} /> : finished ? <RotateCcw size={14} /> : <Play size={14} />}
-          {playing ? 'Pausar' : finished ? 'Repetir' : 'Continuar'}
+          {playing ? 'Pause' : finished ? 'Replay' : 'Continue'}
         </button>
         <ol className="sim-phases">
           {phases.map((item, index) => (
@@ -341,7 +341,7 @@ export default function PlanningSimulation({ form, missionProfile, onClose }) {
         <strong>{phase.label}</strong>
         <p>{captionFor(phase.id, form, latitude, longitude, day)}</p>
       </div>
-      <p className="planning-note">Simulación ilustrativa: distancias, tiempos y trayectoria no están a escala ni son un cálculo orbital. Arrastra para girar la vista.</p>
+      <p className="planning-note">Illustrative simulation: distances, times and trajectory are not to scale and are not an orbital calculation. Drag to rotate the view.</p>
     </div>
   )
 }

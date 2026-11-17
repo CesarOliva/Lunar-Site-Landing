@@ -324,7 +324,7 @@ function MoonSurface({
 
         apiRef.current = {
           setSkyTimeScale: (value) => starSky?.setTimeScale(value),
-          startLandingDemo: () => landingDemo?.start().catch((error) => console.error('Demostración de aterrizaje:', error)),
+          startLandingDemo: () => landingDemo?.start().catch((error) => console.error('Landing demo:', error)),
           stopLandingDemo: () => landingDemo?.stop(),
           setVerticalExaggeration: (value) => {
             if (!viewer.isDestroyed()) scene.verticalExaggeration = value

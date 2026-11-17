@@ -19,12 +19,12 @@ function MissionPreview({ mission, slide, onSlide, onExplore, onSurface, onScene
           />
         </AnimatePresence>
         <span className="hero-mission-dates">{mission.dates}</span>
-        <div className="hero-indicators" role="group" aria-label="Imágenes de la misión">
+        <div className="hero-indicators" role="group" aria-label="Mission images">
           {Array.from({ length: 3 }, (_, index) => (
             <button
               className={`hero-indicator ${slide === index ? 'is-active' : ''}`}
               key={index}
-              aria-label={`Ver imagen ${index + 1}`}
+              aria-label={`View image ${index + 1}`}
               aria-pressed={slide === index}
               onClick={() => onSlide(index - slide)}
             />
@@ -32,10 +32,10 @@ function MissionPreview({ mission, slide, onSlide, onExplore, onSurface, onScene
         </div>
       </div>
       <div className="preview-details">
-        <h2>{mission.name} - Misión {mission.number}</h2>
+        <h2>{mission.name} - Mission {mission.number}</h2>
 
         <section className="detail-section">
-          <span className="section-label">Tripulación <i /></span>
+          <span className="section-label">Crew <i /></span>
           <div className="crew-list">
             {mission.crew.map((person, index) => (
               <div className="crew-member" key={person.name}>
@@ -46,7 +46,7 @@ function MissionPreview({ mission, slide, onSlide, onExplore, onSurface, onScene
         </section>
 
         <section className="detail-section purpose-section">
-          <span className="section-label">Propósito de la misión <i /></span>
+          <span className="section-label">Mission purpose <i /></span>
           <p>{mission.purpose}</p>
           <p className="mission-description">{mission.description}</p>
         </section>
@@ -54,12 +54,12 @@ function MissionPreview({ mission, slide, onSlide, onExplore, onSurface, onScene
         <MissionAssessment key={mission.id} mission={mission} onSceneChange={onSceneChange} />
 
         <button className="primary-button explore-button" onClick={onExplore}>
-          Explorar misión <ArrowUpRight size={17} />
+          Explore mission <ArrowUpRight size={17} />
         </button>
 
         {onSurface && (
           <button className="primary-button surface-button" onClick={onSurface}>
-            Explorador lunar · primera persona <Footprints size={17} />
+            Lunar explorer · first person <Footprints size={17} />
           </button>
         )}
       </div>

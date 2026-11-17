@@ -97,7 +97,7 @@ function MatrixText({ text, elapsed, seed = 0 }) {
 
 function HomeIntro({ onOpenMissions, onOpenPlanning }) {
   const elapsed = useGlitchClock()
-  const description = 'Selecciona un punto en la Luna o explora el archivo de misiones históricas.'
+  const description = 'Select a point on the Moon or explore the archive of historic missions.'
 
   return (
     <motion.div
@@ -107,17 +107,17 @@ function HomeIntro({ onOpenMissions, onOpenPlanning }) {
       exit={{ opacity: 0, filter: 'blur(4px)' }}
       transition={{ duration: 0.22 }}
     >
-      <h2 aria-label="Un pequeño paso. Un mundo por descubrir.">
+      <h2 aria-label="One small step. A world to discover.">
         <span className="home-intro-line">
-          <MatrixText text="Un pequeño paso." elapsed={elapsed} seed={0} />
+          <MatrixText text="One small step." elapsed={elapsed} seed={0} />
         </span>
         <br />
         <span className="home-intro-line">
           <em>
-            <MatrixText text="Un mundo" elapsed={elapsed} seed={17} />
+            <MatrixText text="A world" elapsed={elapsed} seed={17} />
           </em>
           {' '}
-          <MatrixText text="por descubrir." elapsed={elapsed} seed={31} />
+          <MatrixText text="to discover." elapsed={elapsed} seed={31} />
         </span>
       </h2>
 
@@ -128,8 +128,8 @@ function HomeIntro({ onOpenMissions, onOpenPlanning }) {
       <div className="home-actions">
         <button className="menu-option" onClick={onOpenMissions}>
           <span>
-            <strong aria-label="Misiones históricas">
-              <MatrixText text="Misiones históricas" elapsed={elapsed} seed={71} />
+            <strong aria-label="Historic missions">
+              <MatrixText text="Historic missions" elapsed={elapsed} seed={71} />
             </strong>
           </span>
         </button>
@@ -139,8 +139,8 @@ function HomeIntro({ onOpenMissions, onOpenPlanning }) {
           onClick={onOpenPlanning}
         >
           <span>
-            <strong aria-label="Planeación de viaje">
-              <MatrixText text="Planeación de viaje" elapsed={elapsed} seed={89} />
+            <strong aria-label="Trip planning">
+              <MatrixText text="Trip planning" elapsed={elapsed} seed={89} />
             </strong>
           </span>
         </button>

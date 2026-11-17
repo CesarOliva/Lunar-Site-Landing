@@ -1,7 +1,7 @@
 {
   "catalog_version": 1,
   "coordinate_frame": "Mean Earth/Polar Axis (ME), DE421; planetocentric; norte y este positivos",
-  "time_note": "Las horas históricas se conservan como las publica NSSDCA (UT). Al usarlas con efemérides históricas, el adaptador de datos debe documentar y aplicar la escala temporal requerida por la consulta; este catálogo no convierte UT a una escala de efemérides.",
+  "time_note": "Historical times are kept as published by NSSDCA (UT). When used with historical ephemerides, the data adapter must document and apply the time scale required by the query; this catalog does not convert UT to an ephemeris time scale.",
   "missions": [
     {
       "id": "apollo-11",
@@ -17,7 +17,7 @@
         "time_alternative": {
           "value": "1969-07-20T20:17:41Z",
           "source": "https://www.nasa.gov/wp-content/uploads/static/history/SP-4029/Apollo_11a_Summary.htm",
-          "note": "La cronología de Apollo 11 difiere por un segundo; se conserva la hora NSSDCA como valor principal."
+          "note": "The Apollo 11 timeline differs by one second; the NSSDCA time is kept as the primary value."
         }
       }
     },

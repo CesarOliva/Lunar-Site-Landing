@@ -19,7 +19,7 @@ function createDetailTile(imageBitmap, elevationBitmap, matrix, row, column, rot
   canvas.width = elevationBitmap.width
   canvas.height = elevationBitmap.height
   const context = canvas.getContext('2d', { willReadFrequently: true })
-  if (!context) throw new Error('No se pudo leer la tesela de elevación.')
+  if (!context) throw new Error('The elevation tile could not be read.')
   context.drawImage(elevationBitmap, 0, 0)
   const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data
 
@@ -161,7 +161,7 @@ function MoonScene({
       renderer.outputColorSpace = THREE.SRGBColorSpace
       renderer.setClearColor(0x000000, 0)
       renderer.domElement.className = 'moon-canvas'
-      renderer.domElement.setAttribute('aria-label', 'Modelo 3D de la Luna. Arrastra para rotar y usa la rueda para acercar.')
+      renderer.domElement.setAttribute('aria-label', '3D model of the Moon. Drag to rotate and use the wheel to zoom.')
       host.prepend(renderer.domElement)
 
       controls = new OrbitControls(camera, renderer.domElement)
@@ -185,7 +185,7 @@ function MoonScene({
       scene.add(rimLight)
       scene.add(createStarField())
     } catch (error) {
-      onError(`WebGL no está disponible en este navegador: ${error.message}`)
+      onError(`WebGL is not available in this browser: ${error.message}`)
       return undefined
     }
 
@@ -444,7 +444,7 @@ function MoonScene({
             elevationResult.value.close()
             detailFailed.elevation += 1
             reportStreamedProgress()
-            onError(`No se pudo preparar una tesela de detalle: ${error.message}`)
+            onError(`A detail tile could not be prepared: ${error.message}`)
           }
         }
 
@@ -452,7 +452,7 @@ function MoonScene({
           if (abortController.signal.aborted || !moon) return
           const matrix = elevation.matrix.matrices.find((item) => item.matrixId === '5')
           if (!matrix) {
-            onError('La matriz WMTS de detalle nivel 5 no está disponible para LOLA.')
+            onError('The level-5 detail WMTS matrix is not available for LOLA.')
             return
           }
 

@@ -19,7 +19,7 @@ function loadImageData(src, targetRatio) {
       canvas.height = Math.round(canvas.width / targetRatio)
       const context = canvas.getContext('2d')
       if (!context) {
-        reject(new Error('No se pudo preparar la imagen de la misión.'))
+        reject(new Error('The mission image could not be prepared.'))
         return
       }
 
@@ -45,7 +45,7 @@ function loadImageData(src, targetRatio) {
       )
       resolve(canvas.toDataURL('image/jpeg', 0.88))
     }
-    image.onerror = () => reject(new Error('No se pudo cargar la imagen de la misión.'))
+    image.onerror = () => reject(new Error('The mission image could not be loaded.'))
     image.src = src
   })
 }
@@ -79,35 +79,35 @@ function drawField(document, field, layout, x, y) {
 
 function makeFields({ form, missionProfile, siteName }) {
   const fields = [
-    { label: 'Perfil', value: missionProfile.label },
-    { label: 'Objetivo', value: `${form.objective} · ${form.duration}` },
+    { label: 'Profile', value: missionProfile.label },
+    { label: 'Objective', value: `${form.objective} · ${form.duration}` },
     {
-      label: 'Lanzador y carga',
-      value: `${form.vehicle || 'Sin definir'} · ${form.mass ? `${form.mass} kg` : 'Masa no definida'} · ${form.payload}`,
+      label: 'Launcher and payload',
+      value: `${form.vehicle || 'Not defined'} · ${form.mass ? `${form.mass} kg` : 'Mass not defined'} · ${form.payload}`,
     },
-    { label: 'Lanzamiento', value: `${form.launchSite} · ${form.launchWindow}` },
-    { label: 'Sitio', value: siteName },
-    { label: 'Área y pendiente', value: `${form.landingArea} · ${form.maxSlope}` },
-    { label: 'Altitud', value: `${form.elevation} m sobre el radio lunar medio` },
-    { label: 'Coordenadas', value: `${Number(form.latitude).toFixed(4)}° · ${Number(form.longitude).toFixed(4)}° E` },
-    { label: 'Aterrizaje (UTC)', value: `${form.dateTime.replace('T', ' · ')} UT` },
+    { label: 'Launch', value: `${form.launchSite} · ${form.launchWindow}` },
+    { label: 'Site', value: siteName },
+    { label: 'Area and slope', value: `${form.landingArea} · ${form.maxSlope}` },
+    { label: 'Altitude', value: `${form.elevation} m above the mean lunar radius` },
+    { label: 'Coordinates', value: `${Number(form.latitude).toFixed(4)}° · ${Number(form.longitude).toFixed(4)}° E` },
+    { label: 'Landing (UTC)', value: `${form.dateTime.replace('T', ' · ')} UT` },
   ]
 
   if (missionProfile.conditionalSteps.includes('crew')) {
     fields.push({
-      label: 'Tripulación y soporte',
+      label: 'Crew and support',
       value: `${form.crewSize} · ${form.evaPlan} · ${form.lifeSupport}`,
     })
   }
   if (missionProfile.conditionalSteps.includes('logistics')) {
     fields.push({
-      label: 'Logística',
-      value: `${form.supplies} de reserva · energía ${form.redundancy} · ISRU ${form.isru}`,
+      label: 'Logistics',
+      value: `${form.supplies} reserve · ${form.redundancy} power · ISRU ${form.isru}`,
     })
   }
   if (missionProfile.conditionalSteps.includes('sample')) {
     fields.push({
-      label: 'Retorno de muestras',
+      label: 'Sample return',
       value: `${form.sampleTarget} · ${form.sampleCollection} · ${form.sampleReturn}`,
     })
   }
@@ -121,7 +121,7 @@ function drawContinuationHeader(document) {
   document.setFont('helvetica', 'bold')
   document.setFontSize(11)
   document.setTextColor(...COLORS.accent)
-  document.text('PLAN DE MISIÓN · CONTINUACIÓN', 14, 20)
+  document.text('MISSION PLAN · CONTINUED', 14, 20)
   document.setDrawColor(...COLORS.divider)
   document.line(14, 25, width - 14, 25)
 }
@@ -139,18 +139,18 @@ function drawVisibility(document, selectedSample, formatAngle, y) {
   document.setDrawColor(...COLORS.divider)
   document.line(margin, y, width - margin, y)
   const solar = selectedSample
-    ? `${selectedSample.sun.state === 'visible' ? 'visible' : 'oculto'} ${formatAngle(selectedSample.sun.elevation)}`
-    : 'Sin datos calculados'
+    ? `${selectedSample.sun.state === 'visible' ? 'visible' : 'hidden'} ${formatAngle(selectedSample.sun.elevation)}`
+    : 'No calculated data'
   const earth = selectedSample
-    ? `${selectedSample.earth.state === 'visible' ? 'visible' : 'oculta'} ${formatAngle(selectedSample.earth.elevation)}`
-    : 'Sin datos calculados'
+    ? `${selectedSample.earth.state === 'visible' ? 'visible' : 'hidden'} ${formatAngle(selectedSample.earth.elevation)}`
+    : 'No calculated data'
 
   document.setFont('helvetica', 'normal')
   document.setFontSize(9)
   document.setTextColor(...COLORS.muted)
-  document.text(`Sol ${solar}`, margin, y + 8)
+  document.text(`Sun ${solar}`, margin, y + 8)
   document.setTextColor(...COLORS.accent)
-  document.text(`Tierra ${earth}`, margin + 44, y + 8)
+  document.text(`Earth ${earth}`, margin + 44, y + 8)
 }
 
 export async function downloadMissionPlanPdf({ form, missionProfile, siteName, selectedSample, formatAngle }) {
@@ -172,10 +172,10 @@ export async function downloadMissionPlanPdf({ form, missionProfile, siteName, s
   document.setFont('helvetica', 'normal')
   document.setFontSize(9)
   document.setTextColor(...COLORS.muted)
-  document.text('PLAN DE MISIÓN', 139, 34)
+  document.text('MISSION PLAN', 139, 34)
   document.setFontSize(19)
   document.setTextColor(...COLORS.white)
-  document.text(form.name.trim() || 'Misión sin nombre', 139, 45)
+  document.text(form.name.trim() || 'Unnamed mission', 139, 45)
   document.setDrawColor(...COLORS.divider)
   document.line(139, 54, pageWidth - margin, 54)
 
@@ -212,6 +212,6 @@ export async function downloadMissionPlanPdf({ form, missionProfile, siteName, s
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-zA-Z0-9]+/g, '-')
     .replace(/^-|-$/g, '')
-    .toLowerCase() || 'mision-lunar'
+    .toLowerCase() || 'lunar-mission'
   document.save(`plan-${fileStem}.pdf`)
 }

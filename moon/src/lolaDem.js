@@ -31,10 +31,10 @@ async function readBytes(url, start, length, signal) {
     signal,
   })
   if (response.status !== 206 && !(response.status === 200 && start === 0)) {
-    throw new Error(`LOLA PDS respondió HTTP ${response.status} para ${url.split('/').pop()}.`)
+    throw new Error(`LOLA PDS responded HTTP ${response.status} for ${url.split('/').pop()}.`)
   }
   const buffer = await response.arrayBuffer()
-  if (buffer.byteLength < length) throw new Error('LOLA PDS devolvió datos incompletos.')
+  if (buffer.byteLength < length) throw new Error('LOLA PDS returned incomplete data.')
   return new DataView(buffer)
 }
 
@@ -57,12 +57,12 @@ async function readMultiRange(url, ranges, signal) {
     headers: { Range: `bytes=${ranges.map((range) => `${range.start}-${range.end}`).join(',')}` },
     signal,
   })
-  if (response.status !== 206) throw new Error(`LOLA PDS respondió HTTP ${response.status} a la petición multirango.`)
+  if (response.status !== 206) throw new Error(`LOLA PDS responded HTTP ${response.status} to the multi-range request.`)
   const bytes = new Uint8Array(await response.arrayBuffer())
   const contentType = response.headers.get('Content-Type') ?? ''
   if (!contentType.toLowerCase().startsWith('multipart/byteranges')) {
     const single = /bytes (\d+)-(\d+)\//i.exec(response.headers.get('Content-Range') ?? '')
-    if (!single) throw new Error('LOLA PDS devolvió una respuesta de rangos que no se puede interpretar.')
+    if (!single) throw new Error('LOLA PDS returned a range response that cannot be interpreted.')
     return [{ start: Number(single[1]), bytes }]
   }
 
@@ -84,7 +84,7 @@ async function readMultiRange(url, ranges, signal) {
 
 function findPart(parts, start, length) {
   const part = parts.find((item) => start >= item.start && start + length <= item.start + item.bytes.length)
-  if (!part) throw new Error('LOLA PDS no devolvió todas las filas pedidas.')
+  if (!part) throw new Error('LOLA PDS did not return all the requested rows.')
   return new DataView(part.bytes.buffer, part.bytes.byteOffset + (start - part.start), length)
 }
 
@@ -96,7 +96,7 @@ function findPart(parts, start, length) {
 export async function loadLolaWindow(latitude, longitude, radiusKm, signal, onProgress) {
   const latRadius = (radiusKm / MOON_MEAN_RADIUS_KM) * (180 / Math.PI)
   if (Math.abs(latitude) + latRadius >= 89.9) {
-    throw new Error('El punto está demasiado cerca de un polo para el DEM LOLA cilíndrico.')
+    throw new Error('The point is too close to a pole for the cylindrical LOLA DEM.')
   }
   const lonRadius = latRadius / Math.cos(latitude * Math.PI / 180)
   const metersPerPixel = (2 * Math.PI * MOON_MEAN_RADIUS_KM * 1000) / 360 / PIXELS_PER_DEGREE
@@ -164,7 +164,7 @@ export async function loadLolaWindow(latitude, longitude, radiusKm, signal, onPr
   let next = 0
   const workers = Array.from({ length: Math.min(MAX_PARALLEL_REQUESTS, batches.length) }, async () => {
     while (next < batches.length) {
-      if (signal?.aborted) throw new DOMException('Carga LOLA cancelada.', 'AbortError')
+      if (signal?.aborted) throw new DOMException('LOLA load cancelled.', 'AbortError')
       const batch = batches[next]
       next += 1
       try {
@@ -176,7 +176,7 @@ export async function loadLolaWindow(latitude, longitude, radiusKm, signal, onPr
         batch.jobs.forEach((job, index) => store(job, findPart(parts, ranges[index].start, job.count * 2), 0))
       } catch (error) {
         if (error.name === 'AbortError') throw error
-        console.warn('LOLA multirango no disponible, se usa lectura contigua:', error.message)
+        console.warn('LOLA multi-range not available, using contiguous read:', error.message)
         await readContiguous(batch)
       }
       progress.loaded += 1
@@ -263,7 +263,7 @@ export function loadLolaWindowCached(latitude, longitude, radiusKm, signal, onPr
     if (entry.lastProgress) onProgress(entry.lastProgress)
   }
   const aborted = new Promise((_, reject) => {
-    signal?.addEventListener('abort', () => reject(new DOMException('Carga LOLA cancelada.', 'AbortError')), { once: true })
+    signal?.addEventListener('abort', () => reject(new DOMException('LOLA load cancelled.', 'AbortError')), { once: true })
   })
   return Promise.race([entry.promise, aborted]).finally(() => onProgress && entry.listeners.delete(onProgress))
 }

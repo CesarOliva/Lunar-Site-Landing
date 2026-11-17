@@ -11,9 +11,9 @@ function TimelineScreen({ mission, onBack, onHome }) {
       <MissionRainPanel mission={mission} />
 
       <div className="timeline-topline">
-        <button className="icon-button" onClick={onBack} aria-label="Regresar"><ArrowLeft size={18} /></button>
+        <button className="icon-button" onClick={onBack} aria-label="Back"><ArrowLeft size={18} /></button>
         <span></span>
-        <button className="icon-button" onClick={onHome} aria-label="Ir al inicio"><Home size={17} /></button>
+        <button className="icon-button" onClick={onHome} aria-label="Go to home"><Home size={17} /></button>
       </div>
 
       {/* Línea de tiempo horizontal con la nave */}

@@ -7,13 +7,13 @@
     "api_version": "1.2",
     "ephemeris_source": "DE441",
     "time_type": "UT",
-    "time_note": "Se consultan las horas UT originales de NSSDCA. Horizons informa las fechas posteriores a 1962 en UTC, escala civil mantenida dentro de 0.9 s de UT1.",
-    "center_frame": "MEAN_ME (high precision), según las respuestas de Horizons",
-    "site_coordinates": "SITE_COORD = longitud este, latitud planetocéntrica, altitud km; coordenadas ME del catálogo",
-    "apparent_place": "Airless azimuth/elevation; quantity 4; light-time, deflexión gravitacional, aberración estelar, precesión y nutación según Horizons",
+    "time_note": "The original NSSDCA UT times are queried. Horizons reports dates after 1962 in UTC, a civil time scale kept within 0.9 s of UT1.",
+    "center_frame": "MEAN_ME (high precision), according to the Horizons responses",
+    "site_coordinates": "SITE_COORD = east longitude, planetocentric latitude, altitude in km; ME coordinates from the catalog",
+    "apparent_place": "Airless azimuth/elevation; quantity 4; light-time, gravitational deflection, stellar aberration, precession and nutation according to Horizons",
     "horizon_model": "NASA LRO LOLA local horizons (50 km radius, 5 degree azimuth bins) and preliminary slope screen at each landing instant.",
-    "sun_vector_method": "Se reconstruye la dirección fija a la Luna a partir del azimut y elevación locales, y de las bases este, norte y cenit del sitio en coordenadas ME.",
-    "render_axis_mapping": "Three.js Y-up: (x_ME, y_ME, z_ME) -> (x, z, -y). La textura global de NASA está centrada en longitud 0° y orientada norte arriba."
+    "sun_vector_method": "The Moon-fixed direction is reconstructed from the local azimuth and elevation and from the site's east, north and zenith bases in ME coordinates.",
+    "render_axis_mapping": "Three.js Y-up: (x_ME, y_ME, z_ME) -> (x, z, -y). The global NASA texture is centered on longitude 0° and oriented north up."
   },
   "missions": {
     "apollo-11": {
@@ -67,7 +67,7 @@
         "status": "favorable",
         "status_label": "Favorable",
         "coverage": "available",
-        "source": "NASA LRO LOLA GDR · grilla global 236.901 m/píxel",
+        "source": "NASA LRO LOLA GDR · global grid 236.901 m/pixel",
         "source_label": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/cylindrical/img/ldem_128.lbl",
         "product": "LDEM_128",
         "coordinate_frame": "MEAN EARTH/POLAR AXIS OF DE421",
@@ -89,12 +89,12 @@
           "earth_visible_over_terrain": true
         },
         "limitations": [
-          "El resultado es favorable solo si la pendiente no supera 5° y el Sol y la Tierra quedan visibles sobre el relieve en el instante evaluado.",
-          "La evaluación cubre un área de 500 m de diámetro; la resolución LOLA es de 236.901 m por píxel y puede omitir rocas y cráteres pequeños.",
-          "El horizonte se calcula hasta 50 km en sectores de 5° de azimut; relieves estrechos entre sectores pueden quedar sin detectar.",
-          "El modelo interpola el relieve entre las mediciones LOLA y puede suavizar cambios topográficos locales.",
-          "Se evalúa un único instante; no se comprueba toda la ventana de descenso ni la duración de las operaciones.",
-          "LOLA usa ME/DE421 y Horizons usa MEAN_ME/DE441; los marcos no se transforman entre sí y la alineación del relieve puede tener error."
+          "The result is favorable only if the slope does not exceed 5° and the Sun and the Earth are visible above the terrain at the evaluated instant.",
+          "The assessment covers an area 500 m in diameter; the LOLA resolution is 236.901 m per pixel and may miss rocks and small craters.",
+          "The horizon is computed out to 50 km in 5° azimuth sectors; narrow relief features between sectors may go undetected.",
+          "The model interpolates the terrain between LOLA measurements and may smooth out local topographic changes.",
+          "A single instant is evaluated; the whole descent window and the duration of operations are not checked.",
+          "LOLA uses ME/DE421 and Horizons uses MEAN_ME/DE441; the frames are not transformed into each other and the terrain alignment may have an error."
         ],
         "data_day": "2026-11-15"
       },
@@ -151,7 +151,7 @@
         "status": "favorable",
         "status_label": "Favorable",
         "coverage": "available",
-        "source": "NASA LRO LOLA GDR · grilla global 236.901 m/píxel",
+        "source": "NASA LRO LOLA GDR · global grid 236.901 m/pixel",
         "source_label": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/cylindrical/img/ldem_128.lbl",
         "product": "LDEM_128",
         "coordinate_frame": "MEAN EARTH/POLAR AXIS OF DE421",
@@ -173,12 +173,12 @@
           "earth_visible_over_terrain": true
         },
         "limitations": [
-          "El resultado es favorable solo si la pendiente no supera 5° y el Sol y la Tierra quedan visibles sobre el relieve en el instante evaluado.",
-          "La evaluación cubre un área de 500 m de diámetro; la resolución LOLA es de 236.901 m por píxel y puede omitir rocas y cráteres pequeños.",
-          "El horizonte se calcula hasta 50 km en sectores de 5° de azimut; relieves estrechos entre sectores pueden quedar sin detectar.",
-          "El modelo interpola el relieve entre las mediciones LOLA y puede suavizar cambios topográficos locales.",
-          "Se evalúa un único instante; no se comprueba toda la ventana de descenso ni la duración de las operaciones.",
-          "LOLA usa ME/DE421 y Horizons usa MEAN_ME/DE441; los marcos no se transforman entre sí y la alineación del relieve puede tener error."
+          "The result is favorable only if the slope does not exceed 5° and the Sun and the Earth are visible above the terrain at the evaluated instant.",
+          "The assessment covers an area 500 m in diameter; the LOLA resolution is 236.901 m per pixel and may miss rocks and small craters.",
+          "The horizon is computed out to 50 km in 5° azimuth sectors; narrow relief features between sectors may go undetected.",
+          "The model interpolates the terrain between LOLA measurements and may smooth out local topographic changes.",
+          "A single instant is evaluated; the whole descent window and the duration of operations are not checked.",
+          "LOLA uses ME/DE421 and Horizons uses MEAN_ME/DE441; the frames are not transformed into each other and the terrain alignment may have an error."
         ],
         "data_day": "2026-11-15"
       },
@@ -235,7 +235,7 @@
         "status": "favorable",
         "status_label": "Favorable",
         "coverage": "available",
-        "source": "NASA LRO LOLA GDR · grilla global 236.901 m/píxel",
+        "source": "NASA LRO LOLA GDR · global grid 236.901 m/pixel",
         "source_label": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/cylindrical/img/ldem_128.lbl",
         "product": "LDEM_128",
         "coordinate_frame": "MEAN EARTH/POLAR AXIS OF DE421",
@@ -257,12 +257,12 @@
           "earth_visible_over_terrain": true
         },
         "limitations": [
-          "El resultado es favorable solo si la pendiente no supera 5° y el Sol y la Tierra quedan visibles sobre el relieve en el instante evaluado.",
-          "La evaluación cubre un área de 500 m de diámetro; la resolución LOLA es de 236.901 m por píxel y puede omitir rocas y cráteres pequeños.",
-          "El horizonte se calcula hasta 50 km en sectores de 5° de azimut; relieves estrechos entre sectores pueden quedar sin detectar.",
-          "El modelo interpola el relieve entre las mediciones LOLA y puede suavizar cambios topográficos locales.",
-          "Se evalúa un único instante; no se comprueba toda la ventana de descenso ni la duración de las operaciones.",
-          "LOLA usa ME/DE421 y Horizons usa MEAN_ME/DE441; los marcos no se transforman entre sí y la alineación del relieve puede tener error."
+          "The result is favorable only if the slope does not exceed 5° and the Sun and the Earth are visible above the terrain at the evaluated instant.",
+          "The assessment covers an area 500 m in diameter; the LOLA resolution is 236.901 m per pixel and may miss rocks and small craters.",
+          "The horizon is computed out to 50 km in 5° azimuth sectors; narrow relief features between sectors may go undetected.",
+          "The model interpolates the terrain between LOLA measurements and may smooth out local topographic changes.",
+          "A single instant is evaluated; the whole descent window and the duration of operations are not checked.",
+          "LOLA uses ME/DE421 and Horizons uses MEAN_ME/DE441; the frames are not transformed into each other and the terrain alignment may have an error."
         ],
         "data_day": "2026-11-15"
       },
@@ -319,7 +319,7 @@
         "status": "favorable",
         "status_label": "Favorable",
         "coverage": "available",
-        "source": "NASA LRO LOLA GDR · grilla global 236.901 m/píxel",
+        "source": "NASA LRO LOLA GDR · global grid 236.901 m/pixel",
         "source_label": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/cylindrical/img/ldem_128.lbl",
         "product": "LDEM_128",
         "coordinate_frame": "MEAN EARTH/POLAR AXIS OF DE421",
@@ -341,12 +341,12 @@
           "earth_visible_over_terrain": true
         },
         "limitations": [
-          "El resultado es favorable solo si la pendiente no supera 5° y el Sol y la Tierra quedan visibles sobre el relieve en el instante evaluado.",
-          "La evaluación cubre un área de 500 m de diámetro; la resolución LOLA es de 236.901 m por píxel y puede omitir rocas y cráteres pequeños.",
-          "El horizonte se calcula hasta 50 km en sectores de 5° de azimut; relieves estrechos entre sectores pueden quedar sin detectar.",
-          "El modelo interpola el relieve entre las mediciones LOLA y puede suavizar cambios topográficos locales.",
-          "Se evalúa un único instante; no se comprueba toda la ventana de descenso ni la duración de las operaciones.",
-          "LOLA usa ME/DE421 y Horizons usa MEAN_ME/DE441; los marcos no se transforman entre sí y la alineación del relieve puede tener error."
+          "The result is favorable only if the slope does not exceed 5° and the Sun and the Earth are visible above the terrain at the evaluated instant.",
+          "The assessment covers an area 500 m in diameter; the LOLA resolution is 236.901 m per pixel and may miss rocks and small craters.",
+          "The horizon is computed out to 50 km in 5° azimuth sectors; narrow relief features between sectors may go undetected.",
+          "The model interpolates the terrain between LOLA measurements and may smooth out local topographic changes.",
+          "A single instant is evaluated; the whole descent window and the duration of operations are not checked.",
+          "LOLA uses ME/DE421 and Horizons uses MEAN_ME/DE441; the frames are not transformed into each other and the terrain alignment may have an error."
         ],
         "data_day": "2026-11-15"
       },
@@ -403,7 +403,7 @@
         "status": "favorable",
         "status_label": "Favorable",
         "coverage": "available",
-        "source": "NASA LRO LOLA GDR · grilla global 236.901 m/píxel",
+        "source": "NASA LRO LOLA GDR · global grid 236.901 m/pixel",
         "source_label": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/cylindrical/img/ldem_128.lbl",
         "product": "LDEM_128",
         "coordinate_frame": "MEAN EARTH/POLAR AXIS OF DE421",
@@ -425,12 +425,12 @@
           "earth_visible_over_terrain": true
         },
         "limitations": [
-          "El resultado es favorable solo si la pendiente no supera 5° y el Sol y la Tierra quedan visibles sobre el relieve en el instante evaluado.",
-          "La evaluación cubre un área de 500 m de diámetro; la resolución LOLA es de 236.901 m por píxel y puede omitir rocas y cráteres pequeños.",
-          "El horizonte se calcula hasta 50 km en sectores de 5° de azimut; relieves estrechos entre sectores pueden quedar sin detectar.",
-          "El modelo interpola el relieve entre las mediciones LOLA y puede suavizar cambios topográficos locales.",
-          "Se evalúa un único instante; no se comprueba toda la ventana de descenso ni la duración de las operaciones.",
-          "LOLA usa ME/DE421 y Horizons usa MEAN_ME/DE441; los marcos no se transforman entre sí y la alineación del relieve puede tener error."
+          "The result is favorable only if the slope does not exceed 5° and the Sun and the Earth are visible above the terrain at the evaluated instant.",
+          "The assessment covers an area 500 m in diameter; the LOLA resolution is 236.901 m per pixel and may miss rocks and small craters.",
+          "The horizon is computed out to 50 km in 5° azimuth sectors; narrow relief features between sectors may go undetected.",
+          "The model interpolates the terrain between LOLA measurements and may smooth out local topographic changes.",
+          "A single instant is evaluated; the whole descent window and the duration of operations are not checked.",
+          "LOLA uses ME/DE421 and Horizons uses MEAN_ME/DE441; the frames are not transformed into each other and the terrain alignment may have an error."
         ],
         "data_day": "2026-11-15"
       },
@@ -487,7 +487,7 @@
         "status": "favorable",
         "status_label": "Favorable",
         "coverage": "available",
-        "source": "NASA LRO LOLA GDR · grilla global 236.901 m/píxel",
+        "source": "NASA LRO LOLA GDR · global grid 236.901 m/pixel",
         "source_label": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/cylindrical/img/ldem_128.lbl",
         "product": "LDEM_128",
         "coordinate_frame": "MEAN EARTH/POLAR AXIS OF DE421",
@@ -509,12 +509,12 @@
           "earth_visible_over_terrain": true
         },
         "limitations": [
-          "El resultado es favorable solo si la pendiente no supera 5° y el Sol y la Tierra quedan visibles sobre el relieve en el instante evaluado.",
-          "La evaluación cubre un área de 500 m de diámetro; la resolución LOLA es de 236.901 m por píxel y puede omitir rocas y cráteres pequeños.",
-          "El horizonte se calcula hasta 50 km en sectores de 5° de azimut; relieves estrechos entre sectores pueden quedar sin detectar.",
-          "El modelo interpola el relieve entre las mediciones LOLA y puede suavizar cambios topográficos locales.",
-          "Se evalúa un único instante; no se comprueba toda la ventana de descenso ni la duración de las operaciones.",
-          "LOLA usa ME/DE421 y Horizons usa MEAN_ME/DE441; los marcos no se transforman entre sí y la alineación del relieve puede tener error."
+          "The result is favorable only if the slope does not exceed 5° and the Sun and the Earth are visible above the terrain at the evaluated instant.",
+          "The assessment covers an area 500 m in diameter; the LOLA resolution is 236.901 m per pixel and may miss rocks and small craters.",
+          "The horizon is computed out to 50 km in 5° azimuth sectors; narrow relief features between sectors may go undetected.",
+          "The model interpolates the terrain between LOLA measurements and may smooth out local topographic changes.",
+          "A single instant is evaluated; the whole descent window and the duration of operations are not checked.",
+          "LOLA uses ME/DE421 and Horizons uses MEAN_ME/DE441; the frames are not transformed into each other and the terrain alignment may have an error."
         ],
         "data_day": "2026-11-15"
       },

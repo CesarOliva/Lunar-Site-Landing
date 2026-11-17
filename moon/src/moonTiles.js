@@ -17,12 +17,12 @@ function firstText(element, namespace, tagName) {
 export async function readTileTemplate(layer, zoom, signal) {
   const response = await fetch(`${layer.endpoint}/1.0.0/WMTSCapabilities.xml`, { signal })
   if (!response.ok) {
-    throw new Error(`NASA Trek no respondió las capacidades WMTS de ${layer.id} (${response.status}).`)
+    throw new Error(`NASA Trek did not answer the WMTS capabilities of ${layer.id} (${response.status}).`)
   }
 
   const document = new DOMParser().parseFromString(await response.text(), 'application/xml')
   if (document.querySelector('parsererror')) {
-    throw new Error(`La respuesta WMTS de ${layer.id} no contiene XML válido.`)
+    throw new Error(`The WMTS response for ${layer.id} does not contain valid XML.`)
   }
 
   const layerNode = [...document.getElementsByTagNameNS(wmtsNamespace, 'Layer')]
@@ -48,7 +48,7 @@ export async function readTileTemplate(layer, zoom, signal) {
     : matrixMetadata.find((item) => item.matrixId === String(zoom))
 
   if (!resource || (zoom !== undefined && !matrix)) {
-    throw new Error(`No se encontró la matriz WMTS ${zoom} para ${layer.id}.`)
+    throw new Error(`WMTS matrix ${zoom} was not found for ${layer.id}.`)
   }
 
   const template = resource.getAttribute('template')
@@ -57,7 +57,7 @@ export async function readTileTemplate(layer, zoom, signal) {
   if (!template || !style || (matrix && (
     !matrix.tileWidth || !matrix.tileHeight || !matrix.matrixWidth || !matrix.matrixHeight
   ))) {
-    throw new Error(`La matriz WMTS de ${layer.id} está incompleta.`)
+    throw new Error(`The WMTS matrix of ${layer.id} is incomplete.`)
   }
 
   return {
@@ -85,7 +85,7 @@ export async function loadWmtsTiles(layer, zoom, signal, onProgress) {
   canvas.height = matrix.tileHeight * matrix.matrixHeight
 
   const context = canvas.getContext('2d', { willReadFrequently: true })
-  if (!context) throw new Error(`No se pudo crear el mosaico de teselas para ${layer.id}.`)
+  if (!context) throw new Error(`The tile mosaic could not be created for ${layer.id}.`)
 
   const tiles = Array.from({ length: matrix.matrixWidth * matrix.matrixHeight }, (_, index) => ({
     row: Math.floor(index / matrix.matrixWidth),
@@ -99,7 +99,7 @@ export async function loadWmtsTiles(layer, zoom, signal, onProgress) {
 
   const workers = Array.from({ length: 6 }, async () => {
     while (nextTile < tiles.length) {
-      if (signal.aborted) throw new DOMException('Carga cancelada.', 'AbortError')
+      if (signal.aborted) throw new DOMException('Load cancelled.', 'AbortError')
       const { row, column } = tiles[nextTile]
       nextTile += 1
 
@@ -122,7 +122,7 @@ export async function loadWmtsTiles(layer, zoom, signal, onProgress) {
 
   await Promise.all(workers)
   if (loaded === 0) {
-    throw new Error(`No se pudo descargar ninguna tesela WMTS de ${layer.id}. ${lastError?.message ?? ''}`)
+    throw new Error(`No WMTS tile of ${layer.id} could be downloaded. ${lastError?.message ?? ''}`)
   }
 
   const result = { canvas, loaded, failed, total: tiles.length, matrix }
@@ -137,7 +137,7 @@ export async function loadWmtsTiles(layer, zoom, signal, onProgress) {
 export async function loadWmtsTile(layer, matrix, zoom, row, column, signal) {
   const requestedMatrix = matrix.matrices.find((item) => item.matrixId === String(zoom))
   if (!requestedMatrix) {
-    throw new Error(`La matriz WMTS ${zoom} no está disponible para ${layer.id}.`)
+    throw new Error(`WMTS matrix ${zoom} is not available for ${layer.id}.`)
   }
 
   const response = await fetch(
@@ -184,12 +184,12 @@ function productContainsPoint(product, latitude, longitude) {
 async function readCatalogProducts(query, signal, label) {
   const response = await fetch(`${catalogEndpoint}?${query}`, { signal })
   if (!response.ok) {
-    throw new Error(`NASA Trek no respondió el catálogo de ${label} (${response.status}).`)
+    throw new Error(`NASA Trek did not answer the ${label} catalog (${response.status}).`)
   }
 
   const catalog = await response.json()
   if (!Array.isArray(catalog.response?.docs)) {
-    throw new Error(`El catálogo de NASA Trek no devolvió una lista de ${label} válida.`)
+    throw new Error(`The NASA Trek catalog did not return a valid ${label} list.`)
   }
   return catalog.response.docs
 }
@@ -200,14 +200,14 @@ async function readWmtsEndpoint(product, signal, kind) {
     { signal },
   )
   if (!response.ok) {
-    throw new Error(`No se encontró el servicio WMTS de ${product.productLabel} (${response.status}).`)
+    throw new Error(`The WMTS service of ${product.productLabel} was not found (${response.status}).`)
   }
 
   const serviceInfo = await response.json()
   const service = serviceInfo.response?.docs?.find((item) => (
     item.serviceType === 'Mosaic' && item.protocol === 'WMTS' && item.endPoint
   ))
-  if (!service) throw new Error(`NASA Trek no publicó WMTS para ${product.productLabel}.`)
+  if (!service) throw new Error(`NASA Trek did not publish WMTS for ${product.productLabel}.`)
 
   return {
     id: product.productLabel,
@@ -290,7 +290,7 @@ export async function findImageryLayersForPoint(latitude, longitude, signal) {
     ))
 
   const settled = await Promise.allSettled(candidates.map(loadLayerInfoOnce))
-  if (signal?.aborted) throw new DOMException('Búsqueda de imagen cancelada.', 'AbortError')
+  if (signal?.aborted) throw new DOMException('Imagery search cancelled.', 'AbortError')
 
   const layers = settled
     .filter((result) => result.status === 'fulfilled')
@@ -302,7 +302,7 @@ export async function findImageryLayersForPoint(latitude, longitude, signal) {
       || right.nominalMetersPerPixel - left.nominalMetersPerPixel
     ))
   if (!layers.length) {
-    throw new Error('NASA Trek no ofrece mosaicos de imagen para el punto seleccionado.')
+    throw new Error('NASA Trek does not offer imagery mosaics for the selected point.')
   }
   return layers
 }

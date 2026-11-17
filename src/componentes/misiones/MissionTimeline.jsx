@@ -288,7 +288,7 @@ function MissionTimeline({ events }) {
 
   return (
     <div className="timeline-stage">
-      <div className="timeline-scroller" ref={scrollerRef} tabIndex={0} role="region" aria-label="Línea de tiempo de la misión">
+      <div className="timeline-scroller" ref={scrollerRef} tabIndex={0} role="region" aria-label="Mission timeline">
         <div className="timeline-rail" ref={railRef} style={{ '--count': events.length }}>
           <span className="timeline-line" />
 
@@ -335,13 +335,13 @@ function MissionTimeline({ events }) {
 
       <div className="timeline-footer">
         <span className="timeline-hint" ref={hintRef} aria-hidden="true">
-          DESLIZA <ArrowRight size={13} />
+          SCROLL <ArrowRight size={13} />
         </span>
-        <div className="timeline-controls" role="group" aria-label="Controles de la línea del tiempo">
+        <div className="timeline-controls" role="group" aria-label="Timeline controls">
           <button
             className="timeline-control"
             type="button"
-            aria-label="Evento anterior"
+            aria-label="Previous event"
             disabled={activeIndex === 0}
             onClick={() => moveToAdjacentEvent(-1)}
           >
@@ -350,7 +350,7 @@ function MissionTimeline({ events }) {
           <button
             className="timeline-control"
             type="button"
-            aria-label={isPlaying ? 'Pausar recorrido' : 'Reproducir recorrido'}
+            aria-label={isPlaying ? 'Pause tour' : 'Play tour'}
             aria-pressed={isPlaying}
             onClick={() => setIsPlaying((playing) => !playing)}
           >
@@ -359,7 +359,7 @@ function MissionTimeline({ events }) {
           <button
             className="timeline-control"
             type="button"
-            aria-label="Evento siguiente"
+            aria-label="Next event"
             disabled={activeIndex === events.length - 1}
             onClick={() => moveToAdjacentEvent(1)}
           >

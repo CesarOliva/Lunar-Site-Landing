@@ -99,7 +99,7 @@ function MissionRainPanel({ mission }) {
   const columns = useMemo(
     () =>
       [
-        { direction: 'down', items: [mission.name, `Misión ${mission.number}`] },
+        { direction: 'down', items: [mission.name, `Mission ${mission.number}`] },
         { direction: 'up', items: [mission.site, mission.vehicle] },
       ].map((column) => ({
         ...column,
@@ -117,7 +117,7 @@ function MissionRainPanel({ mission }) {
     >
       {/* Texto completo para lectores de pantalla (las columnas están ocultas para ellos) */}
       <p className="rain-sr">
-        {`${mission.name}, misión ${mission.number}. Sitio de alunizaje: ${mission.site}. Vehículo: ${mission.vehicle}.`}
+        {`${mission.name}, mission ${mission.number}. Landing site: ${mission.site}. Vehicle: ${mission.vehicle}.`}
       </p>
 
       {columns.map((column, index) => (

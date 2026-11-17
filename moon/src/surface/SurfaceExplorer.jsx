@@ -3,11 +3,11 @@ import './SurfaceExplorer.css'
 
 // Velocidad del cielo estrellado respecto al tiempo real (la Luna da una vuelta cada 27,32 días).
 const SKY_SPEEDS = [
-  [1, 'Tiempo real'],
-  [60, '1 minuto por segundo'],
-  [600, '10 minutos por segundo'],
-  [3600, '1 hora por segundo'],
-  [21600, '6 horas por segundo'],
+  [1, 'Real time'],
+  [60, '1 minute per second'],
+  [600, '10 minutes per second'],
+  [3600, '1 hour per second'],
+  [21600, '6 hours per second'],
 ]
 
 function WalkButton({ direction, label, symbol, disabled, onWalk }) {
@@ -51,7 +51,7 @@ function WalkButton({ direction, label, symbol, disabled, onWalk }) {
  * @param {() => void} onClose se llama al pulsar volver (o tras un error).
  * @param {(info: object|null) => void} [onInfo] recibe las capas de imagen/relieve activas.
  */
-export default function SurfaceExplorer({ point, title, closeLabel = 'VOLVER', onClose, onInfo }) {
+export default function SurfaceExplorer({ point, title, closeLabel = 'BACK', onClose, onInfo }) {
   const surface = useSurfaceExplorer(point, { onInfo })
   const { info, status, error, loading, tourActive, position, bestImagery: best } = surface
 
@@ -63,13 +63,13 @@ export default function SurfaceExplorer({ point, title, closeLabel = 'VOLVER', o
         <div className="moon-sx-card" role="status" aria-live="polite">
           <span className="moon-sx-spinner" aria-hidden="true" />
           <span>
-            <strong>Preparando vista de superficie</strong>
+            <strong>Preparing surface view</strong>
             <small>
               {status.phase === 'catalog' || status.phase === 'idle'
-                ? 'Buscando mosaicos de imagen de NASA Trek…'
+                ? 'Looking up NASA Trek imagery mosaics…'
                 : status.phase === 'terrain'
-                  ? `Descargando elevación LOLA (16 bits) · ${status.terrain.loaded}/${status.terrain.total}`
-                  : 'Iniciando visor Cesium…'}
+                  ? `Downloading LOLA elevation (16-bit) · ${status.terrain.loaded}/${status.terrain.total}`
+                  : 'Starting Cesium viewer…'}
             </small>
           </span>
         </div>
@@ -78,7 +78,7 @@ export default function SurfaceExplorer({ point, title, closeLabel = 'VOLVER', o
       {error && (
         <div className="moon-sx-card moon-sx-error" role="alert">
           <span>
-            <strong>No se pudo cargar la superficie</strong>
+            <strong>The surface could not be loaded</strong>
             <small>{error}</small>
           </span>
           <button type="button" onClick={onClose}>{closeLabel}</button>
@@ -86,40 +86,40 @@ export default function SurfaceExplorer({ point, title, closeLabel = 'VOLVER', o
       )}
 
       {info && (
-        <div className="moon-sx-hud" aria-label="Controles de primera persona">
+        <div className="moon-sx-hud" aria-label="First-person controls">
           <div className="moon-sx-hud-info">
-            <span className="moon-sx-kicker">EXPLORACIÓN LUNAR · CESIUM</span>
+            <span className="moon-sx-kicker">LUNAR EXPLORATION · CESIUM</span>
             {title && <b className="moon-sx-title">{title}</b>}
             <strong>{position.latitude.toFixed(4)}° · {position.longitude.toFixed(4)}°</strong>
             <span>
-              Imagen: {best?.title || 'Mosaico de NASA Trek'} · hasta ~{best?.resolutionMetersPerPixel?.toFixed(2)} m/píxel
+              Imagery: {best?.title || 'NASA Trek mosaic'} · up to ~{best?.resolutionMetersPerPixel?.toFixed(2)} m/pixel
               {' '}· z{best?.maximumLevel}
             </span>
             <span>
-              Terreno: {info.dem.title} · ~{info.dem.resolutionMetersPerPixel.toFixed(1)} m/píxel
+              Terrain: {info.dem.title} · ~{info.dem.resolutionMetersPerPixel.toFixed(1)} m/pixel
             </span>
           </div>
 
           <div className="moon-sx-actions">
             <button type="button" onClick={surface.toggleTour}>
-              {tourActive ? 'PAUSAR RECORRIDO' : 'INICIAR RECORRIDO'}
+              {tourActive ? 'PAUSE TOUR' : 'START TOUR'}
             </button>
             <button type="button" onClick={onClose}>{closeLabel}</button>
           </div>
 
           <details className="moon-sx-settings">
-            <summary>Ajustes de imagen y relieve</summary>
+            <summary>Image and terrain settings</summary>
             <span className="moon-sx-note">
-              Capas combinadas: {info.imagery.length} · rugosidad LOLA local {info.detail.roughness.toFixed(2)} m a 30 m
+              Combined layers: {info.imagery.length} · local LOLA roughness {info.detail.roughness.toFixed(2)} m at 30 m
               {info.detail.sun && (
                 <>
-                  {' '}· sol {info.detail.sun.estimated ? 'estimado' : 'supuesto'} (az {info.detail.sun.azimuthDegrees.toFixed(0)}° / el {info.detail.sun.elevationDegrees.toFixed(0)}°)
+                  {' '}· sun {info.detail.sun.estimated ? 'estimated' : 'assumed'} (az {info.detail.sun.azimuthDegrees.toFixed(0)}° / el {info.detail.sun.elevationDegrees.toFixed(0)}°)
                 </>
               )}
             </span>
 
             <label className="moon-sx-slider">
-              <span>Detalle calibrado (sintético) <b>{surface.detail === 0 ? 'APAGADO' : `${surface.detail.toFixed(1)}×`}</b></span>
+              <span>Calibrated (synthetic) detail <b>{surface.detail === 0 ? 'OFF' : `${surface.detail.toFixed(1)}×`}</b></span>
               <input
                 type="range"
                 min="0"
@@ -131,7 +131,7 @@ export default function SurfaceExplorer({ point, title, closeLabel = 'VOLVER', o
             </label>
 
             <label className="moon-sx-slider">
-              <span>Contraste de la imagen <b>{surface.contrast.toFixed(1)}×</b></span>
+              <span>Image contrast <b>{surface.contrast.toFixed(1)}×</b></span>
               <input
                 type="range"
                 min="0.6"
@@ -143,7 +143,7 @@ export default function SurfaceExplorer({ point, title, closeLabel = 'VOLVER', o
             </label>
 
             <label className="moon-sx-slider">
-              <span>Cielo estrellado: giro</span>
+              <span>Starry sky: rotation</span>
               <select value={surface.skyTimeScale} onChange={(event) => surface.changeSkyTimeScale(Number(event.target.value))}>
                 {SKY_SPEEDS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
               </select>
@@ -151,7 +151,7 @@ export default function SurfaceExplorer({ point, title, closeLabel = 'VOLVER', o
 
             {info.baseOptions.length > 1 && (
               <label className="moon-sx-slider">
-                <span>Imagen base</span>
+                <span>Base imagery</span>
                 <select value={info.baseId} onChange={(event) => surface.changeBaseImagery(event.target.value)}>
                   {info.baseOptions.map((option) => (
                     <option key={option.id} value={option.id}>
@@ -163,7 +163,7 @@ export default function SurfaceExplorer({ point, title, closeLabel = 'VOLVER', o
             )}
 
             <label className="moon-sx-slider">
-              <span>Exageración vertical <b>{surface.exaggeration.toFixed(1)}×</b></span>
+              <span>Vertical exaggeration <b>{surface.exaggeration.toFixed(1)}×</b></span>
               <input
                 type="range"
                 min="1"
@@ -175,16 +175,16 @@ export default function SurfaceExplorer({ point, title, closeLabel = 'VOLVER', o
             </label>
           </details>
 
-          <small className="moon-sx-help">WASD para caminar · Shift corre · Arrastra para mirar · Esc para pausar</small>
+          <small className="moon-sx-help">WASD to walk · Shift to run · Drag to look · Esc to pause</small>
         </div>
       )}
 
       {info && (
-        <div className="moon-sx-walk-pad" aria-label="Controles para caminar">
-          <WalkButton direction="forward" label="Caminar hacia adelante" symbol="↑" disabled={!tourActive} onWalk={surface.walk} />
-          <WalkButton direction="left" label="Caminar hacia la izquierda" symbol="←" disabled={!tourActive} onWalk={surface.walk} />
-          <WalkButton direction="backward" label="Caminar hacia atrás" symbol="↓" disabled={!tourActive} onWalk={surface.walk} />
-          <WalkButton direction="right" label="Caminar hacia la derecha" symbol="→" disabled={!tourActive} onWalk={surface.walk} />
+        <div className="moon-sx-walk-pad" aria-label="Walking controls">
+          <WalkButton direction="forward" label="Walk forward" symbol="↑" disabled={!tourActive} onWalk={surface.walk} />
+          <WalkButton direction="left" label="Walk left" symbol="←" disabled={!tourActive} onWalk={surface.walk} />
+          <WalkButton direction="backward" label="Walk backward" symbol="↓" disabled={!tourActive} onWalk={surface.walk} />
+          <WalkButton direction="right" label="Walk right" symbol="→" disabled={!tourActive} onWalk={surface.walk} />
         </div>
       )}
     </div>

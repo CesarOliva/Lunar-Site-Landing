@@ -49,9 +49,9 @@ def parse_utc(value: str, label: str) -> datetime:
     try:
         parsed = datetime.fromisoformat(value.strip().replace("Z", "+00:00"))
     except ValueError as exc:
-        raise ValueError(f"{label}: fecha inválida: {value!r}; usa ISO 8601 con zona UTC") from exc
+        raise ValueError(f"{label}: invalid date: {value!r}; use ISO 8601 with a UTC zone") from exc
     if parsed.tzinfo is None or parsed.utcoffset().total_seconds() != 0:
-        raise ValueError(f"{label}: se requiere una fecha con zona UTC explícita")
+        raise ValueError(f"{label}: a date with an explicit UTC zone is required")
     return parsed.astimezone(timezone.utc)
 
 
@@ -63,9 +63,9 @@ def parse_angle(value: str | None, label: str, *, optional: bool = False) -> flo
     try:
         angle = float(value)
     except ValueError as exc:
-        raise ValueError(f"{label} debe ser numérico: {value!r}") from exc
+        raise ValueError(f"{label} must be numeric: {value!r}") from exc
     if not math.isfinite(angle):
-        raise ValueError(f"{label} debe ser finito")
+        raise ValueError(f"{label} must be finite")
     return angle
 
 
@@ -85,19 +85,19 @@ def load_samples(path: Path) -> dict[str, list[Sample]]:
             try:
                 site = (row.get("site_id") or "").strip()
                 if not site:
-                    raise ValueError("site_id está vacío")
+                    raise ValueError("site_id is empty")
                 start = parse_utc(row["start_utc"], "start_utc")
                 end = parse_utc(row["end_utc"], "end_utc")
                 if end <= start:
-                    raise ValueError("end_utc debe ser posterior a start_utc")
+                    raise ValueError("end_utc must be later than start_utc")
                 azimuth = parse_angle(row.get("sun_azimuth_deg"), "sun_azimuth_deg", optional=True)
                 elevation = parse_angle(row.get("sun_elevation_deg"), "sun_elevation_deg", optional=True)
                 horizon = parse_angle(row.get("horizon_elevation_deg"), "horizon_elevation_deg", optional=True)
                 if azimuth is not None and not 0 <= azimuth < 360:
-                    raise ValueError("sun_azimuth_deg debe estar en [0, 360)")
+                    raise ValueError("sun_azimuth_deg must be in [0, 360)")
                 for name, value in (("sun_elevation_deg", elevation), ("horizon_elevation_deg", horizon)):
                     if value is not None and not -90 <= value <= 90:
-                        raise ValueError(f"{name} debe estar en [-90, 90]")
+                        raise ValueError(f"{name} must be in [-90, 90]")
                 grouped.setdefault(site, []).append(Sample(
                     site, start, end, azimuth, elevation, horizon,
                     (row.get("sun_source") or "").strip() or None,
@@ -111,7 +111,7 @@ def load_samples(path: Path) -> dict[str, list[Sample]]:
         samples.sort(key=lambda item: item.start)
         for previous, current in zip(samples, samples[1:]):
             if current.start < previous.end:
-                raise ValueError(f"Intervalos superpuestos para {site}: {previous.start.isoformat()} y {current.start.isoformat()}")
+                raise ValueError(f"Overlapping intervals for {site}: {previous.start.isoformat()} and {current.start.isoformat()}")
     return grouped
 
 
@@ -133,7 +133,7 @@ def clipped_segments(samples: Iterable[Sample], start: datetime, end: datetime) 
         if left > cursor:
             segments.append({"inicio_utc": iso(cursor), "fin_utc": iso(left), "estado": "indeterminate"})
         if left < cursor:
-            raise ValueError("Se encontraron muestras superpuestas en el periodo solicitado")
+            raise ValueError("Overlapping samples were found in the requested period")
         segments.append({
             "inicio_utc": iso(left),
             "fin_utc": iso(right),
@@ -194,7 +194,7 @@ def report(mode: str, reports: list[dict], coincidence: float, coincidence_label
         "insumo_csv": str(csv_path.resolve()),
         "coincidencia": {"descripcion": coincidence_label, "horas": round(coincidence / 3600, 6)},
         "resultados": reports,
-        "metodo": "visible si elevacion_sol_deg > elevacion_horizonte_deg; la igualdad es oculta; faltantes y huecos son indeterminados",
+        "metodo": "visible if elevacion_sol_deg > elevacion_horizonte_deg; equality is hidden; missing values and gaps are indeterminate",
     }
 
 
@@ -202,7 +202,7 @@ def load_catalog() -> dict:
     try:
         return json.loads(CATALOG_PATH.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
-        raise ValueError(f"No se pudo leer el catálogo {CATALOG_PATH}: {exc}") from exc
+        raise ValueError(f"The catalog {CATALOG_PATH} could not be read: {exc}") from exc
 
 
 def command_catalog(args: argparse.Namespace) -> None:
@@ -214,25 +214,25 @@ def command_catalog(args: argparse.Namespace) -> None:
         return
     match = next((mission for mission in missions if mission["id"].casefold() == args.mission.casefold()), None)
     if match is None:
-        raise ValueError(f"Misión desconocida: {args.mission}. Usa 'catalog list'.")
+        raise ValueError(f"Unknown mission: {args.mission}. Use 'catalog list'.")
     print(json.dumps(match, ensure_ascii=False, indent=2))
 
 
 def check_range(start: datetime, end: datetime, label: str) -> None:
     if end <= start:
-        raise ValueError(f"{label}: el final debe ser posterior al inicio")
+        raise ValueError(f"{label}: the end must be later than the start")
 
 
 def command_compare_sites(args: argparse.Namespace) -> None:
     samples = load_samples(Path(args.csv))
     if args.site_a not in samples or args.site_b not in samples:
-        raise ValueError(f"Sitio no encontrado en CSV. Disponibles: {', '.join(sorted(samples))}")
+        raise ValueError(f"Site not found in CSV. Available: {', '.join(sorted(samples))}")
     start, end = parse_utc(args.start, "--start"), parse_utc(args.end, "--end")
     check_range(start, end, "Periodo")
     a = clipped_segments(samples[args.site_a], start, end)
     b = clipped_segments(samples[args.site_b], start, end)
     coincidence = joint_visible_seconds(a, b)
-    output = report("dos_sitios_mismo_periodo", [summarize(args.site_a, a), summarize(args.site_b, b)], coincidence, "ambos sitios visibles simultáneamente", Path(args.csv))
+    output = report("dos_sitios_mismo_periodo", [summarize(args.site_a, a), summarize(args.site_b, b)], coincidence, "both sites visible simultaneously", Path(args.csv))
     print(json.dumps(output, ensure_ascii=False, indent=2))
 
 
@@ -260,46 +260,46 @@ def overlap_offset_seconds(left: list[dict], right: list[dict]) -> float:
 def command_compare_periods(args: argparse.Namespace) -> None:
     samples = load_samples(Path(args.csv))
     if args.site not in samples:
-        raise ValueError(f"Sitio no encontrado en CSV. Disponibles: {', '.join(sorted(samples))}")
+        raise ValueError(f"Site not found in CSV. Available: {', '.join(sorted(samples))}")
     start_a, end_a = parse_utc(args.start_a, "--start-a"), parse_utc(args.end_a, "--end-a")
     start_b, end_b = parse_utc(args.start_b, "--start-b"), parse_utc(args.end_b, "--end-b")
     check_range(start_a, end_a, "Periodo A")
     check_range(start_b, end_b, "Periodo B")
     duration_a, duration_b = seconds(start_a, end_a), seconds(start_b, end_b)
     if not math.isclose(duration_a, duration_b, abs_tol=1e-6):
-        raise ValueError("Los dos periodos deben tener exactamente la misma duración")
+        raise ValueError("The two periods must have exactly the same duration")
     seg_a = clipped_segments(samples[args.site], start_a, end_a)
     seg_b = clipped_segments(samples[args.site], start_b, end_b)
     coincidence = overlap_offset_seconds(offset_segments(seg_a, start_a), offset_segments(seg_b, start_b))
-    output = report("un_sitio_dos_periodos", [summarize(args.site + " / periodo A", seg_a), summarize(args.site + " / periodo B", seg_b)], coincidence, "ambos periodos visibles en el mismo tiempo transcurrido", Path(args.csv))
+    output = report("un_sitio_dos_periodos", [summarize(args.site + " / periodo A", seg_a), summarize(args.site + " / periodo B", seg_b)], coincidence, "both periods visible at the same elapsed time", Path(args.csv))
     print(json.dumps(output, ensure_ascii=False, indent=2))
 
 
 def parser() -> argparse.ArgumentParser:
-    result = argparse.ArgumentParser(description="Catálogo Apollo y comparación de ventanas de visibilidad lunar.")
+    result = argparse.ArgumentParser(description="Apollo catalog and comparison of lunar visibility windows.")
     commands = result.add_subparsers(dest="command", required=True)
-    catalog = commands.add_parser("catalog", help="Consultar el catálogo histórico Apollo")
+    catalog = commands.add_parser("catalog", help="Query the historic Apollo catalog")
     actions = catalog.add_subparsers(dest="action", required=True)
     actions.add_parser("list", help="Listar misiones")
-    show = actions.add_parser("show", help="Mostrar la ficha de una misión")
-    show.add_argument("mission", help="ID de misión, por ejemplo apollo-11")
+    show = actions.add_parser("show", help="Show the profile of a mission")
+    show.add_argument("mission", help="Mission ID, for example apollo-11")
     catalog.set_defaults(func=command_catalog)
 
-    sites = commands.add_parser("compare-sites", help="Comparar dos sitios en el mismo periodo")
-    sites.add_argument("--csv", required=True, help="CSV con muestras de ambos sitios")
+    sites = commands.add_parser("compare-sites", help="Compare two sites over the same period")
+    sites.add_argument("--csv", required=True, help="CSV with samples from both sites")
     sites.add_argument("--site-a", required=True)
     sites.add_argument("--site-b", required=True)
     sites.add_argument("--start", required=True, help="Inicio UTC ISO 8601")
     sites.add_argument("--end", required=True, help="Fin UTC ISO 8601")
     sites.set_defaults(func=command_compare_sites)
 
-    periods = commands.add_parser("compare-periods", help="Comparar dos periodos iguales para un sitio")
-    periods.add_argument("--csv", required=True, help="CSV con muestras del sitio")
+    periods = commands.add_parser("compare-periods", help="Compare two equal periods for one site")
+    periods.add_argument("--csv", required=True, help="CSV with samples from the site")
     periods.add_argument("--site", required=True)
-    periods.add_argument("--start-a", required=True, help="Inicio UTC ISO 8601 del periodo A")
-    periods.add_argument("--end-a", required=True, help="Fin UTC ISO 8601 del periodo A")
-    periods.add_argument("--start-b", required=True, help="Inicio UTC ISO 8601 del periodo B")
-    periods.add_argument("--end-b", required=True, help="Fin UTC ISO 8601 del periodo B")
+    periods.add_argument("--start-a", required=True, help="ISO 8601 UTC start of period A")
+    periods.add_argument("--end-a", required=True, help="ISO 8601 UTC end of period A")
+    periods.add_argument("--start-b", required=True, help="ISO 8601 UTC start of period B")
+    periods.add_argument("--end-b", required=True, help="ISO 8601 UTC end of period B")
     periods.set_defaults(func=command_compare_periods)
     return result
 

@@ -22,9 +22,9 @@
         "source_values": { "latitude": "0.67416", "longitude": "23.47314" },
         "source_url": "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html"
       },
-      "normalization": "Hora guardada en ISO 8601 sin sufijo de zona; la escala UT reportada por NSSDCA se conserva explícitamente. Las coordenadas se copiaron sin redondeo de la fila Lunar Module.",
+      "normalization": "Time stored in ISO 8601 without a zone suffix; the UT scale reported by NSSDCA is kept explicitly. The coordinates were copied without rounding from the Lunar Module row.",
       "provenance_notes": [
-        "NSSDCA reporta 20:17:40 UT; el resumen histórico NASA reporta 20:17:39 GMT. Se adopta NSSDCA según el plan."
+        "NSSDCA reports 20:17:40 UT; the NASA historical summary reports 20:17:39 GMT. NSSDCA is adopted according to the plan."
       ],
       "reviewed_on": "2026-11-14"
     },
@@ -49,7 +49,7 @@
         "source_values": { "latitude": "-3.0128", "longitude": "-23.4219" },
         "source_url": "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html"
       },
-      "normalization": "Hora guardada en ISO 8601 sin sufijo de zona; la escala UT reportada por NSSDCA se conserva explícitamente. Las coordenadas se copiaron sin redondeo de la fila Lunar Module.",
+      "normalization": "Time stored in ISO 8601 without a zone suffix; the UT scale reported by NSSDCA is kept explicitly. The coordinates were copied without rounding from the Lunar Module row.",
       "provenance_notes": [],
       "reviewed_on": "2026-11-14"
     },
@@ -74,7 +74,7 @@
         "source_values": { "latitude": "-3.64589", "longitude": "-17.47194" },
         "source_url": "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html"
       },
-      "normalization": "Hora guardada en ISO 8601 sin sufijo de zona; la escala UT reportada por NSSDCA se conserva explícitamente. Las coordenadas se copiaron sin redondeo de la fila Lunar Module.",
+      "normalization": "Time stored in ISO 8601 without a zone suffix; the UT scale reported by NSSDCA is kept explicitly. The coordinates were copied without rounding from the Lunar Module row.",
       "provenance_notes": [],
       "reviewed_on": "2026-11-14"
     }

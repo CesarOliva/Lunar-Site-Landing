@@ -78,15 +78,15 @@ function PlanningPanel({ creditsBalance, onSpendCredits }) {
   const [planNotice, setPlanNotice] = useState('')
   const missionProfile = missionTypes.find((type) => type.id === form.missionType) ?? missionTypes[0]
   const steps = [
-    { id: 'mission', label: 'Planeación de viaje' },
-    { id: 'vehicle', label: 'Vehículo y lanzamiento' },
+    { id: 'mission', label: 'Trip planning' },
+    { id: 'vehicle', label: 'Vehicle and launch' },
     ...(missionProfile.conditionalSteps.length
-      ? [{ id: 'mission-details', label: 'Configuración de misión' }]
+      ? [{ id: 'mission-details', label: 'Mission setup' }]
       : []),
-    { id: 'site', label: 'Sitio de aterrizaje' },
-    { id: 'forecast', label: 'Fecha y hora' },
-    { id: 'analysis', label: 'Fecha y visibilidad' },
-    { id: 'summary', label: 'Resumen de misión' },
+    { id: 'site', label: 'Landing site' },
+    { id: 'forecast', label: 'Date and time' },
+    { id: 'analysis', label: 'Date and visibility' },
+    { id: 'summary', label: 'Mission summary' },
   ]
   const isStepAvailable = (stepDefinition) => detailedPlan || FREE_STEP_IDS.has(stepDefinition.id)
   const findNextAvailableStep = (index) => steps.findIndex(
@@ -127,16 +127,16 @@ function PlanningPanel({ creditsBalance, onSpendCredits }) {
 
   const confirmDetailedPlan = () => {
     if (creditsBalance < DETAILED_PLAN_CREDITS) {
-      setPurchaseError(`Necesitas ${DETAILED_PLAN_CREDITS} créditos y tu saldo actual es de ${creditsBalance}.`)
+      setPurchaseError(`You need ${DETAILED_PLAN_CREDITS} credits and your current balance is ${creditsBalance}.`)
       return
     }
     if (!onSpendCredits(DETAILED_PLAN_CREDITS)) {
-      setPurchaseError(`No se pudo completar la compra. Necesitas ${DETAILED_PLAN_CREDITS} créditos disponibles.`)
+      setPurchaseError(`The purchase could not be completed. You need ${DETAILED_PLAN_CREDITS} credits available.`)
       return
     }
 
     setDetailedPlan(true)
-    setPlanNotice(`Plan detallado activado para esta misión. Saldo restante: ${creditsBalance - DETAILED_PLAN_CREDITS} créditos.`)
+    setPlanNotice(`Detailed plan activated for this mission. Remaining balance: ${creditsBalance - DETAILED_PLAN_CREDITS} credits.`)
     setPurchaseError('')
     setUnlockDialogOpen(false)
   }
@@ -175,7 +175,7 @@ function PlanningPanel({ creditsBalance, onSpendCredits }) {
       })
       .catch((error) => {
         if (active) {
-          setVisibilityError(`No se pudo cargar el archivo de visibilidad (${error.message}).`)
+          setVisibilityError(`The visibility file could not be loaded (${error.message}).`)
         }
       })
     return () => { active = false }
@@ -249,7 +249,7 @@ function PlanningPanel({ creditsBalance, onSpendCredits }) {
           }),
         })
         const result = await response.json()
-        if (!response.ok) throw new Error(result.error ?? `Error de consulta (${response.status}).`)
+        if (!response.ok) throw new Error(result.error ?? `Query error (${response.status}).`)
         return [date, parseVisibilityDay(result)]
       }))
       if (!active) return
@@ -257,7 +257,7 @@ function PlanningPanel({ creditsBalance, onSpendCredits }) {
       const errors = []
       results.forEach((result) => {
         if (result.status === 'fulfilled') days[result.value[0]] = result.value[1]
-        else if (result.reason?.name !== 'AbortError') errors.push(result.reason instanceof Error ? result.reason.message : 'No se pudo calcular la visibilidad.')
+        else if (result.reason?.name !== 'AbortError') errors.push(result.reason instanceof Error ? result.reason.message : 'The visibility could not be calculated.')
       })
       setCustomVisibility({ key: customRequestKey, days, loading: false, error: errors.join(' ') })
     }, 250)
@@ -313,7 +313,7 @@ function PlanningPanel({ creditsBalance, onSpendCredits }) {
 
   const goNext = () => {
     if (currentStep.id === 'mission' && !form.name.trim()) {
-      setValidationMessage('Escribe un nombre para la misión antes de continuar.')
+      setValidationMessage('Enter a name for the mission before continuing.')
       return
     }
     if (currentStep.id === 'mission' && getDurationIssue(form)) {
@@ -321,15 +321,15 @@ function PlanningPanel({ creditsBalance, onSpendCredits }) {
       return
     }
     if (currentStep.id === 'site' && !siteInputsValid) {
-      setValidationMessage('Revisa latitud, longitud y altitud del sitio antes de continuar.')
+      setValidationMessage('Check the site latitude, longitude and altitude before continuing.')
       return
     }
     if (currentStep.id === 'forecast' && !dateIsInCoverage) {
-      setValidationMessage('Selecciona una fecha dentro del intervalo de datos disponible.')
+      setValidationMessage('Select a date within the available data range.')
       return
     }
     if (currentStep.id === 'analysis' && !comparisonDateIsInCoverage) {
-      setValidationMessage('Selecciona una fecha alternativa dentro del intervalo de datos.')
+      setValidationMessage('Select an alternative date within the data range.')
       return
     }
     setValidationMessage('')
@@ -339,7 +339,7 @@ function PlanningPanel({ creditsBalance, onSpendCredits }) {
 
   const downloadPlan = async () => {
     if (!form.name.trim() || getDurationIssue(form) || !siteInputsValid || !dateIsInCoverage || !comparisonDateIsInCoverage) {
-      setValidationMessage('Revisa el nombre, duración, coordenadas y fechas antes de descargar el plan.')
+      setValidationMessage('Check the name, duration, coordinates and dates before downloading the plan.')
       return
     }
     setValidationMessage('')
@@ -348,28 +348,28 @@ function PlanningPanel({ creditsBalance, onSpendCredits }) {
       await downloadMissionPlanPdf({
         form,
         missionProfile,
-        siteName: isModeledSite ? visibilitySite.name : 'Coordenadas personalizadas',
+        siteName: isModeledSite ? visibilitySite.name : 'Custom coordinates',
         selectedSample,
         formatAngle,
       })
     } catch (error) {
       setValidationMessage(
-        `No se pudo generar el PDF: ${error instanceof Error ? error.message : 'error inesperado.'}`
+        `The PDF could not be generated: ${error instanceof Error ? error.message : 'unexpected error.'}`
       )
     }
   }
 
   return (
     <div ref={wizardRef} className={`planning-wizard ${glitchActive ? 'is-glitching' : ''}`}>
-      <nav className="planning-stepper" aria-label="Pasos de planificación" style={{ '--progress': steps.length > 1 ? step / (steps.length - 1) : 0 }}>
+      <nav className="planning-stepper" aria-label="Planning steps" style={{ '--progress': steps.length > 1 ? step / (steps.length - 1) : 0 }}>
         {steps.map(({ label }, index) => (
           <button
             className={`step-number ${index === step ? 'is-current' : ''} ${index < step && isStepAvailable(steps[index]) ? 'is-complete' : ''} ${isStepAvailable(steps[index]) ? '' : 'is-locked'}`}
             key={steps[index].id}
             type="button"
             disabled={!isStepAvailable(steps[index])}
-            aria-label={`Paso ${index + 1}: ${label}${isStepAvailable(steps[index]) ? '' : ', bloqueado en el plan gratuito'}`}
-            title={isStepAvailable(steps[index]) ? label : `${label} · Requiere plan detallado`}
+            aria-label={`Step ${index + 1}: ${label}${isStepAvailable(steps[index]) ? '' : ', locked on the free plan'}`}
+            title={isStepAvailable(steps[index]) ? label : `${label} · Requires detailed plan`}
             aria-current={index === step ? 'step' : undefined}
             onClick={() => {
               if (!isStepAvailable(steps[index])) return
@@ -455,11 +455,11 @@ function PlanningPanel({ creditsBalance, onSpendCredits }) {
             setStep(findPreviousAvailableStep(step))
             setValidationMessage('')
           }} disabled={step === 0}>
-            <ChevronLeft size={16} /> Anterior
+            <ChevronLeft size={16} /> Previous
           </button>
           {nextAvailableStep !== -1 && (
             <button className="planning-next-button" type="button" onClick={goNext}>
-              Siguiente <ChevronRight size={16} />
+              Next <ChevronRight size={16} />
             </button>
           )}
         </footer>
@@ -477,25 +477,25 @@ function PlanningPanel({ creditsBalance, onSpendCredits }) {
         }}
       >
         <div className="planning-unlock-content">
-          <p className="planning-unlock-eyebrow">DESBLOQUEO POR PLAN</p>
-          <h3 id="planning-unlock-title">Plan detallado</h3>
+          <p className="planning-unlock-eyebrow">PLAN UNLOCK</p>
+          <h3 id="planning-unlock-title">Detailed plan</h3>
           <p className="planning-unlock-description">
-            Por 5 créditos ($2.50 USD) obtienes, para esta planeación:
+            For 5 credits ($2.50 USD) you get, for this plan:
           </p>
           <ul className="planning-unlock-benefits">
-            <li>Edición de todos los pasos y sus detalles.</li>
-            <li>Simulación final de la misión.</li>
-            <li>Descarga en PDF del resumen de misión.</li>
+            <li>Editing of all the steps and their details.</li>
+            <li>Final mission simulation.</li>
+            <li>PDF download of the mission summary.</li>
           </ul>
           <p className="planning-unlock-balance">
-            Saldo actual: <strong>{creditsBalance} créditos</strong>
+            Current balance: <strong>{creditsBalance} credits</strong>
           </p>
           <p className="planning-unlock-once">
-            La compra desbloquea solo este plan. Cada nuevo plan detallado cuesta otros 5 créditos.
+            The purchase unlocks this plan only. Each new detailed plan costs another 5 credits.
           </p>
           {creditsBalance < DETAILED_PLAN_CREDITS && (
             <p className="planning-unlock-error" role="status">
-              Saldo insuficiente: necesitas {DETAILED_PLAN_CREDITS - creditsBalance} créditos más para continuar.
+              Insufficient balance: you need {DETAILED_PLAN_CREDITS - creditsBalance} more credits to continue.
             </p>
           )}
           {purchaseError && <p className="planning-unlock-error" role="alert">{purchaseError}</p>}
@@ -506,10 +506,10 @@ function PlanningPanel({ creditsBalance, onSpendCredits }) {
               onClick={confirmDetailedPlan}
               disabled={creditsBalance < DETAILED_PLAN_CREDITS}
             >
-              Comprar por 5 créditos
+              Buy for 5 credits
             </button>
             <button className="planning-unlock-cancel" type="button" onClick={() => setUnlockDialogOpen(false)}>
-              Cancelar
+              Cancel
             </button>
           </div>
         </div>

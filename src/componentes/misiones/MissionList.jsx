@@ -4,15 +4,15 @@ import '../../estilos/misiones/MissionList.css'
 
 const assessmentLabels = {
   favorable: 'FAVORABLE',
-  unfavorable: 'DESFAVORABLE',
-  indeterminate: 'SIN DATOS SUFICIENTES',
+  unfavorable: 'UNFAVORABLE',
+  indeterminate: 'INSUFFICIENT DATA',
 }
 
 function MissionList({ missions, onSelect, onHover }) {
   return (
     <div className="mission-list-content">
-      <h2>Misiones<br /><em>históricas</em></h2>
-      <p className="panel-description">Seis expediciones Apollo que hicieron historia en la superficie lunar.</p>
+      <h2>Historic<br /><em>missions</em></h2>
+      <p className="panel-description">Six Apollo expeditions that made history on the lunar surface.</p>
       <div className="mission-list">
         {missions.map((mission) => {
           const assessment = sceneCatalog.missions[mission.id]?.landing_assessment

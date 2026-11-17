@@ -11,22 +11,22 @@ const initialProgress = {
 
 // Zonas con mosaico LROC NAC de ~0,5 m/píxel en NASA Trek (centros de sus bbox).
 const nacSites = [
-  { name: 'Tycho (NAC 0,5 m)', latitude: -42.98, longitude: -11.2 },
-  { name: 'Apolo 11', latitude: 0.64, longitude: 23.49 },
-  { name: 'Apolo 12', latitude: -3.0, longitude: -23.4 },
-  { name: 'Apolo 14', latitude: -3.7, longitude: -17.44 },
-  { name: 'Apolo 15', latitude: 26.28, longitude: 3.63 },
-  { name: 'Apolo 16', latitude: -9.13, longitude: 15.47 },
-  { name: 'Apolo 17', latitude: 20.3, longitude: 30.8 },
+  { name: 'Tycho (NAC 0.5 m)', latitude: -42.98, longitude: -11.2 },
+  { name: 'Apollo 11', latitude: 0.64, longitude: 23.49 },
+  { name: 'Apollo 12', latitude: -3.0, longitude: -23.4 },
+  { name: 'Apollo 14', latitude: -3.7, longitude: -17.44 },
+  { name: 'Apollo 15', latitude: 26.28, longitude: 3.63 },
+  { name: 'Apollo 16', latitude: -9.13, longitude: 15.47 },
+  { name: 'Apollo 17', latitude: 20.3, longitude: 30.8 },
   { name: 'Von Kármán', latitude: -45.5, longitude: 175.7 },
 ]
 
 const qualityOptions = [
-  { level: 1, label: 'Ligera', tiles: 16 },
-  { level: 2, label: 'Estándar', tiles: 64 },
-  { level: 3, label: 'Alta', tiles: 256 },
-  { level: 4, label: 'Muy alta', tiles: 1024 },
-  { level: 5, label: 'Máxima', tiles: 2048 },
+  { level: 1, label: 'Light', tiles: 16 },
+  { level: 2, label: 'Standard', tiles: 64 },
+  { level: 3, label: 'High', tiles: 256 },
+  { level: 4, label: 'Very high', tiles: 1024 },
+  { level: 5, label: 'Maximum', tiles: 2048 },
 ]
 
 function Icon({ name }) {
@@ -155,7 +155,7 @@ function App() {
   return (
     <main className="app-shell">
       <header className="topbar">
-        <a className="brand" href="https://trek.nasa.gov/" target="_blank" rel="noreferrer" aria-label="NASA Trek, abrir en una nueva pestaña">
+        <a className="brand" href="https://trek.nasa.gov/" target="_blank" rel="noreferrer" aria-label="NASA Trek, open in a new tab">
           <span className="brand-mark" aria-hidden="true"><span /></span>
           <span className="brand-copy">
             <strong>LUNAR ATLAS</strong>
@@ -164,16 +164,16 @@ function App() {
         </a>
         <div className="topbar-meta">
           <span className="live-indicator" aria-hidden="true" />
-          <span>DATOS WMTS</span>
+          <span>WMTS DATA</span>
           <span className="topbar-divider" />
           <span className="topbar-source">{surfaceMode ? 'CESIUM · NASA' : 'LOLA · WAC'}</span>
         </div>
       </header>
 
       <div className="workspace">
-        <section className="viewer" aria-label="Globo lunar interactivo">
+        <section className="viewer" aria-label="Interactive lunar globe">
           <div className="viewer-topline">
-            <div className="eyebrow"><span>01</span> EXPLORADOR PLANETARIO</div>
+            <div className="eyebrow"><span>01</span> PLANETARY EXPLORER</div>
             <div className="projection-tag">
               <span className="projection-dot" />
               {surfaceMode ? 'VISTA DE SUPERFICIE · CESIUM' : 'EQUIRECTANGULAR · 360°'}
@@ -199,26 +199,26 @@ function App() {
               <SurfaceExplorer
                 key={`${surfacePoint.latitude}/${surfacePoint.longitude}`}
                 point={surfacePoint}
-                closeLabel="VOLVER AL GLOBO"
+                closeLabel="BACK TO THE GLOBE"
                 onClose={handleReturnToGlobe}
                 onInfo={setSurfaceInfo}
               />
             )}
             {!surfaceMode && <div className="globe-caption">
-              <span className="caption-kicker">CUERPO CELESTE</span>
-              <strong>La Luna</strong>
-              <span>Radio medio <b>1.737,4 km</b></span>
+              <span className="caption-kicker">CELESTIAL BODY</span>
+              <strong>The Moon</strong>
+              <span>Mean radius <b>1,737.4 km</b></span>
             </div>}
             {selectionEnabled && !surfaceMode && (
               <div className="selection-prompt" role="status">
-                Haz clic en el globo para marcar el punto
+                Click on the globe to mark the point
               </div>
             )}
             {error && (
               <div className="scene-error" role="alert">
-                <strong>No se pudo cargar el globo</strong>
+                <strong>The globe could not be loaded</strong>
                 <span>{error}</span>
-                <button type="button" onClick={() => window.location.reload()}>Reintentar</button>
+                <button type="button" onClick={() => window.location.reload()}>Retry</button>
               </div>
             )}
 
@@ -226,29 +226,29 @@ function App() {
               <div className="loading-card" role="status" aria-live="polite">
                 <span className="loading-spinner" aria-hidden="true" />
                 <span>
-                  <strong>Conectando con NASA Trek</strong>
-                  <small>{totalTiles ? `${loadedTiles} de ${totalTiles} teselas` : 'Leyendo capacidades WMTS…'}</small>
+                  <strong>Connecting to NASA Trek</strong>
+                  <small>{totalTiles ? `${loadedTiles} of ${totalTiles} tiles` : 'Reading WMTS capabilities…'}</small>
                 </span>
               </div>
             )}
 
-            {!surfaceMode && <div className="viewer-controls" aria-label="Controles del globo">
-              <button type="button" aria-label="Alejar globo" title="Alejar" onClick={() => viewerRef.current?.zoomOut()}>
+            {!surfaceMode && <div className="viewer-controls" aria-label="Globe controls">
+              <button type="button" aria-label="Zoom out of the globe" title="Zoom out" onClick={() => viewerRef.current?.zoomOut()}>
                 <Icon name="zoomOut" />
               </button>
-              <button type="button" aria-label="Acercar globo" title="Acercar" onClick={() => viewerRef.current?.zoomIn()}>
+              <button type="button" aria-label="Zoom into the globe" title="Zoom in" onClick={() => viewerRef.current?.zoomIn()}>
                 <Icon name="zoomIn" />
               </button>
               <span className="control-separator" />
-              <button type="button" aria-label="Restablecer vista" title="Restablecer vista" onClick={() => viewerRef.current?.resetView()}>
+              <button type="button" aria-label="Reset view" title="Reset view" onClick={() => viewerRef.current?.resetView()}>
                 <Icon name="reset" />
               </button>
               <button
                 type="button"
                 className={autoRotate ? 'is-selected' : ''}
-                aria-label={autoRotate ? 'Pausar rotación automática' : 'Activar rotación automática'}
+                aria-label={autoRotate ? 'Pause automatic rotation' : 'Enable automatic rotation'}
                 aria-pressed={autoRotate}
-                title={autoRotate ? 'Pausar rotación' : 'Activar rotación'}
+                title={autoRotate ? 'Pause rotation' : 'Enable rotation'}
                 onClick={() => setAutoRotate((current) => !current)}
               >
                 <Icon name={autoRotate ? 'pause' : 'play'} />
@@ -261,27 +261,27 @@ function App() {
               <span className={`status-dot ${isReady && !hasMissingTiles ? 'status-ready' : ''}`} />
               <span>
                 {surfaceMode
-                  ? 'VISTA DE SUPERFICIE'
+                  ? 'SURFACE VIEW'
                   : selectionEnabled
-                    ? 'SELECCIONA UN PUNTO'
+                    ? 'SELECT A POINT'
                     : error
-                      ? 'ERROR DE CONEXIÓN'
+                      ? 'CONNECTION ERROR'
                       : !isReady
-                        ? 'CARGANDO CAPAS'
+                        ? 'LOADING LAYERS'
                         : hasMissingTiles
-                          ? 'COBERTURA PARCIAL'
+                          ? 'PARTIAL COVERAGE'
                           : qualityLevel >= 4
-                            ? 'DETALLE BAJO DEMANDA'
-                            : 'CAPAS CARGADAS'}
+                            ? 'DETAIL ON DEMAND'
+                            : 'LAYERS LOADED'}
               </span>
             </div>
             <div className="footer-coordinates">
-              <span>ESCALA DE ALTURA <b>VISUAL</b></span>
+              <span>HEIGHT SCALE <b>VISUAL</b></span>
               <span className="footer-divider" />
               <span>
                 {selectedPoint
                   ? `LAT ${selectedPoint.latitude.toFixed(3)}° · LON ${selectedPoint.longitude.toFixed(3)}°`
-                  : <>FUENTE <b>NASA TREK WMTS</b></>}
+                  : <>SOURCE <b>NASA TREK WMTS</b></>}
               </span>
             </div>
           </div>
@@ -289,51 +289,51 @@ function App() {
 
         <aside className="sidebar">
           <div className="sidebar-heading">
-            <span className="eyebrow"><span>02</span> FICHA DEL CUERPO</span>
+            <span className="eyebrow"><span>02</span> BODY PROFILE</span>
             <span className="body-code">MOON / 301</span>
           </div>
-          <h1>Topografía<br /><span>lunar</span></h1>
-          <p className="intro-copy">Un globo interactivo construido con mosaicos de imagen y elevación de NASA Trek.</p>
+          <h1>Lunar<br /><span>topography</span></h1>
+          <p className="intro-copy">An interactive globe built from NASA Trek imagery and elevation mosaics.</p>
 
           <div className="data-divider" />
 
           <section className="layer-section" aria-labelledby="layers-title">
             <div className="section-title-row">
-              <h2 id="layers-title">Capas activas</h2>
+              <h2 id="layers-title">Active layers</h2>
               <span className="layer-count">02</span>
             </div>
             <div className="layer-card">
               <span className="layer-swatch swatch-imagery" aria-hidden="true" />
               <div className="layer-info">
-                <strong>Mosaico de imagen</strong>
+                <strong>Imagery mosaic</strong>
                 <span>
                   {surfaceMode
-                    ? `Superficie · ${surfaceInfo?.imagery.at(-1)?.title || 'buscando mosaicos…'} (Cesium)`
-                    : 'LRO WAC · 303 px/grado'}
+                    ? `Surface · ${surfaceInfo?.imagery.at(-1)?.title || 'looking up mosaics…'} (Cesium)`
+                    : 'LRO WAC · 303 px/degree'}
                 </span>
               </div>
-              <span className="layer-check" aria-label="Activa">✓</span>
+              <span className="layer-check" aria-label="Active">✓</span>
             </div>
             <div className="layer-card">
               <span className="layer-swatch swatch-elevation" aria-hidden="true" />
               <div className="layer-info">
-                <strong>Modelo de elevación</strong>
+                <strong>Elevation model</strong>
                 <span>
                   {surfaceMode
-                    ? `Superficie · ${surfaceInfo?.dem.title || 'descargando LOLA…'} (Cesium)`
-                    : 'LOLA DEM · 128 px/grado'}
+                    ? `Surface · ${surfaceInfo?.dem.title || 'downloading LOLA…'} (Cesium)`
+                    : 'LOLA DEM · 128 px/degree'}
                 </span>
               </div>
-              <span className="layer-check" aria-label="Activa">✓</span>
+              <span className="layer-check" aria-label="Active">✓</span>
             </div>
           </section>
 
           <section className="point-section" aria-labelledby="point-title">
             <div className="section-title-row">
-              <h2 id="point-title">Explorar un punto</h2>
+              <h2 id="point-title">Explore a point</h2>
               <span className="layer-count">CESIUM</span>
             </div>
-            <p className="point-helper">Marca una ubicación en el globo o escribe sus coordenadas lunares.</p>
+            <p className="point-helper">Mark a location on the globe or type in its lunar coordinates.</p>
             <button
               className={`point-pick-button${selectionEnabled ? ' is-active' : ''}`}
               type="button"
@@ -341,11 +341,11 @@ function App() {
               disabled={!isReady || surfaceMode}
               onClick={togglePointSelection}
             >
-              {selectionEnabled ? 'CANCELAR SELECCIÓN' : 'SELECCIONAR EN EL GLOBO'}
+              {selectionEnabled ? 'CANCEL SELECTION' : 'SELECT ON THE GLOBE'}
             </button>
             <form className="coordinate-form" onSubmit={handleCoordinateSubmit}>
               <label>
-                Latitud
+                Latitude
                 <input
                   type="number"
                   name="latitude"
@@ -359,7 +359,7 @@ function App() {
                 />
               </label>
               <label>
-                Longitud
+                Longitude
                 <input
                   type="number"
                   name="longitude"
@@ -372,10 +372,10 @@ function App() {
                   onChange={(event) => setLongitudeInput(event.target.value)}
                 />
               </label>
-              <button type="submit" disabled={surfaceMode}>MARCAR COORDENADAS</button>
+              <button type="submit" disabled={surfaceMode}>MARK COORDINATES</button>
             </form>
-            <div className="nac-sites" aria-label="Zonas con imagen NAC de alta resolución">
-              <span>Zonas con imagen NAC ~0,5 m</span>
+            <div className="nac-sites" aria-label="Areas with high-resolution NAC imagery">
+              <span>Areas with NAC imagery ~0.5 m</span>
               <div>
                 {nacSites.map((site) => (
                   <button
@@ -396,8 +396,8 @@ function App() {
             </div>
             <p className="selected-point" role="status">
               {selectedPoint
-                ? `Punto: ${selectedPoint.latitude.toFixed(4)}° lat · ${selectedPoint.longitude.toFixed(4)}° lon`
-                : 'Sin punto seleccionado'}
+                ? `Point: ${selectedPoint.latitude.toFixed(4)}° lat · ${selectedPoint.longitude.toFixed(4)}° lon`
+                : 'No point selected'}
             </p>
             <button
               className="surface-launch-button"
@@ -405,26 +405,26 @@ function App() {
               disabled={!selectedPoint || !isReady || surfaceMode}
               onClick={handleExploreSurface}
             >
-              {surfaceMode ? 'EN PRIMERA PERSONA' : 'EXPLORAR EN PRIMERA PERSONA'}
+              {surfaceMode ? 'IN FIRST PERSON' : 'EXPLORE IN FIRST PERSON'}
             </button>
             <p className="point-resolution-note">
-              La vista de superficie usa CesiumJS con el elipsoide lunar: carga solo las teselas de imagen de NASA Trek de mayor resolución que cubren el punto (según el zoom de la cámara) y el relieve real LOLA de 16 bits del PDS de la NASA.
+              The surface view uses CesiumJS with the lunar ellipsoid: it loads only the highest-resolution NASA Trek imagery tiles that cover the point (according to the camera zoom) and the real 16-bit LOLA terrain from the NASA PDS.
             </p>
           </section>
 
           <section className="quality-section" aria-labelledby="quality-title">
             <div className="section-title-row">
-              <h2 id="quality-title">Calidad del modelo</h2>
-              <span className="coverage-value">{selectedQuality.tiles} TESELAS</span>
+              <h2 id="quality-title">Model quality</h2>
+              <span className="coverage-value">{selectedQuality.tiles} TILES</span>
             </div>
-            <div className="quality-options" aria-label="Elige la cantidad de teselas">
+            <div className="quality-options" aria-label="Choose the number of tiles">
               {qualityOptions.map((option) => (
                 <button
                   type="button"
                   key={option.level}
                   className={qualityLevel === option.level ? 'quality-option is-active' : 'quality-option'}
                   aria-pressed={qualityLevel === option.level}
-                  aria-label={`${option.label}: ${option.tiles} teselas entre las dos capas`}
+                  aria-label={`${option.label}: ${option.tiles} tiles across the two layers`}
                   disabled={surfaceMode}
                   onClick={() => changeQuality(option.level)}
                 >
@@ -435,21 +435,21 @@ function App() {
             </div>
             <p className="quality-hint">
               {qualityLevel >= 4
-                ? `El mosaico base se completa con detalle de la zona visible al rotar. Presupuesto máximo: ${selectedQuality.tiles} solicitudes entre ambas capas; el progreso cuenta solo las teselas planificadas.`
-                : 'Más teselas aumentan el detalle y el tiempo de descarga.'}
-              {' '}Este selector solo afecta al globo; la vista de superficie usa Cesium con su propio nivel de detalle.
+                ? `The base mosaic is completed with detail of the visible area as you rotate. Maximum budget: ${selectedQuality.tiles} requests across both layers; progress counts only the planned tiles.`
+                : 'More tiles increase the detail and the download time.'}
+              {' '}This selector only affects the globe; the surface view uses Cesium with its own level of detail.
             </p>
           </section>
 
-          <section className="coverage-section" aria-label="Progreso de carga">
+          <section className="coverage-section" aria-label="Loading progress">
             <div className="section-title-row">
-              <h2>Descarga de teselas</h2>
+              <h2>Tile download</h2>
               <span className="coverage-value">{totalTiles ? `${Math.round((loadedTiles / totalTiles) * 100)}%` : '—'}</span>
             </div>
             <div
               className="progress-track"
               role="progressbar"
-              aria-label="Teselas cargadas"
+              aria-label="Tiles loaded"
               aria-valuemin="0"
               aria-valuemax={totalTiles || 100}
               aria-valuenow={loadedTiles}
@@ -457,36 +457,36 @@ function App() {
               <span style={{ width: `${totalTiles ? (loadedTiles / totalTiles) * 100 : 0}%` }} />
             </div>
             <div className="tile-counts">
-              <span>Imagen <b>{visibleProgress.imagery.loaded}/{visibleProgress.imagery.total || '—'}</b></span>
-              <span>Relieve <b>{visibleProgress.elevation.loaded}/{visibleProgress.elevation.total || '—'}</b></span>
+              <span>Imagery <b>{visibleProgress.imagery.loaded}/{visibleProgress.imagery.total || '—'}</b></span>
+              <span>Terrain <b>{visibleProgress.elevation.loaded}/{visibleProgress.elevation.total || '—'}</b></span>
             </div>
             <p className="quality-hint">
               {surfaceMode
-                ? 'Descarga del globo.'
-                : 'El contador refleja las solicitudes realmente planificadas; el presupuesto es un límite, no una meta de descarga.'}
+                ? 'Globe download.'
+                : 'The counter reflects the requests actually planned; the budget is a limit, not a download target.'}
             </p>
           </section>
 
           <section className="model-note" aria-labelledby="model-note-title">
             <span className="note-icon" aria-hidden="true"><Icon name="orbit" /></span>
             <div>
-              <h2 id="model-note-title">Sobre el relieve</h2>
-              <p>El terreno se construye con el DEM real de NASA Trek. Si el catálogo no publica su rango vertical, se representa como relieve relativo, no en metros calibrados; los PNG de 8 bits no sirven para mediciones científicas.</p>
+              <h2 id="model-note-title">About the terrain</h2>
+              <p>The terrain is built from the real NASA Trek DEM. If the catalog does not publish its vertical range, it is rendered as relative relief, not in calibrated meters; 8-bit PNGs are not suitable for scientific measurements.</p>
             </div>
           </section>
 
           <div className="sidebar-bottom">
             <a href="https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=moon" target="_blank" rel="noreferrer">
-              DOCUMENTACIÓN DE LA API <span aria-hidden="true">↗</span>
+              API DOCUMENTATION <span aria-hidden="true">↗</span>
             </a>
-            <span>OGC WMTS · PROYECCIÓN EQ</span>
+            <span>OGC WMTS · EQ PROJECTION</span>
           </div>
         </aside>
       </div>
 
       <footer className="page-footer">
         <span>NASA TREK MAP SERVICES</span>
-        <span>INTERACTÚA: ARRASTRA PARA ROTAR · RUEDA PARA ACERCAR</span>
+        <span>INTERACT: DRAG TO ROTATE · SCROLL TO ZOOM</span>
       </footer>
     </main>
   )

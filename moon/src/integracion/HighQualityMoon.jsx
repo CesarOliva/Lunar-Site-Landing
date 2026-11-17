@@ -27,7 +27,7 @@ export default function HighQualityMoon({ radius = 1.1, fallback = null, onReady
         setMoon(loaded)
         onReady?.(loaded)
       })
-      .catch((error) => console.warn('No se pudo cargar la luna de alta calidad:', error))
+      .catch((error) => console.warn('The high-quality Moon could not be loaded:', error))
     return () => { cancelled = true }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [radius])

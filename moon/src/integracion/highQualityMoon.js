@@ -62,7 +62,7 @@ export function loadHighQualityMoon({ radius = 1.1 } = {}) {
 
 /** Empieza la descarga en segundo plano (p. ej. durante la pantalla de introducción). */
 export function preloadHighQualityMoon(options) {
-  loadHighQualityMoon(options).catch((error) => console.warn('Luna de alta calidad no disponible:', error))
+  loadHighQualityMoon(options).catch((error) => console.warn('High-quality Moon not available:', error))
 }
 
 export function onHighQualityMoonProgress(listener) {

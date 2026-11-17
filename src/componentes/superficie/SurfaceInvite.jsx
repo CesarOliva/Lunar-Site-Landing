@@ -16,7 +16,7 @@ export default function SurfaceInvite({ target, onOpen }) {
       exit={{ opacity: 0, y: 14 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
     >
-      <span className="section-label">Explorador lunar <i /></span>
+      <span className="section-label">Lunar explorer <i /></span>
       <strong className="surface-invite-title">{target.mission.name}</strong>
       <span className="surface-invite-site">{target.mission.site}</span>
       <p className="surface-invite-coords">
@@ -24,7 +24,7 @@ export default function SurfaceInvite({ target, onOpen }) {
         <span>{formatLongitude(target.longitude)}</span>
       </p>
       <button className="primary-button surface-invite-button" onClick={onOpen}>
-        Entrar en primera persona <Footprints size={17} />
+        Enter first person <Footprints size={17} />
       </button>
     </motion.div>
   )

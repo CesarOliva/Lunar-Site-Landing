@@ -5,33 +5,33 @@ import '../../estilos/Creditos/CreditosScreen.css'
 const offers = [
   {
     id: 'student',
-    title: 'Plan estudiantil',
+    title: 'Student plan',
     credits: 100,
     price: 0,
-    cadence: 'al mes',
-    description: 'Registra una cuenta universitaria para recibir créditos gratis cada mes.',
+    cadence: 'per month',
+    description: 'Register a university account to receive free credits every month.',
     featured: true,
   },
   {
     id: '10-credits',
-    title: '10 créditos',
+    title: '10 credits',
     credits: 10,
     price: 5,
-    description: 'Una recarga para comenzar a explorar.',
+    description: 'A top-up to start exploring.',
   },
   {
     id: '50-credits',
-    title: '50 créditos',
+    title: '50 credits',
     credits: 50,
     price: 25,
-    description: 'Más créditos para continuar tu exploración lunar.',
+    description: 'More credits to continue your lunar exploration.',
   },
   {
     id: '100-credits',
-    title: '100 créditos',
+    title: '100 credits',
     credits: 100,
     price: 50,
-    description: 'La recarga más amplia para tus próximas misiones.',
+    description: 'The largest top-up for your upcoming missions.',
   },
 ]
 
@@ -67,21 +67,21 @@ function CreditosScreen({ onRecharge }) {
 
     onRecharge(selectedOffer.credits)
     setNotice(selectedOffer.featured
-      ? `Se sumaron ${selectedOffer.credits} créditos de demostración al saldo. El registro y la validación universitaria no se realizan en esta vista.`
-      : `Se sumaron ${selectedOffer.credits} créditos de demostración al saldo. No se procesó ningún pago.`)
+      ? `${selectedOffer.credits} demo credits were added to the balance. University registration and validation are not performed in this view.`
+      : `${selectedOffer.credits} demo credits were added to the balance. No payment was processed.`)
     closeConfirmation()
   }
 
   return (
     <section className="credits-screen" aria-labelledby="credits-title">
       <header className="credits-heading">
-        <p className="credits-eyebrow">CENTRO DE EXPLORACIÓN</p>
-        <h2 id="credits-title">Recarga <em>créditos</em></h2>
+        <p className="credits-eyebrow">EXPLORATION CENTER</p>
+        <h2 id="credits-title">Top up <em>credits</em></h2>
         <p className="credits-description">
-          Elige una opción para continuar tu recorrido por la Luna.
-          <strong> 1 crédito = $0.50 USD</strong>
+          Choose an option to continue your journey around the Moon.
+          <strong> 1 credit = $0.50 USD</strong>
         </p>
-        <p className="credits-demo-note">Vista de demostración: las recargas se reflejan en el saldo, sin procesar pagos ni registros.</p>
+        <p className="credits-demo-note">Demo view: top-ups are reflected in the balance, with no payments or registrations processed.</p>
       </header>
 
       {notice && <p className="credits-notice" role="status">{notice}</p>}
@@ -96,31 +96,31 @@ function CreditosScreen({ onRecharge }) {
               <span className="credits-card-icon">
                 {offer.featured ? <GraduationCap size={19} /> : <Coins size={19} />}
               </span>
-              {offer.featured && <span className="credits-card-badge">GRATIS</span>}
+              {offer.featured && <span className="credits-card-badge">FREE</span>}
             </div>
             <h3>{offer.title}</h3>
             <p className="credits-card-description">{offer.description}</p>
             <div className="credits-card-value">
               <strong>{offer.credits}</strong>
-              <span>{offer.cadence ? `créditos ${offer.cadence}` : 'créditos'}</span>
+              <span>{offer.cadence ? `credits ${offer.cadence}` : 'credits'}</span>
             </div>
             <p className="credits-card-price">
-              {offer.featured ? 'Gratis' : `$${offer.price.toFixed(2)} USD`}
-              {offer.featured && <span> al mes</span>}
+              {offer.featured ? 'Free' : `$${offer.price.toFixed(2)} USD`}
+              {offer.featured && <span> per month</span>}
             </p>
             {offer.featured && (
               <p className="credits-card-requirement">
-                La validación de la cuenta universitaria no está incluida en esta vista.
+                University account validation is not included in this view.
               </p>
             )}
             <button
               className="credits-recharge-button"
               type="button"
               onClick={(event) => openConfirmation(offer, event)}
-              aria-label={`Recargar: ${offer.title}`}
+              aria-label={`Top up: ${offer.title}`}
             >
               <Coins size={16} />
-              Recargar
+              Top up
             </button>
           </article>
         ))}
@@ -141,30 +141,30 @@ function CreditosScreen({ onRecharge }) {
         {selectedOffer && (
           <div className="credits-dialog-content">
             <p className="credits-eyebrow">
-              {selectedOffer.featured ? 'CONFIRMAR PLAN' : 'CONFIRMAR RECARGA'}
+              {selectedOffer.featured ? 'CONFIRM PLAN' : 'CONFIRM TOP-UP'}
             </p>
             <h3 id="credits-dialog-title">{selectedOffer.title}</h3>
-            <p className="credits-dialog-question">¿Estás seguro de que quieres continuar?</p>
+            <p className="credits-dialog-question">Are you sure you want to continue?</p>
             <div className="credits-dialog-summary">
-              <span>Recibirás</span>
+              <span>You will receive</span>
               <strong>
-                {selectedOffer.credits} créditos
-                {selectedOffer.featured ? ' gratis al mes' : ''}
+                {selectedOffer.credits} credits
+                {selectedOffer.featured ? ' free per month' : ''}
               </strong>
-              <span>{selectedOffer.featured ? 'Costo mensual' : 'Total'}</span>
-              <strong>{selectedOffer.featured ? 'Gratis' : `$${selectedOffer.price.toFixed(2)} USD`}</strong>
+              <span>{selectedOffer.featured ? 'Monthly cost' : 'Total'}</span>
+              <strong>{selectedOffer.featured ? 'Free' : `$${selectedOffer.price.toFixed(2)} USD`}</strong>
             </div>
             {selectedOffer.featured && (
               <p className="credits-dialog-note">
-                El plan requiere registrar una cuenta universitaria. No se solicita ni valida desde esta vista.
+                The plan requires registering a university account. It is neither requested nor validated in this view.
               </p>
             )}
             <div className="credits-dialog-actions">
               <button className="credits-confirm-button" type="button" onClick={confirmOffer}>
-                Recargar
+                Top up
               </button>
               <button className="credits-cancel-button" type="button" onClick={closeConfirmation}>
-                Cancelar
+                Cancel
               </button>
             </div>
           </div>

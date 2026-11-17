@@ -340,7 +340,7 @@ export async function estimateSunDirection(provider, lolaWindow, latitude, longi
       }
     }
     if (count < 200) {
-      console.debug('[sol] pocos puntos válidos', count)
+      console.debug('[sun] too few valid points', count)
       return { ...DEFAULT_SUN, meanBrightness }
     }
 
@@ -351,7 +351,7 @@ export async function estimateSunDirection(provider, lolaWindow, latitude, longi
     const explained = (coefficientEast * (right[1] - normal[1][0] * sumBrightness / count) + coefficientNorth * (right[2] - normal[2][0] * sumBrightness / count)) / count
     const correlation = Math.sqrt(Math.max(0, explained / Math.max(variance, 1e-9)))
     const magnitude = Math.hypot(coefficientEast, coefficientNorth)
-    console.debug('[sol]', { count, b0, coefficientEast, coefficientNorth, correlation })
+    console.debug('[sun]', { count, b0, coefficientEast, coefficientNorth, correlation })
     if (correlation < 0.12 || magnitude < 1e-6) return { ...DEFAULT_SUN, correlation, meanBrightness }
 
     const elevation = Math.min((55 * Math.PI) / 180, Math.max((15 * Math.PI) / 180, Math.atan2(Math.abs(b0), magnitude)))
@@ -363,7 +363,7 @@ export async function estimateSunDirection(provider, lolaWindow, latitude, longi
       estimated: true,
     }
   } catch (error) {
-    console.debug('[sol] error', error)
+    console.debug('[sun] error', error)
     return DEFAULT_SUN
   }
 }

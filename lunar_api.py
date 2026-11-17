@@ -36,32 +36,32 @@ class RequestError(ValueError):
 
 def parse_request(payload: Any) -> tuple[float, float, datetime]:
     if not isinstance(payload, dict):
-        raise RequestError("El cuerpo debe ser un objeto JSON.")
+        raise RequestError("The body must be a JSON object.")
 
     raw_latitude, raw_longitude = payload.get("latitude_deg"), payload.get("longitude_deg")
     if isinstance(raw_latitude, bool) or isinstance(raw_longitude, bool):
-        raise RequestError("Ingresa latitud y longitud numéricas.")
+        raise RequestError("Enter a numeric latitude and longitude.")
     try:
         latitude = float(raw_latitude)
         longitude = float(raw_longitude)
     except (KeyError, TypeError, ValueError):
-        raise RequestError("Ingresa latitud y longitud numéricas.") from None
+        raise RequestError("Enter a numeric latitude and longitude.") from None
     if not (-90 <= latitude <= 90):
-        raise RequestError("La latitud debe estar entre −90° y 90°.")
+        raise RequestError("The latitude must be between −90° and 90°.")
     if not (-180 <= longitude <= 180):
-        raise RequestError("La longitud debe estar entre −180° y 180°.")
+        raise RequestError("The longitude must be between −180° and 180°.")
 
     raw_time = payload.get("time_utc")
     if not isinstance(raw_time, str) or not raw_time.endswith("Z"):
-        raise RequestError("La fecha debe incluir hora UTC y terminar en Z.")
+        raise RequestError("The date must include a UTC time and end in Z.")
     try:
         instant = datetime.fromisoformat(raw_time[:-1] + "+00:00")
     except ValueError:
-        raise RequestError("La fecha y hora no tienen un formato ISO válido.") from None
+        raise RequestError("The date and time are not in a valid ISO format.") from None
     if instant < MIN_TIME:
-        raise RequestError("Horizons admite esta consulta con escala UTC/UT desde 1962-01-20.")
+        raise RequestError("Horizons accepts this query with a UTC/UT scale from 1962-01-20.")
     if instant > datetime.now(timezone.utc) + timedelta(days=75):
-        raise RequestError("La fecha supera el horizonte de predicción EOP de Horizons (75 días).")
+        raise RequestError("The date exceeds the Horizons EOP prediction horizon (75 days).")
 
     return latitude, longitude, instant.replace(microsecond=0)
 
@@ -198,19 +198,21 @@ def query_horizons_range(target: str, site: dict[str, float], start: datetime, e
     block = text.split("$$SOE", 1)[-1].split("$$EOE", 1)[0]
     output = {}
     for line in block.splitlines():
-        timestamp = re.match(r"\s*(\d{4}-[A-Za-z]{3}-\d{2}\s+\d{2}:\d{2}:\d{2}\.\d+)", line)
+        timestamp = re.match(r"\s*(\d{4}-[A-Za-z]{3}-\d{2}\s+\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?)", line)
         angles = re.search(r"([-+]?\d+(?:\.\d+)?)\s+([-+]?\d+(?:\.\d+)?)\s*$", line)
         if not timestamp or not angles:
             continue
         year, month, day, clock = re.match(
-            r"(\d{4})-([A-Za-z]{3})-(\d{2})\s+(\d{2}:\d{2}:\d{2}\.\d+)", timestamp.group(1)
+            r"(\d{4})-([A-Za-z]{3})-(\d{2})\s+(\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?)", timestamp.group(1)
         ).groups()
         month_number = {"Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4, "May": 5, "Jun": 6, "Jul": 7, "Aug": 8, "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12}[month]
-        instant = datetime.strptime(f"{year}-{month_number:02}-{day} {clock}", "%Y-%m-%d %H:%M:%S.%f").replace(tzinfo=timezone.utc)
+        clock_parts = clock.split(":")
+        clock = ":".join(clock_parts + ["00"] * (3 - len(clock_parts)))
+        instant = datetime.strptime(f"{year}-{month_number:02}-{day} {clock.split('.')[0]}", "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
         key = instant.isoformat(timespec="seconds").replace("+00:00", "Z")
         output[key] = {"azimuth_deg": float(angles.group(1)), "elevation_deg": float(angles.group(2))}
     if not output:
-        raise ValueError("Horizons no devolvió posiciones horarias en el intervalo solicitado.")
+        raise ValueError("Horizons did not return hourly positions for the requested interval.")
     return output
 
 
@@ -218,7 +220,7 @@ def query_visibility_day(latitude: float, longitude: float, instant: datetime, a
     day_start = instant.replace(hour=0, minute=0, second=0, microsecond=0)
     day_end = day_start + timedelta(hours=23)
     if day_end > datetime.now(timezone.utc) + timedelta(days=75):
-        raise RequestError("El final del dÃ­a supera el horizonte de predicciÃ³n de Horizons (75 dÃ­as).")
+        raise RequestError("The end of the day exceeds the Horizons prediction horizon (75 days).")
 
     cache_identity = json.dumps([
         CACHE_VERSION,
@@ -247,7 +249,7 @@ def query_visibility_day(latitude: float, longitude: float, instant: datetime, a
 
     times = sorted(positions["sun"].keys() & positions["earth"].keys())
     if not times:
-        raise ValueError("Horizons no devolviÃ³ posiciones simultÃ¡neas del Sol y la Tierra para este dÃ­a.")
+        raise ValueError("Horizons did not return simultaneous positions of the Sun and the Earth for this day.")
     candidates = [
         {"time_utc": time, "sun": positions["sun"][time], "earth": positions["earth"][time]}
         for time in times
@@ -307,15 +309,15 @@ def query_visibility_day(latitude: float, longitude: float, instant: datetime, a
 def find_alternative_dates(latitude: float, longitude: float, instant: datetime, scene: dict[str, Any]) -> dict[str, Any]:
     assessment = scene.get("landing_assessment", {})
     if assessment.get("coverage") != "available":
-        return {"mode": "date", "candidates": [], "reason": assessment.get("reason", "Hace falta un perfil LOLA válido.")}
+        return {"mode": "date", "candidates": [], "reason": assessment.get("reason", "A valid LOLA profile is required.")}
     if not assessment.get("checks", {}).get("slope_within_limit"):
-        return {"mode": "date", "candidates": [], "reason": "La pendiente de este sitio supera el límite y cambiar la fecha no la modifica."}
+        return {"mode": "date", "candidates": [], "reason": "The slope at this site exceeds the limit and changing the date does not alter it."}
 
     now = datetime.now(timezone.utc)
     start = max(instant.replace(minute=0, second=0) - SEARCH_WINDOW, MIN_TIME)
     end = min(instant.replace(minute=0, second=0) + SEARCH_WINDOW, now + timedelta(days=75))
     if start >= end:
-        return {"mode": "date", "candidates": [], "reason": "No hay intervalo de búsqueda disponible para esta fecha."}
+        return {"mode": "date", "candidates": [], "reason": "No search interval is available for this date."}
     site = {"latitude_deg": latitude, "longitude_deg": longitude}
     from concurrent.futures import ThreadPoolExecutor
 
@@ -348,24 +350,24 @@ def find_alternative_dates(latitude: float, longitude: float, instant: datetime,
             }
             for candidate in ranked[:3]
         ],
-        "reason": None if ranked else "No se encontró una hora favorable en el intervalo de siete días alrededor de la fecha, muestreado cada hora.",
+        "reason": None if ranked else "No favorable hour was found in the seven-day interval around the date, sampled hourly.",
     }
 
 
 def find_alternative_locations(latitude: float, longitude: float, scene: dict[str, Any]) -> dict[str, Any]:
     assessment = scene.get("landing_assessment", {})
     if assessment.get("coverage") != "available":
-        return {"mode": "location", "candidates": [], "reason": assessment.get("reason", "Hace falta un perfil LOLA válido.")}
+        return {"mode": "location", "candidates": [], "reason": assessment.get("reason", "A valid LOLA profile is required.")}
     try:
         candidates = search_nearby_sites(latitude, longitude, scene["sun"], scene["earth"])
     except Exception as error:
-        return {"mode": "location", "candidates": [], "reason": f"No se pudo cargar el perfil LOLA ampliado: {error}"}
+        return {"mode": "location", "candidates": [], "reason": f"The extended LOLA profile could not be loaded: {error}"}
     return {
         "mode": "location",
         "radius_km": 5,
         "step_km": 1,
         "candidates": candidates,
-        "reason": None if candidates else "No se encontraron puntos favorables dentro de 5 km en esta búsqueda de ocho rumbos por kilómetro.",
+        "reason": None if candidates else "No favorable points were found within 5 km in this search of eight bearings per kilometer.",
     }
 
 
@@ -391,7 +393,7 @@ class NavigatorHandler(BaseHTTPRequestHandler):
         try:
             length = int(self.headers.get("Content-Length", "0"))
             if length > 8192:
-                raise RequestError("El cuerpo de la consulta es demasiado grande.", 413)
+                raise RequestError("The query body is too large.", 413)
             payload = json.loads(self.rfile.read(length))
             latitude, longitude, instant = parse_request(payload)
             if self.path == "/api/scene":
@@ -400,18 +402,18 @@ class NavigatorHandler(BaseHTTPRequestHandler):
             if self.path == "/api/visibility-day":
                 raw_altitude = payload.get("altitude_m", 0)
                 if isinstance(raw_altitude, bool):
-                    raise RequestError("La elevaciÃ³n debe ser un nÃºmero en metros.")
+                    raise RequestError("The elevation must be a number in meters.")
                 try:
                     altitude_m = float(raw_altitude)
                 except (TypeError, ValueError):
-                    raise RequestError("La elevaciÃ³n debe ser un nÃºmero en metros.") from None
+                    raise RequestError("The elevation must be a number in meters.") from None
                 if not math.isfinite(altitude_m) or not -10000 <= altitude_m <= 20000:
-                    raise RequestError("La elevaciÃ³n debe estar entre âˆ’10.000 y 20.000 m sobre el radio lunar medio.")
+                    raise RequestError("The elevation must be between −10,000 and 20,000 m above the mean lunar radius.")
                 self.send_json(200, query_visibility_day(latitude, longitude, instant, altitude_m))
                 return
             mode = payload.get("mode")
             if mode not in ("location", "date"):
-                raise RequestError("El tipo de búsqueda debe ser location o date.")
+                raise RequestError("The search type must be location or date.")
             scene = query_scene(latitude, longitude, instant)
             if mode == "location":
                 result = find_alternative_locations(latitude, longitude, scene)
@@ -421,16 +423,16 @@ class NavigatorHandler(BaseHTTPRequestHandler):
         except RequestError as error:
             self.send_json(error.status, {"error": str(error)})
         except (json.JSONDecodeError, UnicodeDecodeError):
-            self.send_json(400, {"error": "El cuerpo debe ser JSON válido."})
+            self.send_json(400, {"error": "The body must be valid JSON."})
         except Exception as error:
-            self.send_json(502, {"error": f"No se pudo completar la evaluación: {error}"})
+            self.send_json(502, {"error": f"The assessment could not be completed: {error}"})
 
 
 def main() -> None:
     host, port = "127.0.0.1", 8000
     server = ThreadingHTTPServer((host, port), NavigatorHandler)
     print(f"Lunar Navigator API: http://{host}:{port}")
-    print("Interrumpe con Ctrl+C para detener el servicio.")
+    print("Press Ctrl+C to stop the service.")
     try:
         server.serve_forever()
     except KeyboardInterrupt:

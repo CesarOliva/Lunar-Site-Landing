@@ -41,11 +41,11 @@ function WalkButton({ direction, label, symbol, disabled, onWalk }) {
 
 // Velocidad del cielo estrellado respecto al tiempo real (la Luna da una vuelta cada 27,32 días).
 const SKY_SPEEDS = [
-  [1, 'Tiempo real'],
-  [60, '1 minuto por segundo'],
-  [600, '10 minutos por segundo'],
-  [3600, '1 hora por segundo'],
-  [21600, '6 horas por segundo'],
+  [1, 'Real time'],
+  [60, '1 minute per second'],
+  [600, '10 minutes per second'],
+  [3600, '1 hour per second'],
+  [21600, '6 hours per second'],
 ]
 
 function Slider({ label, value, display, ...inputProps }) {
@@ -74,13 +74,13 @@ export default function SurfaceScreen({ target, onClose, onHome }) {
   const demoBusy = demoState === 'loading' || demoState === 'descending'
 
   const loadingText = status.phase === 'terrain'
-    ? `Relieve LOLA de 16 bits · ${status.terrain.loaded}/${status.terrain.total}`
+    ? `16-bit LOLA terrain · ${status.terrain.loaded}/${status.terrain.total}`
     : status.phase === 'scene'
-      ? 'Iniciando visor…'
-      : 'Buscando mosaicos de imagen de NASA Trek…'
+      ? 'Starting viewer…'
+      : 'Looking up NASA Trek imagery mosaics…'
 
   return (
-    <section className="surface-screen" aria-label={`Primera persona en ${mission.name}`}>
+    <section className="surface-screen" aria-label={`First person at ${mission.name}`}>
       <div className="surface-view">{surface.view}</div>
       <div className="surface-vignette" aria-hidden="true" />
 
@@ -96,36 +96,36 @@ export default function SurfaceScreen({ target, onClose, onHome }) {
         aria-hidden={!panelOpen}
       >
         <div className="panel-top-actions">
-          <button className="text-button" onClick={onClose}><ArrowLeft size={15} /> Regresar</button>
-          <button className="icon-button" onClick={() => setPanelOpen(false)} aria-label="Ocultar panel">
+          <button className="text-button" onClick={onClose}><ArrowLeft size={15} /> Back</button>
+          <button className="icon-button" onClick={() => setPanelOpen(false)} aria-label="Hide panel">
             <PanelLeftClose size={16} />
           </button>
-          <button className="icon-button" onClick={onHome} aria-label="Regresar al inicio"><Home size={16} /></button>
+          <button className="icon-button" onClick={onHome} aria-label="Back to home"><Home size={16} /></button>
         </div>
 
         <div className="surface-content">
-          <span className="section-label">Explorador lunar <i /></span>
+          <span className="section-label">Lunar explorer <i /></span>
           <h2>
             {mission.name} <em>— {mission.site}</em>
           </h2>
           <p className="surface-intro">
-            Camina sobre el terreno real del sitio con imágenes de NASA Trek y relieve LOLA.
+            Walk on the real terrain of the site with NASA Trek imagery and LOLA relief.
             {target.source === 'mission'
-              ? ' El recorrido empieza en las coordenadas históricas de la misión.'
-              : ' El recorrido empieza en las coordenadas que elegiste para esta misión.'}
+              ? ' The tour starts at the mission\'s historic coordinates.'
+              : ' The tour starts at the coordinates you chose for this mission.'}
           </p>
 
-          <div className="surface-coords" aria-label="Coordenadas">
+          <div className="surface-coords" aria-label="Coordinates">
             <div>
-              <small>Latitud</small>
+              <small>Latitude</small>
               <strong>{formatLatitude(position.latitude)}</strong>
             </div>
             <div>
-              <small>Longitud</small>
+              <small>Longitude</small>
               <strong>{formatLongitude(position.longitude)}</strong>
             </div>
             <p>
-              {target.source === 'mission' ? 'Sitio de alunizaje' : 'Punto elegido'}:
+              {target.source === 'mission' ? 'Landing site' : 'Chosen point'}:
               {' '}{formatLatitude(point.latitude)} · {formatLongitude(point.longitude)}
             </p>
           </div>
@@ -134,7 +134,7 @@ export default function SurfaceScreen({ target, onClose, onHome }) {
             <div className="surface-status" role="status" aria-live="polite">
               <span className="surface-spinner" aria-hidden="true" />
               <span>
-                <strong>Preparando superficie</strong>
+                <strong>Preparing surface</strong>
                 <small>{loadingText}</small>
               </span>
             </div>
@@ -143,7 +143,7 @@ export default function SurfaceScreen({ target, onClose, onHome }) {
           {error && (
             <div className="surface-status is-error" role="alert">
               <span>
-                <strong>No se pudo cargar la superficie</strong>
+                <strong>The surface could not be loaded</strong>
                 <small>{error}</small>
               </span>
             </div>
@@ -152,7 +152,7 @@ export default function SurfaceScreen({ target, onClose, onHome }) {
           {info && (
             <>
               <button className="primary-button surface-tour" onClick={surface.toggleTour}>
-                {tourActive ? 'Pausar recorrido' : 'Iniciar recorrido'}
+                {tourActive ? 'Pause tour' : 'Start tour'}
                 {tourActive ? <Pause size={17} /> : <Footprints size={17} />}
               </button>
 
@@ -161,44 +161,44 @@ export default function SurfaceScreen({ target, onClose, onHome }) {
                 onClick={surface.startLandingDemo}
                 disabled={demoBusy}
               >
-                {demoState === 'loading' ? 'Cargando nave…'
-                  : demoState === 'descending' ? 'Aterrizando…'
-                    : demoState === 'landed' ? 'Repetir demostración'
-                      : 'Demostración de aterrizaje'}
+                {demoState === 'loading' ? 'Loading ship…'
+                  : demoState === 'descending' ? 'Landing…'
+                    : demoState === 'landed' ? 'Repeat demo'
+                      : 'Landing demo'}
                 <Rocket size={17} />
               </button>
               {demoState !== 'idle' && (
                 <button className="text-button surface-demo-remove" onClick={surface.stopLandingDemo}>
-                  <X size={15} /> {demoBusy ? 'Cancelar' : 'Retirar nave'}
+                  <X size={15} /> {demoBusy ? 'Cancel' : 'Remove ship'}
                 </button>
               )}
 
               <section className="surface-section">
-                <span className="section-label">Datos de NASA <i /></span>
+                <span className="section-label">NASA data <i /></span>
                 <dl className="surface-data">
                   <div>
-                    <dt>Imagen</dt>
+                    <dt>Imagery</dt>
                     <dd>
-                      {best?.title || 'Mosaico de NASA Trek'}
+                      {best?.title || 'NASA Trek mosaic'}
                       <small>
-                        hasta ~{best?.resolutionMetersPerPixel?.toFixed(2)} m/píxel · {info.imagery.length} capas combinadas
+                        up to ~{best?.resolutionMetersPerPixel?.toFixed(2)} m/pixel · {info.imagery.length} combined layers
                       </small>
                     </dd>
                   </div>
                   <div>
-                    <dt>Terreno</dt>
+                    <dt>Terrain</dt>
                     <dd>
                       {info.dem.title}
-                      <small>~{info.dem.resolutionMetersPerPixel.toFixed(1)} m/píxel · alturas de 16 bits</small>
+                      <small>~{info.dem.resolutionMetersPerPixel.toFixed(1)} m/pixel · 16-bit heights</small>
                     </dd>
                   </div>
                 </dl>
               </section>
 
               <section className="surface-section">
-                <span className="section-label">Ajustes de imagen <i /></span>
+                <span className="section-label">Image settings <i /></span>
                 <Slider
-                  label="Contraste"
+                  label="Contrast"
                   display={`${surface.contrast.toFixed(1)}×`}
                   min="0.6"
                   max="2.6"
@@ -207,7 +207,7 @@ export default function SurfaceScreen({ target, onClose, onHome }) {
                   onChange={(event) => surface.changeContrast(Number(event.target.value))}
                 />
                 <Slider
-                  label="Exageración vertical"
+                  label="Vertical exaggeration"
                   display={`${surface.exaggeration.toFixed(1)}×`}
                   min="1"
                   max="5"
@@ -216,8 +216,8 @@ export default function SurfaceScreen({ target, onClose, onHome }) {
                   onChange={(event) => surface.changeExaggeration(Number(event.target.value))}
                 />
                 <Slider
-                  label="Detalle sintético calibrado"
-                  display={surface.detail === 0 ? 'apagado' : `${surface.detail.toFixed(1)}×`}
+                  label="Calibrated synthetic detail"
+                  display={surface.detail === 0 ? 'off' : `${surface.detail.toFixed(1)}×`}
                   min="0"
                   max="2"
                   step="0.1"
@@ -225,24 +225,24 @@ export default function SurfaceScreen({ target, onClose, onHome }) {
                   onChange={(event) => surface.changeDetail(Number(event.target.value))}
                 />
                 <p className="surface-note">
-                  El detalle sintético extiende el relieve por debajo de la resolución de los datos,
-                  calibrado con la rugosidad real de LOLA de la zona (
-                  {info.detail.roughness.toFixed(2)} m a 30 m). Ponlo en «apagado» para ver solo datos de la NASA.
+                  Synthetic detail extends the relief below the resolution of the data,
+                  calibrated with the real LOLA roughness of the area (
+                  {info.detail.roughness.toFixed(2)} m at 30 m). Set it to "off" to see NASA data only.
                 </p>
                 <label className="surface-slider">
-                  <span>Cielo estrellado: giro</span>
+                  <span>Starry sky: rotation</span>
                   <select value={surface.skyTimeScale} onChange={(event) => surface.changeSkyTimeScale(Number(event.target.value))}>
                     {SKY_SPEEDS.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
                   </select>
                 </label>
                 <p className="surface-note">
-                  Estrellas reales (catálogo Yale Bright Star, hasta magnitud 6) con el color de cada una y la
-                  orientación real de la Luna: sin atmósfera no titilan y el cielo gira una vuelta cada 27,3 días.
-                  El giro está acelerado para que se note; solo mueve el cielo, no la luz del terreno.
+                  Real stars (Yale Bright Star catalog, down to magnitude 6) with each star's color and the
+                  real orientation of the Moon: without an atmosphere they do not twinkle and the sky turns once every 27.3 days.
+                  The rotation is accelerated so it is noticeable; it only moves the sky, not the terrain lighting.
                 </p>
                 {info.baseOptions.length > 1 && (
                   <label className="surface-slider">
-                    <span>Imagen base</span>
+                    <span>Base imagery</span>
                     <select value={info.baseId} onChange={(event) => surface.changeBaseImagery(event.target.value)}>
                       {info.baseOptions.map((option) => (
                         <option key={option.id} value={option.id}>
@@ -255,7 +255,7 @@ export default function SurfaceScreen({ target, onClose, onHome }) {
               </section>
 
               <p className="surface-keys">
-                <kbd>W A S D</kbd> caminar · <kbd>Shift</kbd> correr · arrastra para mirar · <kbd>Esc</kbd> pausar
+                <kbd>W A S D</kbd> walk · <kbd>Shift</kbd> run · drag to look · <kbd>Esc</kbd> pause
               </p>
             </>
           )}
@@ -266,7 +266,7 @@ export default function SurfaceScreen({ target, onClose, onHome }) {
         <button
           className="icon-button surface-panel-toggle"
           onClick={() => setPanelOpen(true)}
-          aria-label="Mostrar panel"
+          aria-label="Show panel"
         >
           <PanelLeftOpen size={16} />
         </button>
@@ -275,16 +275,16 @@ export default function SurfaceScreen({ target, onClose, onHome }) {
       {loading && (
         <div className={`surface-loading ${panelOpen ? 'has-panel' : ''}`} role="status" aria-live="polite">
           <span className="surface-spinner" aria-hidden="true" />
-          <span>CARGANDO SUPERFICIE · {mission.name.toUpperCase()}</span>
+          <span>LOADING SURFACE · {mission.name.toUpperCase()}</span>
         </div>
       )}
 
       {info && (
-        <div className="surface-walk-pad" aria-label="Controles para caminar">
-          <WalkButton direction="forward" label="Caminar hacia adelante" symbol="↑" disabled={!tourActive} onWalk={surface.walk} />
-          <WalkButton direction="left" label="Caminar hacia la izquierda" symbol="←" disabled={!tourActive} onWalk={surface.walk} />
-          <WalkButton direction="backward" label="Caminar hacia atrás" symbol="↓" disabled={!tourActive} onWalk={surface.walk} />
-          <WalkButton direction="right" label="Caminar hacia la derecha" symbol="→" disabled={!tourActive} onWalk={surface.walk} />
+        <div className="surface-walk-pad" aria-label="Walking controls">
+          <WalkButton direction="forward" label="Walk forward" symbol="↑" disabled={!tourActive} onWalk={surface.walk} />
+          <WalkButton direction="left" label="Walk left" symbol="←" disabled={!tourActive} onWalk={surface.walk} />
+          <WalkButton direction="backward" label="Walk backward" symbol="↓" disabled={!tourActive} onWalk={surface.walk} />
+          <WalkButton direction="right" label="Walk right" symbol="→" disabled={!tourActive} onWalk={surface.walk} />
         </div>
       )}
     </section>

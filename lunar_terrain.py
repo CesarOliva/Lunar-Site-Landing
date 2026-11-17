@@ -57,7 +57,7 @@ def _metadata(product: str, base_url: str) -> tuple[dict[str, Any], str]:
     try:
         label_bytes, _ = _request(label_url, timeout=20)
     except Exception as error:
-        raise TerrainUnavailable(f"No se pudo leer el label de LOLA: {error}") from error
+        raise TerrainUnavailable(f"The LOLA label could not be read: {error}") from error
     label = label_bytes.decode("ascii", errors="replace")
     try:
         metadata = {
@@ -80,9 +80,9 @@ def _metadata(product: str, base_url: str) -> tuple[dict[str, Any], str]:
             "product_creation_time": _label_value(label, "PRODUCT_CREATION_TIME"),
         }
     except ValueError as error:
-        raise TerrainUnavailable(f"No se pudo interpretar el label de LOLA: {error}") from error
+        raise TerrainUnavailable(f"The LOLA label could not be interpreted: {error}") from error
     if metadata["record_bytes"] != metadata["samples"] * 2:
-        raise TerrainUnavailable("El producto LOLA no tiene el formato de enteros de 16 bits esperado.")
+        raise TerrainUnavailable("The LOLA product does not have the expected 16-bit integer format.")
     LABEL_CACHE[product] = metadata, label_url
     return metadata, label_url
 
@@ -125,7 +125,7 @@ def _get_patch(latitude: float, longitude: float, coverage_radius_m: float = PRO
     with PATCH_LOCK:
         metadata, label_url = _metadata(product, base_url)
         if not (metadata["minimum_latitude"] <= latitude <= metadata["maximum_latitude"]):
-            raise TerrainUnavailable("La posición cae fuera de la cobertura del producto LOLA.")
+            raise TerrainUnavailable("The position falls outside the coverage of the LOLA product.")
         patch_path, metadata_path, _ = _patch_paths(product, latitude, longitude, coverage_radius_m)
         if patch_path.exists() and metadata_path.exists():
             patch_info = json.loads(metadata_path.read_text(encoding="utf-8"))
@@ -150,11 +150,11 @@ def _get_patch(latitude: float, longitude: float, coverage_radius_m: float = PRO
         row_start, row_end = row_center - half_rows, row_center + half_rows
         col_start, col_end = col_center - half_cols, col_center + half_cols
         if row_start < 0 or row_end >= metadata["lines"] or row_end < row_start:
-            raise TerrainUnavailable("LOLA no cubre un radio completo de 50 km alrededor de esta posición.")
+            raise TerrainUnavailable("LOLA does not cover a full 50 km radius around this position.")
         if "POLAR" in metadata["projection"] and (col_start < 0 or col_end >= metadata["samples"]):
-            raise TerrainUnavailable("LOLA no cubre un radio completo de 50 km alrededor de esta posición.")
+            raise TerrainUnavailable("LOLA does not cover a full 50 km radius around this position.")
         if col_end - col_start + 1 >= metadata["samples"]:
-            raise TerrainUnavailable("La cuadrícula LOLA no cubre el radio solicitado en esta latitud.")
+            raise TerrainUnavailable("The LOLA grid does not cover the requested radius at this latitude.")
 
         rows, cols = row_end - row_start + 1, col_end - col_start + 1
         image_url = f"{base_url}/{product}.img"
@@ -171,10 +171,10 @@ def _get_patch(latitude: float, longitude: float, coverage_radius_m: float = PRO
                     timeout=90,
                 )
             except Exception as error:
-                raise TerrainUnavailable(f"No se pudo descargar el parche de terreno LOLA: {error}") from error
+                raise TerrainUnavailable(f"The LOLA terrain patch could not be downloaded: {error}") from error
             content_range = headers.get("Content-Range", "")
             if not content_range.startswith(f"bytes {start_byte}-{end_byte}/") or len(block) != end_byte - start_byte + 1:
-                raise TerrainUnavailable("El servidor LOLA no devolvió el fragmento de terreno solicitado.")
+                raise TerrainUnavailable("The LOLA server did not return the requested terrain fragment.")
             for row in range(first_row, last_row + 1):
                 row_start_byte = (row - first_row) * metadata["record_bytes"]
                 raw_row = block[row_start_byte:row_start_byte + metadata["record_bytes"]]
@@ -191,7 +191,7 @@ def _get_patch(latitude: float, longitude: float, coverage_radius_m: float = PRO
                 patch_cursor += len(sample_bytes)
 
         if patch_cursor != len(patch_data):
-            raise TerrainUnavailable("El parche LOLA quedó incompleto.")
+            raise TerrainUnavailable("The LOLA patch is incomplete.")
         patch_info = {
             "row_start": row_start,
             "col_start": col_start,
@@ -243,7 +243,7 @@ def evaluate_terrain(
         center_row, center_col = round(site_row), round(site_col)
         center_dn = dn(center_row, center_col)
         if center_dn is None:
-            raise TerrainUnavailable("La posición no coincide con un píxel válido del DEM.")
+            raise TerrainUnavailable("The position does not match a valid DEM pixel.")
         center_height = center_dn * metadata["scale_factor"]
         observer_height = center_height if observer_height_m is None else observer_height_m
         pole = 1 if latitude >= 0 else -1
@@ -297,7 +297,7 @@ def evaluate_terrain(
                     maximum_slope = max(maximum_slope, slope)
                     slope_samples += 1
         if slope_samples == 0:
-            raise TerrainUnavailable("El parche LOLA no tiene muestras suficientes para estimar la pendiente local.")
+            raise TerrainUnavailable("The LOLA patch does not have enough samples to estimate the local slope.")
 
         horizon_bins = [-90.0] * int(360 / AZIMUTH_STEP_DEG)
         horizon_counts = [0] * len(horizon_bins)
@@ -323,7 +323,7 @@ def evaluate_terrain(
                     horizon_bins[bin_index] = horizon
                 horizon_counts[bin_index] += 1
         if any(count == 0 for count in horizon_counts):
-            raise TerrainUnavailable("La cobertura del perfil de horizonte local está incompleta.")
+            raise TerrainUnavailable("Coverage of the local horizon profile is incomplete.")
 
         def horizon_for(azimuth: float) -> float:
             index = int(math.floor((azimuth % 360.0 + AZIMUTH_STEP_DEG / 2) / AZIMUTH_STEP_DEG)) % len(horizon_bins)
@@ -337,9 +337,9 @@ def evaluate_terrain(
         status = "favorable" if slope_pass and sun_visible and earth_visible else "unfavorable"
         assessment = {
             "status": status,
-            "status_label": "Favorable" if status == "favorable" else "Desfavorable preliminar",
+            "status_label": "Favorable" if status == "favorable" else "Preliminary unfavorable",
             "coverage": "available",
-            "source": f"NASA LRO LOLA GDR · grilla {'polar' if polar_projection else 'global'} {metadata['map_scale_m']:g} m/píxel",
+            "source": f"NASA LRO LOLA GDR · {'polar' if polar_projection else 'global'} grid {metadata['map_scale_m']:g} m/pixel",
             "source_label": label_url,
             "product": product,
             "coordinate_frame": metadata["coordinate_system"],
@@ -362,12 +362,12 @@ def evaluate_terrain(
                 "earth_visible_over_terrain": earth_visible,
             },
             "limitations": [
-                "El resultado es favorable solo si la pendiente no supera 5\u00b0 y el Sol y la Tierra quedan visibles sobre el relieve en el instante evaluado.",
-                f"La evaluaci\u00f3n cubre un \u00e1rea de 500 m de di\u00e1metro; la resoluci\u00f3n LOLA es de {metadata['map_scale_m']:g} m por p\u00edxel y puede omitir rocas y cr\u00e1teres peque\u00f1os.",
-                "El horizonte se calcula hasta 50 km en sectores de 5\u00b0 de azimut; relieves estrechos entre sectores pueden quedar sin detectar.",
-                "El modelo interpola el relieve entre las mediciones LOLA y puede suavizar cambios topogr\u00e1ficos locales.",
-                "Se eval\u00faa un \u00fanico instante; no se comprueba toda la ventana de descenso ni la duraci\u00f3n de las operaciones.",
-                "LOLA usa ME/DE421 y Horizons usa MEAN_ME/DE441; los marcos no se transforman entre s\u00ed y la alineaci\u00f3n del relieve puede tener error.",
+                "The result is favorable only if the slope does not exceed 5\u00b0 and the Sun and the Earth are visible above the terrain at the evaluated instant.",
+                f"The assessment covers an area 500 m in diameter; the LOLA resolution is {metadata['map_scale_m']:g} m per pixel and may miss rocks and small craters.",
+                "The horizon is computed out to 50 km in 5\u00b0 azimuth sectors; narrow relief features between sectors may go undetected.",
+                "The model interpolates the terrain between LOLA measurements and may smooth out local topographic changes.",
+                "A single instant is evaluated; the whole descent window and the duration of operations are not checked.",
+                "LOLA uses ME/DE421 and Horizons uses MEAN_ME/DE441; the frames are not transformed into each other and the terrain alignment may have an error.",
             ],
             "data_day": datetime.now(timezone.utc).date().isoformat(),
         }
@@ -397,7 +397,7 @@ def evaluate_terrain(
     except TerrainUnavailable as error:
         return {
             "status": "indeterminate",
-            "status_label": "Indeterminado",
+            "status_label": "Indeterminate",
             "coverage": "unavailable",
             "source": product,
             "reason": str(error),
@@ -406,10 +406,10 @@ def evaluate_terrain(
     except Exception as error:
         return {
             "status": "indeterminate",
-            "status_label": "Indeterminado",
+            "status_label": "Indeterminate",
             "coverage": "error",
             "source": product,
-            "reason": f"No se pudo procesar el DEM LOLA: {error}",
+            "reason": f"The LOLA DEM could not be processed: {error}",
             "profile_radius_km": PROFILE_RADIUS_M / 1000,
         }
 

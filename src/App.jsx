@@ -26,7 +26,7 @@ function App() {
   const [activeScene, setActiveScene] = useState(null)
   const [hoveredMission, setHoveredMission] = useState(null)
   const [slide, setSlide] = useState(0)
-  const [creditsBalance, setCreditsBalance] = useState(0)
+  const [creditsBalance, setCreditsBalance] = useState(100)
   const [surfaceTarget, setSurfaceTarget] = useState(null)
   const transitionStarted = useRef(false)
 
@@ -108,6 +108,12 @@ function App() {
     setHoveredMission(null)
     setScreen('timeline')
     setPanel(null)
+  }
+
+  const spendCredits = (amount) => {
+    if (creditsBalance < amount) return false
+    setCreditsBalance((balance) => balance - amount)
+    return true
   }
 
   return (
@@ -204,7 +210,10 @@ function App() {
               )}
 
               {panel === 'planning' && (
-                <PlanningPanel />
+                <PlanningPanel
+                  creditsBalance={creditsBalance}
+                  onSpendCredits={spendCredits}
+                />
               )}
 
               {panel === 'credits' && (

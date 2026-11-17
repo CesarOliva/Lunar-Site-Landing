@@ -29,7 +29,7 @@ function IntroScreen({ onStart }) {
   return (
     <motion.section
       className="intro-screen"
-      aria-label="Presiona cualquier tecla o desplázate para acercarte a la Luna"
+      aria-label="Press any key or scroll to approach the Moon"
       onClick={onStart}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -38,7 +38,7 @@ function IntroScreen({ onStart }) {
     >
       <div className="intro-brand">
         <OddityLogo />
-        <span>Presiona cualquier tecla para explorar</span>
+        <span>Press any key to explore</span>
       </div>
     </motion.section>
   )
