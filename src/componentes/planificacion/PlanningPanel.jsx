@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Check, ChevronLeft, ChevronRight, Lock } from 'lucide-react'
 import visibilitySite from '../../../data/visibility-site.json'
 import '../../estilos/planificacion/PlanningPanel.css'
+const apiBase = import.meta.env.VITE_API_URL ?? ''
 import {
   CrewStep,
   ForecastStep,
@@ -237,7 +238,7 @@ function PlanningPanel({ creditsBalance, onSpendCredits }) {
     setCustomVisibility({ key: customRequestKey, days: {}, loading: true, error: '' })
     const timer = window.setTimeout(async () => {
       const results = await Promise.allSettled(visibilityDates.map(async (date) => {
-        const response = await fetch('/api/visibility-day', {
+        const response = await fetch(`${apiBase}/api/visibility-day`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           signal: controller.signal,

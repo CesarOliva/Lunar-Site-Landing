@@ -4,6 +4,7 @@ import sceneCatalog from '../../../data/apollo_scenes.json'
 import '../../estilos/misiones/MissionAssessment.css'
 
 const utcValue = (value) => `${value.length === 16 ? `${value}:00` : value}Z`
+const apiBase = import.meta.env.VITE_API_URL ?? ''
 
 async function readApiResponse(response) {
   const body = await response.text()
@@ -62,7 +63,7 @@ function MissionAssessment({ mission, onSceneChange }) {
     setError('')
     setAlternatives(null)
     try {
-      const response = await fetch('/api/scene', {
+      const response = await fetch(`${apiBase}/api/scene`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ latitude_deg: lat, longitude_deg: lon, time_utc: time }),
@@ -85,7 +86,7 @@ function MissionAssessment({ mission, onSceneChange }) {
     setError('')
     setAlternatives(null)
     try {
-      const response = await fetch('/api/alternatives', {
+      const response = await fetch(`${apiBase}/api/alternatives`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

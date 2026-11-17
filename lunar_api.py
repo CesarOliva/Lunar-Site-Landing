@@ -6,6 +6,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import os
 import re
 import sqlite3
 import threading
@@ -383,8 +384,18 @@ class NavigatorHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(encoded)))
         self.send_header("Cache-Control", "no-store")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
         self.wfile.write(encoded)
+
+    def do_OPTIONS(self) -> None:
+        self.send_response(204)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.end_headers()
 
     def do_POST(self) -> None:
         if self.path not in ("/api/scene", "/api/alternatives", "/api/visibility-day"):
@@ -429,7 +440,8 @@ class NavigatorHandler(BaseHTTPRequestHandler):
 
 
 def main() -> None:
-    host, port = "127.0.0.1", 8000
+    host = "0.0.0.0"
+    port = int(os.environ.get("PORT", "8000"))
     server = ThreadingHTTPServer((host, port), NavigatorHandler)
     print(f"Lunar Navigator API: http://{host}:{port}")
     print("Press Ctrl+C to stop the service.")
