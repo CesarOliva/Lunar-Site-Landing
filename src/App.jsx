@@ -1,0 +1,230 @@
+import { useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { missions } from './data/missions.js'
+import sceneCatalog from '../data/apollo_scenes.json'
+import Moon from './componentes/Luna/Moon.jsx'
+import HomeScreen from './componentes/inicio/HomeScreen.jsx'
+import IntroScreen from './componentes/inicio/IntroScreen.jsx'
+import TransitionScreen from './componentes/inicio/TransitionScreen.jsx'
+import MissionList from './componentes/misiones/MissionList.jsx'
+import MissionPreview from './componentes/misiones/MissionPreview.jsx'
+import TimelineScreen from './componentes/misiones/TimelineScreen.jsx'
+import PlanningPanel from './componentes/planificacion/PlanningPanel.jsx'
+import CreditosScreen from './componentes/Creditos/CreditosScreen.jsx'
+import SurfaceScreen from './componentes/superficie/SurfaceScreen.jsx'
+import SurfaceInvite from './componentes/superficie/SurfaceInvite.jsx'
+import PanelActions from './componentes/compartidos/PanelActions.jsx'
+import StarField from './componentes/compartidos/StarField.jsx'
+import './estilos/compartidos/App.css'
+
+const TRANSITION_DURATION = 2000
+
+function App() {
+  const [screen, setScreen] = useState('intro')
+  const [panel, setPanel] = useState(null)
+  const [selectedMission, setSelectedMission] = useState(null)
+  const [activeScene, setActiveScene] = useState(null)
+  const [hoveredMission, setHoveredMission] = useState(null)
+  const [slide, setSlide] = useState(0)
+  const [creditsBalance, setCreditsBalance] = useState(100)
+  const [surfaceTarget, setSurfaceTarget] = useState(null)
+  const transitionStarted = useRef(false)
+
+  const startExperience = () => {
+    if (transitionStarted.current) return
+
+    transitionStarted.current = true
+    setScreen('launch')
+  }
+
+  const finishLaunch = () => {
+    setScreen('transition')
+    window.setTimeout(() => setScreen('home'), TRANSITION_DURATION)
+  }
+
+  const showMission = (mission) => {
+    setHoveredMission(null)
+    setSelectedMission(mission)
+    setActiveScene(sceneCatalog.missions[mission.id])
+    setSlide(0)
+    setPanel('preview')
+  }
+
+  const goHome = () => {
+    setHoveredMission(null)
+    setScreen('home')
+    setPanel(null)
+    setSelectedMission(null)
+    setActiveScene(null)
+  }
+
+  const goBack = () => {
+    setHoveredMission(null)
+
+    if (panel === 'credits') {
+      setPanel('list')
+      return
+    }
+    if (screen === 'timeline') {
+      setScreen('home')
+      setPanel('preview')
+      return
+    }
+    if (panel === 'preview' && screen === 'home') {
+      setPanel('list')
+      setSelectedMission(null)
+      setActiveScene(null)
+      return
+    }
+    setPanel(null)
+  }
+
+  // Punto de la misión seleccionada tal como está en los datos (coordenadas históricas), o las que el usuario
+  // haya elegido en la evaluación del sitio. No se redondea ni se inventa ningún valor.
+  const surfaceTargetFor = (mission, scene) => {
+    const site = scene?.site
+    const latitude = site?.latitude_deg ?? mission.latitude
+    const longitude = site?.longitude_deg ?? mission.longitude
+    const isHistoric = latitude === mission.latitude && longitude === mission.longitude
+    return { mission, latitude, longitude, source: isHistoric ? 'mission' : 'custom' }
+  }
+
+  // Primera persona (Cesium + datos de NASA) directamente en el punto seleccionado.
+  const openSurface = () => {
+    if (!selectedMission) return
+    setHoveredMission(null)
+    setSurfaceTarget(surfaceTargetFor(selectedMission, activeScene))
+    setScreen('surface')
+    setPanel(null)
+  }
+
+  const closeSurface = () => {
+    setSurfaceTarget(null)
+    setScreen('home')
+    setPanel('preview')
+  }
+
+  const openTimeline = () => {
+    setHoveredMission(null)
+    setScreen('timeline')
+    setPanel(null)
+  }
+
+  const spendCredits = (amount) => {
+    if (creditsBalance < amount) return false
+    setCreditsBalance((balance) => balance - amount)
+    return true
+  }
+
+  return (
+    <main className={`app-shell screen-${screen}`}>
+      <StarField />
+
+      {!['timeline', 'surface'].includes(screen) && (
+        <Moon
+          phase={screen}
+          missions={screen === 'home' ? missions : []}
+          selectedMission={screen === 'home' ? selectedMission : null}
+          hoveredMission={screen === 'home' ? hoveredMission : null}
+          scene={screen === 'home' ? activeScene : null}
+          onShowMission={showMission}
+          onLaunchComplete={finishLaunch}
+        />
+      )}
+
+      <AnimatePresence mode="wait">
+        {screen === 'intro' && (
+          <IntroScreen key="intro" onStart={startExperience} />
+        )}
+
+        {['launch', 'transition'].includes(screen) && (
+          <TransitionScreen key="transition" />
+        )}
+
+        {screen === 'home' && (
+          <HomeScreen
+            key="home"
+            panelOpen={Boolean(panel)}
+            onOpenMissions={() => setPanel('list')}
+            onOpenPlanning={() => setPanel('planning')}
+          />
+        )}
+
+        {screen === 'timeline' && selectedMission && (
+          <TimelineScreen mission={selectedMission} onBack={goBack} onHome={goHome} />
+        )}
+      </AnimatePresence>
+
+      {screen === 'surface' && surfaceTarget && (
+        <SurfaceScreen
+          key={`${surfaceTarget.latitude}/${surfaceTarget.longitude}`}
+          target={surfaceTarget}
+          onClose={closeSurface}
+          onHome={() => { setSurfaceTarget(null); goHome() }}
+        />
+      )}
+
+      {screen === 'home' && panel === 'preview' && selectedMission && (
+        <SurfaceInvite
+          key={selectedMission.id}
+          target={surfaceTargetFor(selectedMission, activeScene)}
+          onOpen={openSurface}
+        />
+      )}
+
+      {screen === 'home' && (
+        <AnimatePresence>
+          {panel && (
+            <motion.aside
+              className={`side-panel ${panel === 'preview' ? 'preview-panel' : ''} ${panel === 'planning' ? 'planning-panel-shell' : ''} ${panel === 'credits' ? 'credits-panel-shell' : ''}`}
+              key={panel}
+              initial={{ x: '-105%', opacity: 0.6 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: '-105%', opacity: 0.6 }}
+              transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <PanelActions
+                onBack={goBack}
+                onHome={goHome}
+                onCredits={['list', 'credits'].includes(panel) ? () => setPanel('credits') : undefined}
+                creditsBalance={creditsBalance}
+              />
+
+              {panel === 'list' && (
+                <MissionList
+                  missions={missions}
+                  onSelect={showMission}
+                  onHover={setHoveredMission}
+                />
+              )}
+
+              {panel === 'preview' && selectedMission && (
+                <MissionPreview
+                  mission={selectedMission}
+                  slide={slide}
+                  onSlide={(direction) => setSlide((slide + direction + 3) % 3)}
+                  onExplore={openTimeline}
+                  onSurface={openSurface}
+                  onSceneChange={setActiveScene}
+                />
+              )}
+
+              {panel === 'planning' && (
+                <PlanningPanel
+                  creditsBalance={creditsBalance}
+                  onSpendCredits={spendCredits}
+                />
+              )}
+
+              {panel === 'credits' && (
+                <CreditosScreen onRecharge={(amount) => setCreditsBalance((balance) => balance + amount)} />
+              )}
+            </motion.aside>
+          )}
+        </AnimatePresence>
+      )}
+    </main>
+  )
+}
+
+export default App

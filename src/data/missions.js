@@ -1,0 +1,186 @@
+const lunarSurface =
+  'https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&w=1400&q=85'
+
+const timelineIllustrations = {
+  launch: {
+    src: '/images/timeline/saturn-v-launch.jpg',
+    alt: 'Saturn V rocket during liftoff, NASA archive photograph.',
+  },
+  landing: {
+    src: '/images/timeline/lunar-module-surface.jpg',
+    alt: 'Astronauts next to the lunar module on the surface, NASA archive.',
+  },
+  exploration: {
+    src: '/images/timeline/lunar-exploration.jpg',
+    alt: 'Astronaut walking on the lunar surface, NASA archive.',
+  },
+  return: {
+    src: '/images/timeline/apollo-splashdown.jpg',
+    alt: 'Recovery of an Apollo crew after splashdown, NASA archive.',
+  },
+}
+
+export const missions = [
+  {
+    id: 'apollo-11',
+    number: '01',
+    name: 'Apollo 11',
+    vehicle: 'Saturn V · Eagle lunar module',
+    dates: 'July 16 — 24, 1969',
+    landingDate: 'July 20, 1969',
+    landingTimeUtc: '1969-07-20T20:17:40Z',
+    site: 'Sea of Tranquility',
+    crew: [
+      { name: 'Neil Armstrong', role: 'Commander' },
+      { name: 'Buzz Aldrin', role: 'Lunar Module Pilot' },
+      { name: 'Michael Collins', role: 'Command Module Pilot' },
+    ],
+    purpose: 'Make the first crewed lunar landing and show that it was possible to walk and work on the lunar surface.',
+    description:
+      'The mission took the first human beings to the Moon. Armstrong and Aldrin explored the landing site while Collins remained in orbit.',
+    image: lunarSurface,
+    latitude: 0.67416,
+    longitude: 23.47314,
+    timeline: [
+      { time: 'JUL 16, 1969', title: 'Liftoff', detail: 'The Saturn V lifts off from the Kennedy Space Center.', image: timelineIllustrations.launch },
+      { time: 'JUL 20, 1969', title: 'Moon landing', detail: 'Eagle lands in the Sea of Tranquility.', image: timelineIllustrations.landing },
+      { time: 'JUL 21, 1969', title: 'First steps', detail: 'Armstrong and Aldrin carry out extravehicular activity.', image: timelineIllustrations.exploration },
+      { time: 'JUL 24, 1969', title: 'Return to Earth', detail: 'The crew splashes down in the Pacific Ocean.', image: timelineIllustrations.return },
+    ],
+  },
+  {
+    id: 'apollo-12',
+    number: '02',
+    name: 'Apollo 12',
+    vehicle: 'Saturn V · Intrepid lunar module',
+    dates: 'November 14 — 24, 1969',
+    landingDate: 'November 19, 1969',
+    landingTimeUtc: '1969-11-19T06:54:35Z',
+    site: 'Ocean of Storms',
+    crew: [
+      { name: 'Charles Conrad Jr.', role: 'Commander' },
+      { name: 'Alan L. Bean', role: 'Lunar Module Pilot' },
+      { name: 'Richard F. Gordon Jr.', role: 'Command Module Pilot' },
+    ],
+    purpose: 'Demonstrate a precision landing and expand scientific work on the lunar surface.',
+    description:
+      'Apollo 12 landed near the Surveyor 3 probe. The crew installed scientific instruments and collected samples to study the terrain.',
+    image: lunarSurface,
+    latitude: -3.0128,
+    longitude: -23.4219,
+    timeline: [
+      { time: 'NOV 14, 1969', title: 'Liftoff', detail: 'Apollo 12 begins its journey to the Moon.', image: timelineIllustrations.launch },
+      { time: 'NOV 19, 1969', title: 'Precision landing', detail: 'Intrepid lands near Surveyor 3.', image: timelineIllustrations.landing },
+      { time: 'NOV 19–20, 1969', title: 'Exploration', detail: 'Conrad and Bean complete two moonwalks.', image: timelineIllustrations.exploration },
+      { time: 'NOV 24, 1969', title: 'Splashdown', detail: 'The crew returns to the Pacific Ocean.', image: timelineIllustrations.return },
+    ],
+  },
+  {
+    id: 'apollo-14',
+    number: '03',
+    name: 'Apollo 14',
+    vehicle: 'Saturn V · Antares lunar module',
+    dates: 'January 31 — February 9, 1971',
+    landingDate: 'February 5, 1971',
+    landingTimeUtc: '1971-02-05T09:18:11Z',
+    site: 'Fra Mauro Formation',
+    crew: [
+      { name: 'Alan B. Shepard Jr.', role: 'Commander' },
+      { name: 'Edgar D. Mitchell', role: 'Lunar Module Pilot' },
+      { name: 'Stuart A. Roosa', role: 'Command Module Pilot' },
+    ],
+    purpose: 'Explore the Fra Mauro region and collect material from one of the oldest geological areas of the Moon.',
+    description:
+      'After the problems of Apollo 13, this mission resumed the lunar landings. The crew deployed experiments and traversed the Fra Mauro terrain.',
+    image: lunarSurface,
+    latitude: -3.64589,
+    longitude: -17.47194,
+    timeline: [
+      { time: 'JAN 31, 1971', title: 'Liftoff', detail: 'Apollo 14 sets off for the Moon.', image: timelineIllustrations.launch },
+      { time: 'FEB 5, 1971', title: 'Moon landing', detail: 'Antares lands in the Fra Mauro region.', image: timelineIllustrations.landing },
+      { time: 'FEB 5–6, 1971', title: 'Surface work', detail: 'Shepard and Mitchell make two moonwalks.', image: timelineIllustrations.exploration },
+      { time: 'FEB 9, 1971', title: 'Return', detail: 'The crew splashes down in the South Pacific.', image: timelineIllustrations.return },
+    ],
+  },
+  {
+    id: 'apollo-15',
+    number: '04',
+    name: 'Apollo 15',
+    vehicle: 'Saturn V · Falcon lunar module',
+    dates: 'July 26 — August 7, 1971',
+    landingDate: 'July 30, 1971',
+    landingTimeUtc: '1971-07-30T22:16:29Z',
+    site: 'Hadley–Apennine',
+    crew: [
+      { name: 'David R. Scott', role: 'Commander' },
+      { name: 'James B. Irwin', role: 'Lunar Module Pilot' },
+      { name: 'Alfred M. Worden', role: 'Command Module Pilot' },
+    ],
+    purpose: 'Investigate lunar geology over a wider range thanks to the first lunar roving vehicle.',
+    description:
+      'Apollo 15 was the first J-type mission, focused on field science. Scott and Irwin traveled across Hadley–Apennine in the Lunar Roving Vehicle.',
+    image: lunarSurface,
+    latitude: 26.13239,
+    longitude: 3.63330,
+    timeline: [
+      { time: 'JUL 26, 1971', title: 'Liftoff', detail: 'The Saturn V lifts off with a crew of three.', image: timelineIllustrations.launch },
+      { time: 'JUL 30, 1971', title: 'Moon landing', detail: 'Falcon lands near Hadley Rille.', image: timelineIllustrations.landing },
+      { time: 'JUL 30 — AUG 2', title: 'Mobile exploration', detail: 'The crew drives across the terrain in the lunar rover.', image: timelineIllustrations.exploration },
+      { time: 'AUG 7, 1971', title: 'Splashdown', detail: 'Apollo 15 concludes with the return of the crew.', image: timelineIllustrations.return },
+    ],
+  },
+  {
+    id: 'apollo-16',
+    number: '05',
+    name: 'Apollo 16',
+    vehicle: 'Saturn V · Orion lunar module',
+    dates: 'April 16 — 27, 1972',
+    landingDate: 'April 21, 1972',
+    landingTimeUtc: '1972-04-21T02:23:35Z',
+    site: 'Descartes Highlands',
+    crew: [
+      { name: 'John W. Young', role: 'Commander' },
+      { name: 'Charles M. Duke Jr.', role: 'Lunar Module Pilot' },
+      { name: 'Thomas K. Mattingly II', role: 'Command Module Pilot' },
+    ],
+    purpose: 'Study the lunar highlands and test hypotheses about the volcanic origin of the region.',
+    description:
+      'The crew explored the Descartes highlands, deployed experiments and collected samples to analyze the geological history of the Moon.',
+    image: lunarSurface,
+    latitude: -8.9734,
+    longitude: 15.5011,
+    timeline: [
+      { time: 'APR 16, 1972', title: 'Liftoff', detail: 'Apollo 16 begins its journey from Florida.', image: timelineIllustrations.launch },
+      { time: 'APR 21, 1972', title: 'Moon landing', detail: 'Orion lands in the Descartes highlands.', image: timelineIllustrations.landing },
+      { time: 'APR 21–23, 1972', title: 'Field science', detail: 'Young and Duke explore the surface with the rover.', image: timelineIllustrations.exploration },
+      { time: 'APR 27, 1972', title: 'Return to Earth', detail: 'The crew splashes down in the Pacific.', image: timelineIllustrations.return },
+    ],
+  },
+  {
+    id: 'apollo-17',
+    number: '06',
+    name: 'Apollo 17',
+    vehicle: 'Saturn V · Challenger lunar module',
+    dates: 'December 7 — 19, 1972',
+    landingDate: 'December 11, 1972',
+    landingTimeUtc: '1972-12-11T19:54:57Z',
+    site: 'Taurus–Littrow Valley',
+    crew: [
+      { name: 'Eugene A. Cernan', role: 'Commander' },
+      { name: 'Harrison H. Schmitt', role: 'Lunar Module Pilot' },
+      { name: 'Ronald E. Evans', role: 'Command Module Pilot' },
+    ],
+    purpose: 'Carry out a detailed geological investigation and broaden the diversity of lunar samples.',
+    description:
+      'The last Apollo mission to the Moon combined the experience of a pilot and a geologist. The crew made three moonwalks in Taurus–Littrow.',
+    image: lunarSurface,
+    latitude: 20.1911,
+    longitude: 30.7723,
+    timeline: [
+      { time: 'DEC 7, 1972', title: 'Liftoff', detail: 'Apollo 17 lifts off on a night launch.', image: timelineIllustrations.launch },
+      { time: 'DEC 11, 1972', title: 'Moon landing', detail: 'Challenger lands in the Taurus–Littrow valley.', image: timelineIllustrations.landing },
+      { time: 'DEC 11–14, 1972', title: 'Lunar exploration', detail: 'Cernan and Schmitt make three scientific moonwalks.', image: timelineIllustrations.exploration },
+      { time: 'DEC 19, 1972', title: 'End of the mission', detail: 'The crew splashes down in the Pacific Ocean.', image: timelineIllustrations.return },
+    ],
+  },
+]

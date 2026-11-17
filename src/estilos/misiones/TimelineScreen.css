@@ -1,0 +1,27 @@
+.timeline-topline {
+  font-family: var(--mono); letter-spacing: .12em;
+}
+
+/* Pantalla: columna con la barra superior y debajo la línea de tiempo.
+   Las variables --rain-* definen dónde están las letras de fondo (las usa también MissionTimeline.css). */
+.timeline-screen {
+  --rain-left: 5.3vw;
+  --rain-width: clamp(190px, 17vw, 250px);
+  --rain-gap: clamp(32px, 5vw, 80px);
+  position: absolute; inset: 0; z-index: 5; overflow: hidden;
+  display: flex; flex-direction: column;
+  background: transparent;
+}
+
+/* Barra superior: regresar / inicio */
+.timeline-topline { z-index: 2; position: relative; flex: none; display: flex; align-items: center; gap: 17px; margin: 28px 5.3%; color: var(--muted-green); font-size: 8px; }
+.timeline-topline > span { margin-right: auto; }
+
+@media (max-width: 800px) {
+  .timeline-screen { --rain-width: 150px; --rain-gap: 24px; }
+}
+
+@media (max-width: 560px) {
+  .timeline-screen { --rain-left: 5vw; --rain-width: 96px; --rain-gap: 16px; }
+  .timeline-topline { margin: 18px 5%; gap: 10px; }
+}

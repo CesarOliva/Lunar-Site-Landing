@@ -1,0 +1,298 @@
+
+/* =========================================
+   ESCENA LUNAR 3D
+========================================= */
+
+.home-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+  background: transparent;
+}
+
+/* Contenedor del Canvas 3D */
+
+.moon-3d-container {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  height: 100%;
+  width: 100%;
+  background: transparent;
+  cursor: grab;
+  touch-action: none;
+}
+
+.moon-3d-container canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  outline: none;
+}
+
+/* Degradado para integrar la Luna con la interfaz */
+
+.home-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.88) 0%,
+      rgba(0, 0, 0, 0.58) 25%,
+      transparent 65%
+    ),
+    linear-gradient(
+      0deg,
+      #000000 0%,
+      transparent 18%,
+      transparent 85%,
+      rgba(0, 0, 0, 0.5) 100%
+    );
+}
+
+.home-brand {
+    position: absolute;
+    z-index: 3;
+    top: clamp(18px, 4vh, 42px);
+    left: clamp(40px, 7.8vw, 118px);
+    width: clamp(132px, 15vw, 184px);
+    pointer-events: none;
+    transition: left .42s cubic-bezier(.22, 1, .36, 1);
+}
+
+.home-brand.is-panel-open {
+    left: calc(100vw - clamp(24px, 5vw, 72px) - clamp(132px, 15vw, 184px));
+}
+
+/* Panel de introducción */
+
+.home-intro {
+  z-index: 3;
+  position: absolute;
+  top: 50%;
+  left: clamp(40px, 7.8vw, 118px);
+
+  transform: translateY(-49%);
+
+  width: min(440px, 38vw);
+
+  pointer-events: none;
+}
+
+.home-intro h2 {
+  font-family: var(--display);
+  font-size: clamp(39px, 4.3vw, 61px);
+  line-height: 1.08;
+  letter-spacing: -0.075em;
+  font-weight: 400;
+  color: var(--snow);
+}
+
+.home-intro h2 em {
+  font-weight: 300;
+  color: var(--terminal-green);
+}
+
+.matrix-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.matrix-char {
+  display: inline-block;
+}
+
+.matrix-char.is-hidden {
+  opacity: 0;
+}
+
+.matrix-char.is-glitch {
+  color: var(--snow);
+  text-shadow:
+    0 0 10px var(--terminal-green),
+    2px 0 var(--matrix-green),
+    -2px 0 var(--terminal-green);
+  transform: translateX(var(--gx, 0));
+}
+
+.home-intro > p {
+  font-size: 12px;
+  line-height: 1.8;
+  max-width: 340px;
+  color: var(--fog);
+  margin: 15px 0 25px;
+}
+
+/* Los botones deben seguir siendo interactivos */
+
+.home-actions {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  pointer-events: auto;
+}
+
+.menu-option {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 5px 0;
+  color: var(--snow);
+  text-align: left;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.25s;
+}
+
+.menu-option::before {
+  position: absolute;
+  top: 50%;
+  left: -22px;
+  color: var(--matrix-green);
+  content: '>';
+  font-family: var(--mono);
+  font-size: 15px;
+  opacity: 0;
+  transform: translate(-4px, -50%);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  pointer-events: none;
+}
+
+.menu-option:hover::before,
+.menu-option:focus-visible::before {
+  opacity: 1;
+  transform: translate(0, -50%);
+}
+
+.menu-option:hover strong,
+.menu-option:hover .matrix-char {
+  animation: menu-option-text-pulse 1.1s ease-in-out infinite;
+}
+
+.menu-option:focus-visible {
+  outline: 1px solid var(--matrix-green);
+  outline-offset: 4px;
+}
+
+.menu-option strong {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+@keyframes menu-option-text-pulse {
+  0%,
+  100% {
+    color: var(--snow);
+    text-shadow: none;
+  }
+
+  50% {
+    color: var(--matrix-green);
+    text-shadow: 0 0 9px rgba(57, 255, 136, 0.55);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-option:hover strong,
+  .menu-option:hover .matrix-char {
+    animation: none;
+    color: var(--matrix-green);
+  }
+}
+
+/* Etiquetas de los marcadores 3D */
+
+.moon-marker-label {
+  color: #39FF88;
+  font-family: var(--mono);
+  font-size: 6px;
+  letter-spacing: 0.02em;
+
+  padding: 1px 3px;
+
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(57, 255, 136, 0.25);
+
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.moon-marker-label.active {
+  color: #FFFFFF;
+  border-color: #39FF88;
+  opacity: 1;
+}
+
+.moon-marker-label.hovered {
+  color: #FFFFFF;
+  border-color: #39FF88;
+  box-shadow: 0 0 10px rgba(57, 255, 136, 0.35);
+  opacity: 1;
+  transform: scale(1.15);
+  transform-origin: left center;
+}
+
+.moon-marker-label {
+  transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+/* Adaptación móvil */
+
+@media (max-width: 800px) {
+  .home-brand {
+    left: 7vw;
+    width: clamp(130px, 22vw, 180px);
+  }
+
+  .home-brand.is-panel-open {
+    left: calc(100vw - 7vw - clamp(130px, 22vw, 180px));
+  }
+
+  .home-intro {
+    left: 7vw;
+    width: min(420px, 54vw);
+  }
+
+  .home-vignette {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.8),
+        transparent 90%
+      );
+  }
+}
+
+@media (max-width: 560px) {
+  .home-brand {
+    top: 20px;
+    width: 142px;
+  }
+
+  .home-intro {
+    left: 7vw;
+    top: 48%;
+    width: 84vw;
+  }
+
+  .home-intro h2 {
+    font-size: 43px;
+  }
+
+  .home-intro > p {
+    max-width: 300px;
+  }
+
+  .menu-option {
+    max-width: 410px;
+  }
+}

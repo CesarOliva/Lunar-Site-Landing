@@ -1,0 +1,53 @@
+/* Tarjeta sobre el mapa al seleccionar un punto (mismo lenguaje que MissionAssessment y los paneles). */
+.surface-invite {
+  position: absolute;
+  z-index: 5;
+  right: clamp(24px, 5vw, 72px);
+  bottom: clamp(24px, 6vh, 56px);
+  width: min(330px, 28vw);
+  min-width: 270px;
+  display: grid;
+  gap: 4px;
+  padding: 18px;
+  border: 1px solid rgba(57, 255, 136, .3);
+  background: linear-gradient(145deg, rgba(13, 21, 17, .9), rgba(3, 6, 5, .94));
+  color: var(--snow);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0 40px rgba(3, 6, 5, .6);
+}
+
+.surface-invite .section-label {
+  margin-bottom: 10px;
+}
+
+.surface-invite-title {
+  font-family: var(--display);
+  font-size: 24px;
+  font-weight: 400;
+  letter-spacing: -.06em;
+}
+
+.surface-invite-site {
+  color: var(--terminal-green);
+  font-size: 13px;
+}
+
+.surface-invite-coords {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 10px 0 14px;
+  color: var(--neon-green);
+  font: 500 12px var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.surface-invite-button {
+  width: 100%;
+  min-height: 44px;
+}
+
+/* En pantallas estrechas el panel de la misión cubre el mapa: allí se usa el botón del propio panel. */
+@media (max-width: 800px) {
+  .surface-invite { display: none; }
+}

@@ -1,0 +1,22 @@
+{
+  "id": "shackleton-site04-center",
+  "name": "Documented center of Site 04, Shackleton rim",
+  "latitude_deg": -89.7668,
+  "longitude_east_deg": 188.13,
+  "coordinate_source": "https://ntrs.nasa.gov/api/citations/20250002845/downloads/M2M-30044%20Lunar%20Surface%20Data%20Book%20Baseline_Final.pdf",
+  "coordinate_note": "The report publishes Site04 (Shackleton Rim) at -89.7668°, -171.87°. The longitude is normalized to 188.13° east for the Horizons geodetic query.",
+  "dem_name": "Site04_final_adj_5mpp_surf.tif",
+  "dem_source": "https://pgda.gsfc.nasa.gov/products/78",
+  "dem_version": "LOLA polar LDEM at 5 m/pixel, Site04; version published at NASA/GSFC PGDA",
+  "dem_projection": "South polar stereographic, X/Y coordinates in meters; MOON_ME frame, DE421 ephemeris (according to NASA/GSFC PGDA)",
+  "dem_vertical_reference": "The product defines Z as surface height in meters; the GeoTIFF does not declare any other explicit vertical datum. For Horizons, Z is assumed to be relative to the mean lunar radius of 1,737,400 m.",
+  "observer_height_m": 1.0,
+  "lunar_radius_m": 1737400,
+  "period_days": 90,
+  "start_utc": "2026-11-14T00:00:00",
+  "sample_step_minutes": 60,
+  "refinement_step_minutes": 5,
+  "terrain_radius_m": 5000,
+  "terrain_radial_step_m": 5,
+  "terrain_azimuth_step_deg": 1
+}

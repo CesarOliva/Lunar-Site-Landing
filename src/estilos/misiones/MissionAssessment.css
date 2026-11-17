@@ -1,0 +1,381 @@
+.mission-assessment {
+  margin: 30px 0 24px;
+  border: 1px solid rgba(57, 255, 136, .2);
+  background: linear-gradient(145deg, rgba(13, 21, 17, .82), rgba(3, 6, 5, .92));
+  color: var(--snow);
+}
+
+.mission-assessment-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 18px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.mission-assessment-heading::-webkit-details-marker {
+  display: none;
+}
+
+.mission-assessment-heading:focus-visible {
+  outline: 1px solid var(--matrix-green);
+  outline-offset: -4px;
+}
+
+.mission-assessment-chevron {
+  flex: 0 0 auto;
+  color: var(--matrix-green);
+  transition: transform .18s ease;
+}
+
+.mission-assessment[open] > .mission-assessment-heading {
+  border-bottom: 1px solid rgba(57, 255, 136, .16);
+}
+
+.mission-assessment[open] > .mission-assessment-heading .mission-assessment-chevron {
+  transform: rotate(180deg);
+}
+
+.mission-assessment-content {
+  padding: 0 18px 18px;
+}
+
+.mission-assessment-heading h3 {
+  margin: 0;
+  color: var(--snow);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.mission-assessment-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-top: 14px;
+}
+
+.mission-assessment-meta p,
+.mission-assessment-source,
+.mission-assessment-message {
+  margin: 7px 0 0;
+  color: var(--fog);
+  font-size: .76rem;
+  line-height: 1.5;
+}
+
+.mission-assessment-meta p {
+  margin: 0;
+}
+
+.mission-assessment-status {
+  flex: 0 0 auto;
+  padding: 5px 8px;
+  border: 1px solid rgba(57, 255, 136, .3);
+  color: var(--matrix-green);
+  background: rgba(3, 6, 5, .6);
+  font-size: .66rem;
+  font-weight: 650;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.mission-assessment-status.is-favorable {
+  border-color: var(--matrix-green);
+  color: var(--neon-green);
+  background: rgba(3, 6, 5, .6);
+}
+
+.mission-assessment-status.is-unfavorable {
+  border-color: var(--muted-green);
+  color: var(--fog);
+  background: rgba(3, 6, 5, .6);
+}
+
+.mission-assessment-slope {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 18px 0 12px;
+  color: var(--fog);
+  font-size: .82rem;
+}
+
+.mission-assessment-slope strong {
+  color: var(--snow);
+  font-size: 1.25rem;
+  font-weight: 550;
+}
+
+.mission-assessment-slope span {
+  margin-left: auto;
+  color: var(--muted-green);
+  font-size: .68rem;
+  text-align: right;
+}
+
+.mission-assessment-angles {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mission-assessment-angle {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 7px 12px;
+  padding: 12px;
+  border: 1px solid rgba(57, 255, 136, .12);
+  background: rgba(3, 6, 5, .42);
+  font-size: .77rem;
+}
+
+.mission-assessment-angle strong {
+  grid-column: 1 / -1;
+  color: var(--snow);
+  font-size: .83rem;
+  font-weight: 600;
+}
+
+.mission-assessment-angle > span {
+  color: var(--fog);
+  white-space: nowrap;
+}
+
+.mission-assessment-angle small {
+  grid-column: 1 / -1;
+  color: var(--muted-green);
+}
+
+.mission-assessment-angle small.is-visible {
+  color: var(--matrix-green);
+}
+
+.mission-assessment-angle small.is-blocked {
+  color: var(--neon-green);
+}
+
+.mission-assessment-source {
+  margin-top: 12px;
+  font-size: .68rem;
+}
+
+.mission-assessment-reason {
+  margin: 16px 0 0;
+  color: var(--matrix-green);
+  font-size: .8rem;
+  line-height: 1.55;
+}
+
+.mission-assessment-limits,
+.mission-assessment-query {
+  margin-top: 14px;
+  border-top: 1px solid rgba(57, 255, 136, .16);
+}
+
+.mission-assessment-limits summary,
+.mission-assessment-query summary {
+  padding: 12px 0 2px;
+  color: var(--snow);
+  cursor: pointer;
+  font-size: .76rem;
+  transition: color .18s ease;
+}
+
+.mission-assessment-limits summary:hover,
+.mission-assessment-query summary:hover {
+  color: var(--matrix-green);
+}
+
+.mission-assessment-limits[open] > summary,
+.mission-assessment-query[open] > summary {
+  animation: menu-option-text-pulse 1.1s ease-in-out infinite;
+}
+
+.mission-assessment-limits summary:focus-visible,
+.mission-assessment-query summary:focus-visible {
+  outline: 1px solid var(--matrix-green);
+  outline-offset: 4px;
+}
+
+.mission-assessment-limits ul {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  color: var(--muted-green);
+  font-size: .7rem;
+  line-height: 1.55;
+}
+
+.mission-assessment-link {
+  display: inline-block;
+  margin-top: 11px;
+  color: var(--matrix-green);
+  font-size: .72rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.mission-assessment-query form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px;
+  margin-top: 14px;
+}
+
+.mission-assessment-query label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted-green);
+  font-size: .69rem;
+}
+
+.mission-assessment-query input {
+  width: 100%;
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid rgba(57, 255, 136, .22);
+  outline: none;
+  background: rgba(3, 6, 5, .62);
+  color: var(--snow);
+  color-scheme: dark;
+  font: inherit;
+}
+
+.mission-assessment-query input:focus {
+  border-color: var(--matrix-green);
+}
+
+.mission-assessment-query .mission-assessment-date {
+  grid-column: 1 / -1;
+}
+
+.mission-assessment-query form > button,
+.mission-alternative-actions button {
+  min-height: 38px;
+  padding: 9px 12px;
+  border: 1px solid rgba(57, 255, 136, .28);
+  background: rgba(3, 6, 5, .55);
+  color: var(--neon-green);
+  cursor: pointer;
+  font: inherit;
+  font-size: .74rem;
+  transition: color .18s ease, background .18s ease, border-color .18s ease;
+}
+
+.mission-assessment-query form > button:hover,
+.mission-alternative-actions button:hover {
+  border-color: var(--neon-green);
+  background: rgba(3, 6, 5, .78);
+  color: var(--snow);
+}
+
+.mission-assessment-query button:disabled {
+  cursor: wait;
+  opacity: .55;
+}
+
+.mission-assessment-error {
+  margin: 12px 0 0;
+  color: var(--neon-green);
+  font-size: .75rem;
+  line-height: 1.5;
+}
+
+.mission-alternative-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.mission-assessment-message {
+  color: var(--matrix-green);
+}
+
+.mission-alternatives {
+  display: grid;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.mission-alternatives button {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid rgba(57, 255, 136, .14);
+  background: rgba(3, 6, 5, .48);
+  color: var(--neon-green);
+  cursor: pointer;
+  text-align: left;
+}
+
+.mission-alternatives button:hover {
+  border-color: var(--neon-green);
+  color: var(--snow);
+}
+
+.mission-alternatives button strong {
+  font-size: .77rem;
+  font-weight: 550;
+}
+
+.mission-alternatives button span,
+.mission-alternatives small,
+.mission-alternatives > p {
+  color: var(--muted-green);
+  font-size: .69rem;
+}
+
+@media (max-width: 480px) {
+  .mission-assessment-heading {
+    gap: 8px;
+    padding: 14px;
+  }
+
+  .mission-assessment-meta {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .mission-assessment-content {
+    padding: 0 14px 14px;
+  }
+
+  .mission-assessment-slope {
+    flex-wrap: wrap;
+  }
+
+  .mission-assessment-slope span {
+    width: 100%;
+    margin-left: 0;
+    text-align: left;
+  }
+
+  .mission-assessment-angle {
+    grid-template-columns: 1fr;
+  }
+
+  .mission-assessment-angle > span {
+    white-space: normal;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mission-assessment-chevron {
+    transition: none;
+  }
+
+  .mission-assessment-limits[open] > summary,
+  .mission-assessment-query[open] > summary {
+    animation: none;
+    color: var(--matrix-green);
+  }
+
+  .mission-assessment-query form > button,
+  .mission-alternative-actions button {
+    transition: none;
+  }
+}

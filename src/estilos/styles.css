@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  font-family: 'DM Sans', sans-serif;
+  color: var(--neon-green);
+  background: var(--void-black);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  font-smooth: always;
+  color-scheme: dark;
+  --void-black: #081910;
+  --deep-space: #080D0B;
+  --panel-black: #0D1511;
+  --dark-forest: #10231A;
+  --matrix-green: #34CD3F;
+  --neon-green: #39FF88;
+  --terminal-green: #00B85C;
+  --muted-green: #477A5C;
+  --snow: #F4FBF6;
+  --fog: #C9DCCF;
+  --warning: var(--neon-green);
+  --muted: var(--muted-green);
+  --line: var(--panel-black);
+  --mono: 'DM Mono', monospace;
+  --display: 'Manrope', sans-serif;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; min-height: 100vh; }
+button { font: inherit; }
+button:focus-visible { outline: 1px solid var(--matrix-green); outline-offset: 4px; }
+body { color: var(--neon-green); background-color: var(--void-black); }
+button:focus-visible { outline-color: var(--matrix-green); }

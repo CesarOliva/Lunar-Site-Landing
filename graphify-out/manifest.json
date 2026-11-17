@@ -1,0 +1,536 @@
+{
+  "data/apollo_scenes.json": {
+    "mtime": 1794752250.5725956,
+    "seen": 1794756230.021374,
+    "ast_hash": "a203bdfe5f46ba71349a433a6522ca92",
+    "semantic_hash": "a203bdfe5f46ba71349a433a6522ca92"
+  },
+  "data/apollo_sites.json": {
+    "mtime": 1794752250.5736017,
+    "seen": 1794756230.021374,
+    "ast_hash": "263e6290e656bf559f488d146b5272c0",
+    "semantic_hash": "263e6290e656bf559f488d146b5272c0"
+  },
+  "data/missions.json": {
+    "mtime": 1794752250.5746036,
+    "seen": 1794756230.021374,
+    "ast_hash": "277923772e80fc2325abeb8dd7e185e7",
+    "semantic_hash": "277923772e80fc2325abeb8dd7e185e7"
+  },
+  "data/visibility-site.json": {
+    "mtime": 1794752250.5778382,
+    "seen": 1794756230.021374,
+    "ast_hash": "ddd6bb75c6e434e1d2d47644223f046a",
+    "semantic_hash": "ddd6bb75c6e434e1d2d47644223f046a"
+  },
+  "data/visibility/horizons/hourly-10.json": {
+    "mtime": 1794752250.580853,
+    "seen": 1794756230.021374,
+    "ast_hash": "3382612ef588a72e0736ec102963f635",
+    "semantic_hash": "3382612ef588a72e0736ec102963f635"
+  },
+  "data/visibility/horizons/hourly-399.json": {
+    "mtime": 1794752250.5840771,
+    "seen": 1794756230.021374,
+    "ast_hash": "47f3a68304fa21aa6ccdf386ece763db",
+    "semantic_hash": "47f3a68304fa21aa6ccdf386ece763db"
+  },
+  "data/visibility/horizons/refined-001-10.json": {
+    "mtime": 1794752250.5860765,
+    "seen": 1794756230.021374,
+    "ast_hash": "2852d5007951e3b87b0477bfc85f6a6e",
+    "semantic_hash": "2852d5007951e3b87b0477bfc85f6a6e"
+  },
+  "data/visibility/horizons/refined-001-399.json": {
+    "mtime": 1794752250.5870688,
+    "seen": 1794756230.021374,
+    "ast_hash": "a189893dea64fad31d5a5028bf048998",
+    "semantic_hash": "a189893dea64fad31d5a5028bf048998"
+  },
+  "data/visibility/horizons/refined-002-10.json": {
+    "mtime": 1794752250.5870688,
+    "seen": 1794756230.021374,
+    "ast_hash": "e4d357f773f48c955efe5f0b43bda10e",
+    "semantic_hash": "e4d357f773f48c955efe5f0b43bda10e"
+  },
+  "data/visibility/horizons/refined-002-399.json": {
+    "mtime": 1794752250.5880804,
+    "seen": 1794756230.021374,
+    "ast_hash": "3246cd16d6a2120ff4dcbe4c92f16352",
+    "semantic_hash": "3246cd16d6a2120ff4dcbe4c92f16352"
+  },
+  "data/visibility/horizons/refined-003-10.json": {
+    "mtime": 1794752250.5896015,
+    "seen": 1794756230.021374,
+    "ast_hash": "04330e1cdc1798ef080b7bf385fe6922",
+    "semantic_hash": "04330e1cdc1798ef080b7bf385fe6922"
+  },
+  "data/visibility/horizons/refined-003-399.json": {
+    "mtime": 1794752250.5896015,
+    "seen": 1794756230.021374,
+    "ast_hash": "c9ec89f69124b0c32ad382f652721a17",
+    "semantic_hash": "c9ec89f69124b0c32ad382f652721a17"
+  },
+  "data/visibility/horizons/refined-004-10.json": {
+    "mtime": 1794752250.5896015,
+    "seen": 1794756230.021374,
+    "ast_hash": "c863d8c00d96aa0b54ca39baaf0f9f02",
+    "semantic_hash": "c863d8c00d96aa0b54ca39baaf0f9f02"
+  },
+  "data/visibility/horizons/refined-004-399.json": {
+    "mtime": 1794752250.5896015,
+    "seen": 1794756230.021374,
+    "ast_hash": "fcc8ed318e17695ae3e42a8377ab41fd",
+    "semantic_hash": "fcc8ed318e17695ae3e42a8377ab41fd"
+  },
+  "data/visibility/horizons/refined-005-10.json": {
+    "mtime": 1794752250.5911937,
+    "seen": 1794756230.021374,
+    "ast_hash": "c2d5bbea4d13585b7df743e606f768fe",
+    "semantic_hash": "c2d5bbea4d13585b7df743e606f768fe"
+  },
+  "data/visibility/horizons/refined-005-399.json": {
+    "mtime": 1794752250.5911937,
+    "seen": 1794756230.021374,
+    "ast_hash": "668ac9ad831db2867379a06189c17ca8",
+    "semantic_hash": "668ac9ad831db2867379a06189c17ca8"
+  },
+  "data/visibility/horizons/refined-006-10.json": {
+    "mtime": 1794752250.592218,
+    "seen": 1794756230.021374,
+    "ast_hash": "bc906c503b0d1040de596acaca9da431",
+    "semantic_hash": "bc906c503b0d1040de596acaca9da431"
+  },
+  "data/visibility/horizons/refined-006-399.json": {
+    "mtime": 1794752250.592218,
+    "seen": 1794756230.021374,
+    "ast_hash": "5baee52328425a05d15cd6081a5e4360",
+    "semantic_hash": "5baee52328425a05d15cd6081a5e4360"
+  },
+  "lunar_api.py": {
+    "mtime": 1794752250.5982144,
+    "seen": 1794756230.021374,
+    "ast_hash": "d944ffb0ee5b5a1417e44a10bef1a7ef",
+    "semantic_hash": "d944ffb0ee5b5a1417e44a10bef1a7ef"
+  },
+  "lunar_navigator.py": {
+    "mtime": 1794752250.5982144,
+    "seen": 1794756230.021374,
+    "ast_hash": "a1b36b045dd7fea3fe0f1f2913164c53",
+    "semantic_hash": "a1b36b045dd7fea3fe0f1f2913164c53"
+  },
+  "lunar_terrain.py": {
+    "mtime": 1794752250.5992057,
+    "seen": 1794756230.021374,
+    "ast_hash": "eb056fcb3116d325692fa060cec78d99",
+    "semantic_hash": "eb056fcb3116d325692fa060cec78d99"
+  },
+  "moon/src/App.jsx": {
+    "mtime": 1794753386.9485114,
+    "seen": 1794756230.021374,
+    "ast_hash": "bffe7b3b4804edff760c9c4523c58b42",
+    "semantic_hash": "bffe7b3b4804edff760c9c4523c58b42"
+  },
+  "moon/src/MoonScene.jsx": {
+    "mtime": 1794753206.6620166,
+    "seen": 1794756230.021374,
+    "ast_hash": "815e7e410bf40d55f45e788e29759bb3",
+    "semantic_hash": "815e7e410bf40d55f45e788e29759bb3"
+  },
+  "moon/src/globe.js": {
+    "mtime": 1794753194.7298489,
+    "seen": 1794756230.021374,
+    "ast_hash": "6f6426ab8d0af1b45b918739df2f3348",
+    "semantic_hash": "6f6426ab8d0af1b45b918739df2f3348"
+  },
+  "moon/src/integracion/HighQualityMoon.jsx": {
+    "mtime": 1794753219.9621077,
+    "seen": 1794756230.021374,
+    "ast_hash": "ccfcf78a9e63136b6a1bcf40d7305c59",
+    "semantic_hash": "ccfcf78a9e63136b6a1bcf40d7305c59"
+  },
+  "moon/src/integracion/highQualityMoon.js": {
+    "mtime": 1794753219.803522,
+    "seen": 1794756230.021374,
+    "ast_hash": "925e6003cd14c7463346dda2c9fe4803",
+    "semantic_hash": "925e6003cd14c7463346dda2c9fe4803"
+  },
+  "moon/src/lolaDem.js": {
+    "mtime": 1794753126.789349,
+    "seen": 1794756230.021374,
+    "ast_hash": "4b8fb7f01c399de55428d6ffde72a1e6",
+    "semantic_hash": "4b8fb7f01c399de55428d6ffde72a1e6"
+  },
+  "moon/src/main.jsx": {
+    "mtime": 1794753126.7863493,
+    "seen": 1794756230.021374,
+    "ast_hash": "e13723e2574429d9a6d849727e3ff695",
+    "semantic_hash": "e13723e2574429d9a6d849727e3ff695"
+  },
+  "moon/src/moonTiles.js": {
+    "mtime": 1794754004.814819,
+    "seen": 1794756230.021374,
+    "ast_hash": "c3257ee44a5ecaccad9959648bebf69d",
+    "semantic_hash": "c3257ee44a5ecaccad9959648bebf69d"
+  },
+  "moon/src/surface/MoonSurface.jsx": {
+    "mtime": 1794754944.657488,
+    "seen": 1794756230.021374,
+    "ast_hash": "ac210f7765443d3273b1dc0d2ff2798e",
+    "semantic_hash": "ac210f7765443d3273b1dc0d2ff2798e"
+  },
+  "moon/src/surface/SurfaceExplorer.jsx": {
+    "mtime": 1794754722.9805017,
+    "seen": 1794756230.021374,
+    "ast_hash": "e8efd8e40831554488fe4afddd829017",
+    "semantic_hash": "e8efd8e40831554488fe4afddd829017"
+  },
+  "moon/src/surface/config.js": {
+    "mtime": 1794753126.8003497,
+    "seen": 1794756230.021374,
+    "ast_hash": "a9623046bb8db65dc6b9e19eb5e9263f",
+    "semantic_hash": "a9623046bb8db65dc6b9e19eb5e9263f"
+  },
+  "moon/src/surface/detailImagery.js": {
+    "mtime": 1794753620.6826415,
+    "seen": 1794756230.021374,
+    "ast_hash": "030a25f1a88191f916fb60434619d5dc",
+    "semantic_hash": "030a25f1a88191f916fb60434619d5dc"
+  },
+  "moon/src/surface/firstPerson.js": {
+    "mtime": 1794753126.841186,
+    "seen": 1794756230.021374,
+    "ast_hash": "394ccd88c27580c348056880ec550ebe",
+    "semantic_hash": "394ccd88c27580c348056880ec550ebe"
+  },
+  "moon/src/surface/imageryStack.js": {
+    "mtime": 1794753126.8013504,
+    "seen": 1794756230.021374,
+    "ast_hash": "4d6a2e5355fe25568c25448b9a29ac25",
+    "semantic_hash": "4d6a2e5355fe25568c25448b9a29ac25"
+  },
+  "moon/src/surface/lolaTerrain.js": {
+    "mtime": 1794753126.8033502,
+    "seen": 1794756230.021374,
+    "ast_hash": "9350527247bee90925f81b6aa0cf8813",
+    "semantic_hash": "9350527247bee90925f81b6aa0cf8813"
+  },
+  "moon/src/surface/lru.js": {
+    "mtime": 1794753126.8073525,
+    "seen": 1794756230.021374,
+    "ast_hash": "6e1d8c70f8a18d39ac947d627485ea4a",
+    "semantic_hash": "6e1d8c70f8a18d39ac947d627485ea4a"
+  },
+  "moon/src/surface/microRelief.js": {
+    "mtime": 1794753126.806351,
+    "seen": 1794756230.021374,
+    "ast_hash": "c3a42f4a06f6a2d55595fd392f0cd6bc",
+    "semantic_hash": "c3a42f4a06f6a2d55595fd392f0cd6bc"
+  },
+  "moon/src/surface/microRelief.test.mjs": {
+    "mtime": 1794753126.8043506,
+    "seen": 1794756230.021374,
+    "ast_hash": "1fd42ebd5889220598f88c619c86471e",
+    "semantic_hash": "1fd42ebd5889220598f88c619c86471e"
+  },
+  "moon/src/surface/prefetch.js": {
+    "mtime": 1794753126.7983515,
+    "seen": 1794756230.021374,
+    "ast_hash": "410aa65da1b5ee23d7f7e2dba8e98907",
+    "semantic_hash": "410aa65da1b5ee23d7f7e2dba8e98907"
+  },
+  "moon/src/surface/useSurfaceExplorer.jsx": {
+    "mtime": 1794754994.6162546,
+    "seen": 1794756230.021374,
+    "ast_hash": "1e75388859a062516469593db1c1919d",
+    "semantic_hash": "1e75388859a062516469593db1c1919d"
+  },
+  "package.json": {
+    "mtime": 1794753151.7821617,
+    "seen": 1794756230.021374,
+    "ast_hash": "83ce2baf282ec1e49328c2e84fccf994",
+    "semantic_hash": "83ce2baf282ec1e49328c2e84fccf994"
+  },
+  "scripts/precompute_apollo_scenes.py": {
+    "mtime": 1794752250.7210884,
+    "seen": 1794756230.021374,
+    "ast_hash": "dbb5bc4b0fa4af67476274eb78cfc98d",
+    "semantic_hash": "dbb5bc4b0fa4af67476274eb78cfc98d"
+  },
+  "src/App.jsx": {
+    "mtime": 1794754809.1912348,
+    "seen": 1794756230.021374,
+    "ast_hash": "c9297704dae856678ebcf65e19c92afa",
+    "semantic_hash": "c9297704dae856678ebcf65e19c92afa"
+  },
+  "src/componentes/Creditos/CreditosScreen.jsx": {
+    "mtime": 1794752250.7320852,
+    "seen": 1794756230.021374,
+    "ast_hash": "ce944b853e1ac542dc532f0820701edf",
+    "semantic_hash": "ce944b853e1ac542dc532f0820701edf"
+  },
+  "src/componentes/Luna/Effects.jsx": {
+    "mtime": 1794752250.7344737,
+    "seen": 1794756230.021374,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "src/componentes/Luna/Lighting.jsx": {
+    "mtime": 1794752250.736499,
+    "seen": 1794756230.021374,
+    "ast_hash": "c7fd79599a22dee4ad9e3fc295b97e9f",
+    "semantic_hash": "c7fd79599a22dee4ad9e3fc295b97e9f"
+  },
+  "src/componentes/Luna/MissionMarkers.jsx": {
+    "mtime": 1794752250.7375004,
+    "seen": 1794756230.021374,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "src/componentes/Luna/Moon.jsx": {
+    "mtime": 1794753228.9621036,
+    "seen": 1794756230.021374,
+    "ast_hash": "37937999223eafced5c9a10179a96264",
+    "semantic_hash": "37937999223eafced5c9a10179a96264"
+  },
+  "src/componentes/Luna/MoonCamera.jsx": {
+    "mtime": 1794752250.741502,
+    "seen": 1794756230.021374,
+    "ast_hash": "d41d8cd98f00b204e9800998ecf8427e",
+    "semantic_hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "src/componentes/compartidos/OddityLogo.jsx": {
+    "mtime": 1794752847.807194,
+    "seen": 1794756230.021374,
+    "ast_hash": "0e3f3af39a97388882535cba8c6d9ed1",
+    "semantic_hash": "0e3f3af39a97388882535cba8c6d9ed1"
+  },
+  "src/componentes/compartidos/PanelActions.jsx": {
+    "mtime": 1794752250.7455,
+    "seen": 1794756230.021374,
+    "ast_hash": "a0967f2228fd895b6ea022bc77ee9c94",
+    "semantic_hash": "a0967f2228fd895b6ea022bc77ee9c94"
+  },
+  "src/componentes/compartidos/StarField.jsx": {
+    "mtime": 1794752250.7473304,
+    "seen": 1794756230.021374,
+    "ast_hash": "108218f0b1a79c2e5947c7b58e41c055",
+    "semantic_hash": "108218f0b1a79c2e5947c7b58e41c055"
+  },
+  "src/componentes/inicio/HomeScreen.jsx": {
+    "mtime": 1794754809.2239997,
+    "seen": 1794756230.021374,
+    "ast_hash": "cec87c2b9d4de488d73e093f38cde181",
+    "semantic_hash": "cec87c2b9d4de488d73e093f38cde181"
+  },
+  "src/componentes/inicio/IntroScreen.jsx": {
+    "mtime": 1794752847.854993,
+    "seen": 1794756230.021374,
+    "ast_hash": "3d51db7a587e2c7cbef31505f4ea6206",
+    "semantic_hash": "3d51db7a587e2c7cbef31505f4ea6206"
+  },
+  "src/componentes/inicio/TransitionScreen.jsx": {
+    "mtime": 1794752250.7553518,
+    "seen": 1794756230.021374,
+    "ast_hash": "6715a045720ed65aa861965b65bee23f",
+    "semantic_hash": "6715a045720ed65aa861965b65bee23f"
+  },
+  "src/componentes/misiones/MissionAssessment.jsx": {
+    "mtime": 1794752250.7589567,
+    "seen": 1794756230.021374,
+    "ast_hash": "e23d25fde1de5aa67e0d05a33175d8d7",
+    "semantic_hash": "e23d25fde1de5aa67e0d05a33175d8d7"
+  },
+  "src/componentes/misiones/MissionList.jsx": {
+    "mtime": 1794752250.7599547,
+    "seen": 1794756230.021374,
+    "ast_hash": "effbf47cd16fec2cf13f3783f770050a",
+    "semantic_hash": "effbf47cd16fec2cf13f3783f770050a"
+  },
+  "src/componentes/misiones/MissionPreview.jsx": {
+    "mtime": 1794754809.2752619,
+    "seen": 1794756230.021374,
+    "ast_hash": "b7bf41423302a508eab20fdf85d1034e",
+    "semantic_hash": "b7bf41423302a508eab20fdf85d1034e"
+  },
+  "src/componentes/misiones/MissionRainPanel.jsx": {
+    "mtime": 1794752250.7650404,
+    "seen": 1794756230.021374,
+    "ast_hash": "c96c3965e4a24c503f9efab5f36e2f0d",
+    "semantic_hash": "c96c3965e4a24c503f9efab5f36e2f0d"
+  },
+  "src/componentes/misiones/MissionTimeline.jsx": {
+    "mtime": 1794752250.7660394,
+    "seen": 1794756230.021374,
+    "ast_hash": "b1625e8b83ea039688cfd38a0690f068",
+    "semantic_hash": "b1625e8b83ea039688cfd38a0690f068"
+  },
+  "src/componentes/misiones/TimelineScreen.jsx": {
+    "mtime": 1794752250.7670398,
+    "seen": 1794756230.021374,
+    "ast_hash": "178ec10d47d742bad1a3c877b7cbfe04",
+    "semantic_hash": "178ec10d47d742bad1a3c877b7cbfe04"
+  },
+  "src/componentes/planificacion/PlanningMatrixHeading.jsx": {
+    "mtime": 1794752250.7706468,
+    "seen": 1794756230.021374,
+    "ast_hash": "b7ae3727aceebf484bf0bbee1f454bd5",
+    "semantic_hash": "b7ae3727aceebf484bf0bbee1f454bd5"
+  },
+  "src/componentes/planificacion/PlanningPanel.jsx": {
+    "mtime": 1794752847.883935,
+    "seen": 1794756230.021374,
+    "ast_hash": "5a06c35207f36daf88fd8356a18a282f",
+    "semantic_hash": "5a06c35207f36daf88fd8356a18a282f"
+  },
+  "src/componentes/planificacion/PlanningSteps.jsx": {
+    "mtime": 1794752250.7780156,
+    "seen": 1794756230.021374,
+    "ast_hash": "0268cda7f20f246315ebc70c49270339",
+    "semantic_hash": "0268cda7f20f246315ebc70c49270339"
+  },
+  "src/componentes/planificacion/PlanningVisibility.jsx": {
+    "mtime": 1794752250.7790115,
+    "seen": 1794756230.021374,
+    "ast_hash": "1faf3e43b7825429bdd824151b59d2fa",
+    "semantic_hash": "1faf3e43b7825429bdd824151b59d2fa"
+  },
+  "src/componentes/planificacion/downloadMissionPlanPdf.js": {
+    "mtime": 1794752250.7790115,
+    "seen": 1794756230.021374,
+    "ast_hash": "51cc31e8900d3fe1ff5f331b199a6575",
+    "semantic_hash": "51cc31e8900d3fe1ff5f331b199a6575"
+  },
+  "src/componentes/superficie/SurfaceInvite.jsx": {
+    "mtime": 1794754809.0022514,
+    "seen": 1794756230.021374,
+    "ast_hash": "f64f1cfc95151f5896e22488f0dd60b7",
+    "semantic_hash": "f64f1cfc95151f5896e22488f0dd60b7"
+  },
+  "src/componentes/superficie/SurfaceScreen.jsx": {
+    "mtime": 1794754786.504556,
+    "seen": 1794756230.021374,
+    "ast_hash": "08ee9a13fb9f3e08b9844dc626fc3980",
+    "semantic_hash": "08ee9a13fb9f3e08b9844dc626fc3980"
+  },
+  "src/componentes/superficie/coordinates.js": {
+    "mtime": 1794754747.8262966,
+    "seen": 1794756230.021374,
+    "ast_hash": "db650ddf70300939ff88d82d7a09bbac",
+    "semantic_hash": "db650ddf70300939ff88d82d7a09bbac"
+  },
+  "src/data/missions.js": {
+    "mtime": 1794752250.7820196,
+    "seen": 1794756230.021374,
+    "ast_hash": "037ff3f09819ed5cce7b5c6de010aefb",
+    "semantic_hash": "037ff3f09819ed5cce7b5c6de010aefb"
+  },
+  "src/main.jsx": {
+    "mtime": 1794753228.9631,
+    "seen": 1794756230.021374,
+    "ast_hash": "0f2ae8611bf61717381a250073921ba8",
+    "semantic_hash": "0f2ae8611bf61717381a250073921ba8"
+  },
+  "vite.config.js": {
+    "mtime": 1794753161.2681882,
+    "seen": 1794756230.021374,
+    "ast_hash": "5c88639017133866bfdab299db3544ee",
+    "semantic_hash": "5c88639017133866bfdab299db3544ee"
+  },
+  "README.md": {
+    "mtime": 1794755077.141596,
+    "seen": 1794756230.021374,
+    "ast_hash": "484202bbefdcb50661910f8b075cd168",
+    "semantic_hash": "484202bbefdcb50661910f8b075cd168"
+  },
+  "data/validation-report.md": {
+    "mtime": 1794752250.5773253,
+    "seen": 1794756230.021374,
+    "ast_hash": "73ee2fc70580a8309ee74a3f47f46c56",
+    "semantic_hash": "73ee2fc70580a8309ee74a3f47f46c56"
+  },
+  "data/visibility/report.md": {
+    "mtime": 1794752250.592218,
+    "seen": 1794756230.021374,
+    "ast_hash": "25a870234c9bf90228be337e1dc17816",
+    "semantic_hash": "25a870234c9bf90228be337e1dc17816"
+  },
+  "index.html": {
+    "mtime": 1794752847.7255392,
+    "seen": 1794756230.021374,
+    "ast_hash": "7173208d53c390c4dacade20ba586f84",
+    "semantic_hash": "7173208d53c390c4dacade20ba586f84"
+  },
+  "moon/README.md": {
+    "mtime": 1794755077.1205828,
+    "seen": 1794756230.021374,
+    "ast_hash": "c81a5abdd77fadb493c9976c86b9b09b",
+    "semantic_hash": "c81a5abdd77fadb493c9976c86b9b09b"
+  },
+  "moon/index.html": {
+    "mtime": 1794753161.3469417,
+    "seen": 1794756230.021374,
+    "ast_hash": "54280577abc76165d61dca8b0cf5b51f",
+    "semantic_hash": "54280577abc76165d61dca8b0cf5b51f"
+  },
+  "public/favicon.svg": {
+    "mtime": 1794752847.754184,
+    "seen": 1794756230.021374,
+    "ast_hash": "8a33ba94858b050eb6e5cfbd712812fe",
+    "semantic_hash": "8a33ba94858b050eb6e5cfbd712812fe"
+  },
+  "public/images/oddity-logo.png": {
+    "mtime": 1794752847.786269,
+    "seen": 1794756230.021374,
+    "ast_hash": "137f37e9743f9956ec103632019c978c",
+    "semantic_hash": "137f37e9743f9956ec103632019c978c"
+  },
+  "public/images/timeline/apollo-splashdown.jpg": {
+    "mtime": 1794752250.602735,
+    "seen": 1794756230.021374,
+    "ast_hash": "9369462ace34869888c39aece19f3665",
+    "semantic_hash": "9369462ace34869888c39aece19f3665"
+  },
+  "public/images/timeline/lunar-exploration.jpg": {
+    "mtime": 1794752250.6037345,
+    "seen": 1794756230.021374,
+    "ast_hash": "91a81b6d15fdebe5811b03c8f2e92421",
+    "semantic_hash": "91a81b6d15fdebe5811b03c8f2e92421"
+  },
+  "public/images/timeline/lunar-module-surface.jpg": {
+    "mtime": 1794752250.6057298,
+    "seen": 1794756230.021374,
+    "ast_hash": "4be064888dc3495a87f8fbac4df5c500",
+    "semantic_hash": "4be064888dc3495a87f8fbac4df5c500"
+  },
+  "public/images/timeline/saturn-v-launch.jpg": {
+    "mtime": 1794752250.6057298,
+    "seen": 1794756230.021374,
+    "ast_hash": "90393ccc7119d9f1da6f6c6cf67a63db",
+    "semantic_hash": "90393ccc7119d9f1da6f6c6cf67a63db"
+  },
+  "src/foto1.jpeg": {
+    "mtime": 1794752250.8143668,
+    "seen": 1794756230.021374,
+    "ast_hash": "d94d981fd0f38b5ebb76dde9b3fc9e0f",
+    "semantic_hash": "d94d981fd0f38b5ebb76dde9b3fc9e0f"
+  },
+  "src/foto2.jpeg": {
+    "mtime": 1794752250.8173668,
+    "seen": 1794756230.021374,
+    "ast_hash": "1fa979e332e256576b2e01940a36865e",
+    "semantic_hash": "1fa979e332e256576b2e01940a36865e"
+  },
+  "src/foto3.jpeg": {
+    "mtime": 1794752250.8209572,
+    "seen": 1794756230.021374,
+    "ast_hash": "6e4f53ae1b6c28ec9da5442abe2fc800",
+    "semantic_hash": "6e4f53ae1b6c28ec9da5442abe2fc800"
+  },
+  "src/foto4.jpeg": {
+    "mtime": 1794752250.8219614,
+    "seen": 1794756230.021374,
+    "ast_hash": "d124e577c825ba868a1c580eba5f893b",
+    "semantic_hash": "d124e577c825ba868a1c580eba5f893b"
+  }
+}

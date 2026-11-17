@@ -1,0 +1,12 @@
+.oddity-logo-crop {
+  display: block;
+  width: 100%;
+  aspect-ratio: 745 / 366;
+}
+
+.oddity-logo-crop img {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+}

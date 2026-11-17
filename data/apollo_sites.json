@@ -1,0 +1,90 @@
+{
+  "catalog_version": 1,
+  "coordinate_frame": "Mean Earth/Polar Axis (ME), DE421; planetocentric; norte y este positivos",
+  "time_note": "Historical times are kept as published by NSSDCA (UT). When used with historical ephemerides, the data adapter must document and apply the time scale required by the query; this catalog does not convert UT to an ephemeris time scale.",
+  "missions": [
+    {
+      "id": "apollo-11",
+      "mission": "Apollo 11",
+      "site_name": "Mare Tranquillitatis",
+      "landing_time_utc": "1969-07-20T20:17:40Z",
+      "latitude_deg": 0.67416,
+      "longitude_deg": 23.47314,
+      "frame": "Mean Earth/Polar Axis (ME), DE421",
+      "sources": {
+        "landing_time_utc": "https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo11info.html",
+        "coordinates": "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html",
+        "time_alternative": {
+          "value": "1969-07-20T20:17:41Z",
+          "source": "https://www.nasa.gov/wp-content/uploads/static/history/SP-4029/Apollo_11a_Summary.htm",
+          "note": "The Apollo 11 timeline differs by one second; the NSSDCA time is kept as the primary value."
+        }
+      }
+    },
+    {
+      "id": "apollo-12",
+      "mission": "Apollo 12",
+      "site_name": "Oceanus Procellarum",
+      "landing_time_utc": "1969-11-19T06:54:35Z",
+      "latitude_deg": -3.0128,
+      "longitude_deg": -23.4219,
+      "frame": "Mean Earth/Polar Axis (ME), DE421",
+      "sources": {
+        "landing_time_utc": "https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo12info.html",
+        "coordinates": "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html"
+      }
+    },
+    {
+      "id": "apollo-14",
+      "mission": "Apollo 14",
+      "site_name": "Fra Mauro",
+      "landing_time_utc": "1971-02-05T09:18:11Z",
+      "latitude_deg": -3.64589,
+      "longitude_deg": -17.47194,
+      "frame": "Mean Earth/Polar Axis (ME), DE421",
+      "sources": {
+        "landing_time_utc": "https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo14info.html",
+        "coordinates": "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html"
+      }
+    },
+    {
+      "id": "apollo-15",
+      "mission": "Apollo 15",
+      "site_name": "Hadley Rille / Apennines",
+      "landing_time_utc": "1971-07-30T22:16:29Z",
+      "latitude_deg": 26.13239,
+      "longitude_deg": 3.63330,
+      "frame": "Mean Earth/Polar Axis (ME), DE421",
+      "sources": {
+        "landing_time_utc": "https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo15info.html",
+        "coordinates": "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html"
+      }
+    },
+    {
+      "id": "apollo-16",
+      "mission": "Apollo 16",
+      "site_name": "Descartes",
+      "landing_time_utc": "1972-04-21T02:23:35Z",
+      "latitude_deg": -8.9734,
+      "longitude_deg": 15.5011,
+      "frame": "Mean Earth/Polar Axis (ME), DE421",
+      "sources": {
+        "landing_time_utc": "https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo16info.html",
+        "coordinates": "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html"
+      }
+    },
+    {
+      "id": "apollo-17",
+      "mission": "Apollo 17",
+      "site_name": "Taurus-Littrow",
+      "landing_time_utc": "1972-12-11T19:54:57Z",
+      "latitude_deg": 20.1911,
+      "longitude_deg": 30.7723,
+      "frame": "Mean Earth/Polar Axis (ME), DE421",
+      "sources": {
+        "landing_time_utc": "https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo17info.html",
+        "coordinates": "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html"
+      }
+    }
+  ]
+}

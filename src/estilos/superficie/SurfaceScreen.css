@@ -1,0 +1,373 @@
+/* Primera persona: mismo lenguaje visual que el resto de Oddity (panel lateral, líneas neón finas,
+   esquinas rectas, DM Mono para etiquetas y datos, Manrope para títulos). */
+
+.surface-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  overflow: hidden;
+  background: #000;
+}
+
+.surface-view {
+  position: absolute;
+  inset: 0;
+}
+
+.surface-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(3, 6, 5, .55) 0%, transparent 38%),
+    linear-gradient(0deg, rgba(3, 6, 5, .55) 0%, transparent 20%);
+}
+
+.surface-brand {
+  position: absolute;
+  z-index: 3;
+  top: clamp(18px, 4vh, 42px);
+  right: clamp(24px, 5vw, 72px);
+  width: clamp(120px, 12vw, 160px);
+  pointer-events: none;
+  opacity: .92;
+}
+
+.surface-panel {
+  z-index: 6;
+}
+
+.surface-content {
+  padding: 21px 30px 30px;
+  color: var(--snow);
+  background: rgba(3, 6, 5, .58);
+}
+
+.surface-content h2 {
+  margin: 14px 0 12px;
+  font-size: clamp(26px, 2.6vw, 34px);
+}
+
+.surface-content h2 em {
+  color: var(--terminal-green);
+  font-weight: 300;
+}
+
+.surface-intro {
+  margin: 0 0 18px;
+  color: var(--fog);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+/* Coordenadas */
+.surface-coords {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.surface-coords > div {
+  padding: 11px 13px;
+  border: 1px solid rgba(57, 255, 136, .2);
+  background: linear-gradient(145deg, rgba(13, 21, 17, .82), rgba(3, 6, 5, .92));
+}
+
+.surface-coords small {
+  display: block;
+  margin-bottom: 5px;
+  color: var(--muted-green);
+  font: 9px var(--mono);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.surface-coords strong {
+  color: var(--neon-green);
+  font: 500 15px var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.surface-coords p {
+  grid-column: 1 / -1;
+  margin: 2px 0 0;
+  color: var(--muted-green);
+  font: 10px var(--mono);
+  letter-spacing: .05em;
+}
+
+/* Carga / error */
+.surface-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 13px 14px;
+  border: 1px solid rgba(57, 255, 136, .3);
+  background: rgba(3, 6, 5, .72);
+}
+
+.surface-status > span:last-child {
+  display: grid;
+  gap: 4px;
+}
+
+.surface-status strong {
+  color: var(--snow);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.surface-status small {
+  color: var(--fog);
+  font: 10px/1.5 var(--mono);
+}
+
+.surface-status.is-error {
+  border-color: var(--warning-line, rgba(255, 140, 120, .5));
+}
+
+.surface-status.is-error small {
+  color: #f2c5bd;
+}
+
+.surface-spinner {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid rgba(57, 255, 136, .22);
+  border-top-color: var(--neon-green);
+  border-radius: 50%;
+  animation: surface-spin 850ms linear infinite;
+}
+
+@keyframes surface-spin {
+  to { transform: rotate(360deg); }
+}
+
+.surface-loading {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid rgba(57, 255, 136, .3);
+  color: var(--neon-green);
+  background: rgba(3, 6, 5, .82);
+  font: 10px var(--mono);
+  letter-spacing: .12em;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* centra el aviso en el área libre a la derecha del panel */
+.surface-loading.has-panel {
+  left: calc(50% + min(440px, 41vw) / 2);
+}
+
+/* Botón principal */
+.surface-tour {
+  width: 100%;
+  min-height: 46px;
+  margin-bottom: 6px;
+}
+
+/* Demostración de aterrizaje */
+.surface-demo {
+  width: 100%;
+  min-height: 46px;
+  margin-bottom: 8px;
+  color: var(--neon-green);
+  border: 1px solid var(--matrix-green);
+  background: rgba(3, 6, 5, .72);
+}
+
+.surface-demo:hover:not(:disabled) {
+  color: var(--snow);
+  border-color: var(--neon-green);
+  background: rgba(3, 6, 5, .9);
+}
+
+.surface-demo:disabled {
+  opacity: .6;
+  cursor: progress;
+  transform: none;
+}
+
+.surface-demo-remove {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Secciones */
+.surface-section {
+  margin-top: 24px;
+}
+
+.surface-section .section-label {
+  margin-bottom: 14px;
+}
+
+.surface-data {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+}
+
+.surface-data dt {
+  margin-bottom: 4px;
+  color: var(--muted-green);
+  font: 9px var(--mono);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.surface-data dd {
+  margin: 0;
+  color: var(--snow);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.surface-data dd small {
+  display: block;
+  margin-top: 3px;
+  color: var(--fog);
+  font: 10px/1.5 var(--mono);
+}
+
+/* Controles deslizantes */
+.surface-slider {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 15px;
+  color: var(--fog);
+  font-size: 12px;
+}
+
+.surface-slider b {
+  float: right;
+  color: var(--neon-green);
+  font: 500 11px var(--mono);
+}
+
+.surface-slider input[type='range'] {
+  width: 100%;
+  height: 2px;
+  appearance: none;
+  background: rgba(57, 255, 136, .3);
+  accent-color: var(--neon-green);
+  cursor: pointer;
+}
+
+.surface-slider input[type='range']::-webkit-slider-thumb {
+  width: 12px;
+  height: 12px;
+  appearance: none;
+  border: 1px solid var(--neon-green);
+  border-radius: 0;
+  background: var(--void-black);
+  box-shadow: 0 0 8px rgba(57, 255, 136, .35);
+}
+
+.surface-slider input[type='range']::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border: 1px solid var(--neon-green);
+  border-radius: 0;
+  background: var(--void-black);
+}
+
+.surface-slider select {
+  width: 100%;
+  min-height: 38px;
+  padding: 0 10px;
+  border: 1px solid rgba(57, 255, 136, .3);
+  color: var(--snow);
+  background: rgba(3, 6, 5, .72);
+  font: 11px var(--mono);
+}
+
+.surface-note {
+  margin: -4px 0 16px;
+  color: var(--muted-green);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.surface-keys {
+  margin: 22px 0 0;
+  color: var(--muted-green);
+  font: 10px/1.9 var(--mono);
+  letter-spacing: .05em;
+}
+
+.surface-keys kbd {
+  padding: 1px 6px;
+  border: 1px solid rgba(57, 255, 136, .3);
+  color: var(--neon-green);
+  background: rgba(3, 6, 5, .6);
+  font: inherit;
+}
+
+/* Botón para volver a mostrar el panel */
+.surface-panel-toggle {
+  position: absolute;
+  z-index: 6;
+  top: 20px;
+  left: 20px;
+}
+
+/* Cruceta de caminata */
+.surface-walk-pad {
+  position: absolute;
+  z-index: 4;
+  right: clamp(20px, 4vw, 56px);
+  bottom: clamp(24px, 5vh, 48px);
+  display: grid;
+  grid-template-columns: repeat(3, 46px);
+  grid-template-rows: repeat(2, 46px);
+  gap: 6px;
+}
+
+.surface-walk {
+  min-width: 46px;
+  min-height: 46px;
+  border: 1px solid rgba(57, 255, 136, .35);
+  color: var(--neon-green);
+  background: rgba(3, 6, 5, .72);
+  font-size: 18px;
+  cursor: pointer;
+  touch-action: none;
+  transition: color .2s, border-color .2s, background-color .2s, box-shadow .2s;
+}
+
+.surface-walk:hover:not(:disabled),
+.surface-walk:active:not(:disabled) {
+  border-color: var(--neon-green);
+  color: var(--void-black);
+  background: var(--neon-green);
+  box-shadow: 0 0 16px rgba(57, 255, 136, .3);
+}
+
+.surface-walk:disabled {
+  cursor: not-allowed;
+  opacity: .4;
+}
+
+.surface-walk-forward { grid-column: 2; grid-row: 1; }
+.surface-walk-left { grid-column: 1; grid-row: 2; }
+.surface-walk-backward { grid-column: 2; grid-row: 2; }
+.surface-walk-right { grid-column: 3; grid-row: 2; }
+
+@media (max-width: 560px) {
+  .surface-content { padding-left: 23px; padding-right: 23px; }
+  .surface-brand { display: none; }
+  .surface-loading.has-panel { left: 50%; top: 88%; }
+}

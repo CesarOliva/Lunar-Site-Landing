@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "missions": [
+    {
+      "id": "apollo-11",
+      "name": "Apollo 11",
+      "mission_type": "tripulada",
+      "outcome": "Alunizaje tripulado exitoso",
+      "landing_site": "Mare Tranquillitatis",
+      "landing": {
+        "datetime": "1969-07-20T20:17:40",
+        "time_scale": "UT",
+        "source_value": "20 July 1969 UT 20:17:40",
+        "source_url": "https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo11info.html"
+      },
+      "coordinates": {
+        "latitude": 0.67416,
+        "longitude": 23.47314,
+        "units": "degrees",
+        "reference_frame": "Planetocentric Mean Earth/Polar Axis (ME), DE421",
+        "site_component": "Lunar Module",
+        "source_values": { "latitude": "0.67416", "longitude": "23.47314" },
+        "source_url": "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html"
+      },
+      "normalization": "Time stored in ISO 8601 without a zone suffix; the UT scale reported by NSSDCA is kept explicitly. The coordinates were copied without rounding from the Lunar Module row.",
+      "provenance_notes": [
+        "NSSDCA reports 20:17:40 UT; the NASA historical summary reports 20:17:39 GMT. NSSDCA is adopted according to the plan."
+      ],
+      "reviewed_on": "2026-11-14"
+    },
+    {
+      "id": "apollo-12",
+      "name": "Apollo 12",
+      "mission_type": "tripulada",
+      "outcome": "Alunizaje tripulado exitoso",
+      "landing_site": "Oceanus Procellarum",
+      "landing": {
+        "datetime": "1969-11-19T06:54:35",
+        "time_scale": "UT",
+        "source_value": "19 November 1969 UT 06:54:35",
+        "source_url": "https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo12info.html"
+      },
+      "coordinates": {
+        "latitude": -3.0128,
+        "longitude": -23.4219,
+        "units": "degrees",
+        "reference_frame": "Planetocentric Mean Earth/Polar Axis (ME), DE421",
+        "site_component": "Lunar Module",
+        "source_values": { "latitude": "-3.0128", "longitude": "-23.4219" },
+        "source_url": "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html"
+      },
+      "normalization": "Time stored in ISO 8601 without a zone suffix; the UT scale reported by NSSDCA is kept explicitly. The coordinates were copied without rounding from the Lunar Module row.",
+      "provenance_notes": [],
+      "reviewed_on": "2026-11-14"
+    },
+    {
+      "id": "apollo-14",
+      "name": "Apollo 14",
+      "mission_type": "tripulada",
+      "outcome": "Alunizaje tripulado exitoso",
+      "landing_site": "Fra Mauro",
+      "landing": {
+        "datetime": "1971-02-05T09:18:11",
+        "time_scale": "UT",
+        "source_value": "5 February 1971 UT 09:18:11",
+        "source_url": "https://nssdc.gsfc.nasa.gov/planetary/lunar/apollo14info.html"
+      },
+      "coordinates": {
+        "latitude": -3.64589,
+        "longitude": -17.47194,
+        "units": "degrees",
+        "reference_frame": "Planetocentric Mean Earth/Polar Axis (ME), DE421",
+        "site_component": "Lunar Module",
+        "source_values": { "latitude": "-3.64589", "longitude": "-17.47194" },
+        "source_url": "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html"
+      },
+      "normalization": "Time stored in ISO 8601 without a zone suffix; the UT scale reported by NSSDCA is kept explicitly. The coordinates were copied without rounding from the Lunar Module row.",
+      "provenance_notes": [],
+      "reviewed_on": "2026-11-14"
+    }
+  ]
+}

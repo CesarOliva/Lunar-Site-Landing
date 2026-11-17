@@ -1,0 +1,95 @@
+.panel-top-actions {
+  position: sticky;
+  z-index: 5;
+  top: 0;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 28px;
+  background: linear-gradient(var(--panel-black) 78%, transparent);
+}
+
+.panel-top-actions .text-button { margin-right: auto; }
+
+.icon-button {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(57, 255, 136, .48);
+  background: rgba(57, 255, 136, .08);
+  color: var(--neon-green);
+  cursor: pointer;
+  transition: color .2s, border-color .2s, background-color .2s, box-shadow .2s;
+}
+
+.icon-button svg { width: 20px; height: 20px; }
+
+.icon-button:hover {
+  border-color: var(--neon-green);
+  background: var(--neon-green);
+  color: var(--void-black);
+  box-shadow: 0 0 16px rgba(57, 255, 136, .3);
+}
+
+.text-button {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 13px;
+  border: 1px solid rgba(57, 255, 136, .35);
+  background: rgba(57, 255, 136, .07);
+  color: var(--neon-green);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color .2s, border-color .2s, background-color .2s, box-shadow .2s;
+}
+
+.text-button svg { width: 19px; height: 19px; }
+
+.text-button:hover {
+  border-color: var(--neon-green);
+  background: rgba(57, 255, 136, .16);
+  color: var(--snow);
+  box-shadow: 0 0 14px rgba(57, 255, 136, .16);
+}
+
+.credits-button {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  border: 1px solid rgba(57, 255, 136, .35);
+  background: rgba(3, 6, 5, .62);
+  color: var(--neon-green);
+  font-size: 13px;
+  cursor: pointer;
+  transition: color .2s, border-color .2s, background-color .2s;
+}
+
+.credits-button span {
+  min-width: 1ch;
+  font-variant-numeric: tabular-nums;
+  text-align: left;
+}
+
+.credits-button:hover {
+  border-color: var(--neon-green);
+  background: rgba(3, 6, 5, .82);
+  color: var(--snow);
+}
+
+.icon-button:focus-visible,
+.text-button:focus-visible,
+.credits-button:focus-visible {
+  outline: 2px solid var(--neon-green);
+  outline-offset: 3px;
+}
+
+@media (max-width: 560px) {
+  .panel-top-actions { padding: 0 20px; }
+}

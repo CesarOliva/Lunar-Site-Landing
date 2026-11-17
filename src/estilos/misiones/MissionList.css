@@ -1,0 +1,54 @@
+.panel-footnote { font-family: var(--mono); letter-spacing: .12em; }
+.mission-list-content { padding: 21px 30px 28px; }
+.mission-list-content > h2 { color: var(--snow); }
+.mission-list-content > h2 em { color: var(--matrix-green); }
+.panel-description { max-width: 340px; margin: 0 0 23px; color: var(--fog); font-size: 11px; line-height: 1.7; }
+.mission-list { display: grid; gap: 8px; }
+.mission-list-item {
+  min-height: 88px;
+  padding: 10px 9px;
+  display: grid;
+  grid-template-columns: 56px 1fr 18px;
+  align-items: center;
+  gap: 13px;
+  border: 1px solid rgba(57, 255, 136, .2);
+  background: rgba(3, 6, 5, .62);
+  color: var(--neon-green);
+  text-align: left;
+  cursor: pointer;
+  transition: background .2s, box-shadow .2s, transform .2s, color .2s;
+  transform-origin: left center;
+}
+.mission-list-item > svg { color: var(--muted-green); }
+.mission-thumb { width: 56px; height: 52px; position: relative; overflow: hidden; display: grid; place-items: center; color: var(--neon-green); background: radial-gradient(circle at 55% 40%, rgba(57, 255, 136, .12), var(--dark-forest) 66%, var(--panel-black)); }
+.mission-thumb::before { content: ''; position: absolute; inset: 0; background: url('https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&w=180&q=60') center/cover; opacity: .28; mix-blend-mode: screen; }
+.mission-thumb span { z-index: 1; font: 11px var(--mono); }
+.mission-list-copy small,
+.mission-list-copy strong,
+.mission-list-copy em { display: block; }
+.mission-list-copy small { margin-bottom: 4px; color: var(--muted-green); font: 7px var(--mono); letter-spacing: .08em; }
+.mission-list-copy strong { font-size: 12px; font-weight: 600; transition: color .2s; }
+.mission-list-copy em { margin-top: 4px; color: var(--matrix-green); font-size: 9px; font-style: normal; }
+.mission-assessment-badge { display: inline-block; margin-top: 6px; color: var(--matrix-green); font: 7px var(--mono); letter-spacing: .045em; }
+.mission-assessment-badge.is-unfavorable { color: var(--neon-green); }
+.mission-assessment-badge.is-indeterminate { color: var(--muted-green); }
+.panel-footnote { display: flex; align-items: center; gap: 8px; margin: 19px 0 3px; color: var(--muted-green); font-size: 7px; }
+.panel-footnote svg { color: var(--matrix-green); }
+
+@media (max-width: 560px) {
+  .mission-list-content { padding-left: 23px; padding-right: 23px; }
+}
+.mission-list-item:hover,
+.mission-list-item:focus-visible { position: relative; z-index: 1; outline: 1px solid var(--neon-green); outline-offset: -1px; background: rgba(3, 6, 5, .82); box-shadow: 0 0 18px rgba(57, 255, 136, .12); transform: scale(1.025); }
+.mission-list-item:hover .mission-thumb,
+.mission-list-item:focus-visible .mission-thumb { filter: brightness(1.35); }
+.mission-list-item:hover .mission-list-copy strong,
+.mission-list-item:focus-visible .mission-list-copy strong,
+.mission-list-item:hover .mission-list-copy small,
+.mission-list-item:hover .mission-list-copy em,
+.mission-list-item:hover .mission-assessment-badge,
+.mission-list-item:hover > svg,
+.mission-list-item:focus-visible .mission-list-copy small,
+.mission-list-item:focus-visible .mission-list-copy em,
+.mission-list-item:focus-visible .mission-assessment-badge,
+.mission-list-item:focus-visible > svg { color: var(--snow); text-shadow: 0 0 10px rgba(57, 255, 136, .28); }

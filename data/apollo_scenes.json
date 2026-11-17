@@ -1,0 +1,524 @@
+{
+  "schema_version": 2,
+  "generated_utc": "2026-11-15",
+  "ephemeris": {
+    "provider": "NASA/JPL Horizons API",
+    "endpoint": "https://ssd.jpl.nasa.gov/api/horizons.api",
+    "api_version": "1.2",
+    "ephemeris_source": "DE441",
+    "time_type": "UT",
+    "time_note": "The original NSSDCA UT times are queried. Horizons reports dates after 1962 in UTC, a civil time scale kept within 0.9 s of UT1.",
+    "center_frame": "MEAN_ME (high precision), according to the Horizons responses",
+    "site_coordinates": "SITE_COORD = east longitude, planetocentric latitude, altitude in km; ME coordinates from the catalog",
+    "apparent_place": "Airless azimuth/elevation; quantity 4; light-time, gravitational deflection, stellar aberration, precession and nutation according to Horizons",
+    "horizon_model": "NASA LRO LOLA local horizons (50 km radius, 5 degree azimuth bins) and preliminary slope screen at each landing instant.",
+    "sun_vector_method": "The Moon-fixed direction is reconstructed from the local azimuth and elevation and from the site's east, north and zenith bases in ME coordinates.",
+    "render_axis_mapping": "Three.js Y-up: (x_ME, y_ME, z_ME) -> (x, z, -y). The global NASA texture is centered on longitude 0° and oriented north up."
+  },
+  "missions": {
+    "apollo-11": {
+      "site": {
+        "latitude_deg": 0.67416,
+        "longitude_deg": 23.47314,
+        "altitude_km": 0
+      },
+      "time_utc": "1969-07-20T20:17:40Z",
+      "query": {
+        "COMMAND": {
+          "sun": "10",
+          "earth": "399"
+        },
+        "CENTER": "coord@301",
+        "COORD_TYPE": "GEODETIC",
+        "SITE_COORD": "23.47314,0.67416,0",
+        "TLIST": "1969-07-20 20:17:40 UT",
+        "TIME_TYPE": "UT",
+        "QUANTITIES": "4",
+        "ANG_FORMAT": "DEG",
+        "APPARENT": "AIRLESS"
+      },
+      "sun": {
+        "azimuth_deg": 88.805495,
+        "elevation_deg": 10.703313,
+        "direction_me": [
+          -0.221182743,
+          0.974968908,
+          0.02266766
+        ],
+        "above_geometric_horizon": true,
+        "terrain_visibility": "visible",
+        "source": "DE441",
+        "source_file": "data/horizons/raw/apollo-11-sun.json"
+      },
+      "earth": {
+        "azimuth_deg": 272.195241,
+        "elevation_deg": 59.224237,
+        "direction_me": [
+          0.991472967,
+          -0.126881119,
+          0.029707532
+        ],
+        "above_geometric_horizon": true,
+        "terrain_visibility": "visible",
+        "source": "DE441",
+        "source_file": "data/horizons/raw/apollo-11-earth.json"
+      },
+      "landing_assessment": {
+        "status": "favorable",
+        "status_label": "Favorable",
+        "coverage": "available",
+        "source": "NASA LRO LOLA GDR · global grid 236.901 m/pixel",
+        "source_label": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/cylindrical/img/ldem_128.lbl",
+        "product": "LDEM_128",
+        "coordinate_frame": "MEAN EARTH/POLAR AXIS OF DE421",
+        "resolution_m": 236.901,
+        "data_created": "2017-09-15",
+        "max_slope_deg": 2.296,
+        "slope_limit_deg": 5.0,
+        "slope_samples": 15,
+        "landing_area_diameter_m": 500.0,
+        "profile_radius_km": 50.0,
+        "azimuth_step_deg": 5.0,
+        "sun_horizon_deg": -0.236,
+        "sun_visible_over_terrain": true,
+        "earth_horizon_deg": 1.387,
+        "earth_visible_over_terrain": true,
+        "checks": {
+          "slope_within_limit": true,
+          "sun_visible_over_terrain": true,
+          "earth_visible_over_terrain": true
+        },
+        "limitations": [
+          "The result is favorable only if the slope does not exceed 5° and the Sun and the Earth are visible above the terrain at the evaluated instant.",
+          "The assessment covers an area 500 m in diameter; the LOLA resolution is 236.901 m per pixel and may miss rocks and small craters.",
+          "The horizon is computed out to 50 km in 5° azimuth sectors; narrow relief features between sectors may go undetected.",
+          "The model interpolates the terrain between LOLA measurements and may smooth out local topographic changes.",
+          "A single instant is evaluated; the whole descent window and the duration of operations are not checked.",
+          "LOLA uses ME/DE421 and Horizons uses MEAN_ME/DE441; the frames are not transformed into each other and the terrain alignment may have an error."
+        ],
+        "data_day": "2026-11-15"
+      },
+      "response_frame": "not reported"
+    },
+    "apollo-12": {
+      "site": {
+        "latitude_deg": -3.0128,
+        "longitude_deg": -23.4219,
+        "altitude_km": 0
+      },
+      "time_utc": "1969-11-19T06:54:35Z",
+      "query": {
+        "COMMAND": {
+          "sun": "10",
+          "earth": "399"
+        },
+        "CENTER": "coord@301",
+        "COORD_TYPE": "GEODETIC",
+        "SITE_COORD": "-23.4219,-3.0128,0",
+        "TLIST": "1969-11-19 06:54:35 UT",
+        "TIME_TYPE": "UT",
+        "QUANTITIES": "4",
+        "ANG_FORMAT": "DEG",
+        "APPARENT": "AIRLESS"
+      },
+      "sun": {
+        "azimuth_deg": 91.181896,
+        "elevation_deg": 5.148218,
+        "direction_me": [
+          0.477045087,
+          0.878516575,
+          -0.025231165
+        ],
+        "above_geometric_horizon": true,
+        "terrain_visibility": "visible",
+        "source": "DE441",
+        "source_file": "data/horizons/raw/apollo-12-sun.json"
+      },
+      "earth": {
+        "azimuth_deg": 87.305807,
+        "elevation_deg": 61.395337,
+        "direction_me": [
+          0.995673119,
+          0.089859564,
+          -0.023670639
+        ],
+        "above_geometric_horizon": true,
+        "terrain_visibility": "visible",
+        "source": "DE441",
+        "source_file": "data/horizons/raw/apollo-12-earth.json"
+      },
+      "landing_assessment": {
+        "status": "favorable",
+        "status_label": "Favorable",
+        "coverage": "available",
+        "source": "NASA LRO LOLA GDR · global grid 236.901 m/pixel",
+        "source_label": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/cylindrical/img/ldem_128.lbl",
+        "product": "LDEM_128",
+        "coordinate_frame": "MEAN EARTH/POLAR AXIS OF DE421",
+        "resolution_m": 236.901,
+        "data_created": "2017-09-15",
+        "max_slope_deg": 1.572,
+        "slope_limit_deg": 5.0,
+        "slope_samples": 12,
+        "landing_area_diameter_m": 500.0,
+        "profile_radius_km": 50.0,
+        "azimuth_step_deg": 5.0,
+        "sun_horizon_deg": 0.172,
+        "sun_visible_over_terrain": true,
+        "earth_horizon_deg": 0.113,
+        "earth_visible_over_terrain": true,
+        "checks": {
+          "slope_within_limit": true,
+          "sun_visible_over_terrain": true,
+          "earth_visible_over_terrain": true
+        },
+        "limitations": [
+          "The result is favorable only if the slope does not exceed 5° and the Sun and the Earth are visible above the terrain at the evaluated instant.",
+          "The assessment covers an area 500 m in diameter; the LOLA resolution is 236.901 m per pixel and may miss rocks and small craters.",
+          "The horizon is computed out to 50 km in 5° azimuth sectors; narrow relief features between sectors may go undetected.",
+          "The model interpolates the terrain between LOLA measurements and may smooth out local topographic changes.",
+          "A single instant is evaluated; the whole descent window and the duration of operations are not checked.",
+          "LOLA uses ME/DE421 and Horizons uses MEAN_ME/DE441; the frames are not transformed into each other and the terrain alignment may have an error."
+        ],
+        "data_day": "2026-11-15"
+      },
+      "response_frame": "not reported"
+    },
+    "apollo-14": {
+      "site": {
+        "latitude_deg": -3.64589,
+        "longitude_deg": -17.47194,
+        "altitude_km": 0
+      },
+      "time_utc": "1971-02-05T09:18:11Z",
+      "query": {
+        "COMMAND": {
+          "sun": "10",
+          "earth": "399"
+        },
+        "CENTER": "coord@301",
+        "COORD_TYPE": "GEODETIC",
+        "SITE_COORD": "-17.47194,-3.64589,0",
+        "TLIST": "1971-02-05 09:18:11 UT",
+        "TIME_TYPE": "UT",
+        "QUANTITIES": "4",
+        "ANG_FORMAT": "DEG",
+        "APPARENT": "AIRLESS"
+      },
+      "sun": {
+        "azimuth_deg": 89.555509,
+        "elevation_deg": 10.348525,
+        "direction_me": [
+          0.466809792,
+          0.88434955,
+          -0.003806875
+        ],
+        "above_geometric_horizon": true,
+        "terrain_visibility": "visible",
+        "source": "DE441",
+        "source_file": "data/horizons/raw/apollo-14-sun.json"
+      },
+      "earth": {
+        "azimuth_deg": 96.869207,
+        "elevation_deg": 65.951171,
+        "direction_me": [
+          0.987821453,
+          0.113231627,
+          -0.106711645
+        ],
+        "above_geometric_horizon": true,
+        "terrain_visibility": "visible",
+        "source": "DE441",
+        "source_file": "data/horizons/raw/apollo-14-earth.json"
+      },
+      "landing_assessment": {
+        "status": "favorable",
+        "status_label": "Favorable",
+        "coverage": "available",
+        "source": "NASA LRO LOLA GDR · global grid 236.901 m/pixel",
+        "source_label": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/cylindrical/img/ldem_128.lbl",
+        "product": "LDEM_128",
+        "coordinate_frame": "MEAN EARTH/POLAR AXIS OF DE421",
+        "resolution_m": 236.901,
+        "data_created": "2017-09-15",
+        "max_slope_deg": 1.333,
+        "slope_limit_deg": 5.0,
+        "slope_samples": 15,
+        "landing_area_diameter_m": 500.0,
+        "profile_radius_km": 50.0,
+        "azimuth_step_deg": 5.0,
+        "sun_horizon_deg": 2.561,
+        "sun_visible_over_terrain": true,
+        "earth_horizon_deg": 2.958,
+        "earth_visible_over_terrain": true,
+        "checks": {
+          "slope_within_limit": true,
+          "sun_visible_over_terrain": true,
+          "earth_visible_over_terrain": true
+        },
+        "limitations": [
+          "The result is favorable only if the slope does not exceed 5° and the Sun and the Earth are visible above the terrain at the evaluated instant.",
+          "The assessment covers an area 500 m in diameter; the LOLA resolution is 236.901 m per pixel and may miss rocks and small craters.",
+          "The horizon is computed out to 50 km in 5° azimuth sectors; narrow relief features between sectors may go undetected.",
+          "The model interpolates the terrain between LOLA measurements and may smooth out local topographic changes.",
+          "A single instant is evaluated; the whole descent window and the duration of operations are not checked.",
+          "LOLA uses ME/DE421 and Horizons uses MEAN_ME/DE441; the frames are not transformed into each other and the terrain alignment may have an error."
+        ],
+        "data_day": "2026-11-15"
+      },
+      "response_frame": "not reported"
+    },
+    "apollo-15": {
+      "site": {
+        "latitude_deg": 26.13239,
+        "longitude_deg": 3.6333,
+        "altitude_km": 0
+      },
+      "time_utc": "1971-07-30T22:16:29Z",
+      "query": {
+        "COMMAND": {
+          "sun": "10",
+          "earth": "399"
+        },
+        "CENTER": "coord@301",
+        "COORD_TYPE": "GEODETIC",
+        "SITE_COORD": "3.6333,26.13239,0",
+        "TLIST": "1971-07-30 22:16:29 UT",
+        "TIME_TYPE": "UT",
+        "QUANTITIES": "4",
+        "ANG_FORMAT": "DEG",
+        "APPARENT": "AIRLESS"
+      },
+      "sun": {
+        "azimuth_deg": 95.719409,
+        "elevation_deg": 12.024152,
+        "direction_me": [
+          0.167825488,
+          0.985807564,
+          0.004248834
+        ],
+        "above_geometric_horizon": true,
+        "terrain_visibility": "visible",
+        "source": "DE441",
+        "source_file": "data/horizons/raw/apollo-15-sun.json"
+      },
+      "earth": {
+        "azimuth_deg": 202.917255,
+        "elevation_deg": 69.179731,
+        "direction_me": [
+          0.990142771,
+          -0.075814383,
+          0.117768721
+        ],
+        "above_geometric_horizon": true,
+        "terrain_visibility": "visible",
+        "source": "DE441",
+        "source_file": "data/horizons/raw/apollo-15-earth.json"
+      },
+      "landing_assessment": {
+        "status": "favorable",
+        "status_label": "Favorable",
+        "coverage": "available",
+        "source": "NASA LRO LOLA GDR · global grid 236.901 m/pixel",
+        "source_label": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/cylindrical/img/ldem_128.lbl",
+        "product": "LDEM_128",
+        "coordinate_frame": "MEAN EARTH/POLAR AXIS OF DE421",
+        "resolution_m": 236.901,
+        "data_created": "2017-09-15",
+        "max_slope_deg": 1.616,
+        "slope_limit_deg": 5.0,
+        "slope_samples": 16,
+        "landing_area_diameter_m": 500.0,
+        "profile_radius_km": 50.0,
+        "azimuth_step_deg": 5.0,
+        "sun_horizon_deg": 7.076,
+        "sun_visible_over_terrain": true,
+        "earth_horizon_deg": 1.731,
+        "earth_visible_over_terrain": true,
+        "checks": {
+          "slope_within_limit": true,
+          "sun_visible_over_terrain": true,
+          "earth_visible_over_terrain": true
+        },
+        "limitations": [
+          "The result is favorable only if the slope does not exceed 5° and the Sun and the Earth are visible above the terrain at the evaluated instant.",
+          "The assessment covers an area 500 m in diameter; the LOLA resolution is 236.901 m per pixel and may miss rocks and small craters.",
+          "The horizon is computed out to 50 km in 5° azimuth sectors; narrow relief features between sectors may go undetected.",
+          "The model interpolates the terrain between LOLA measurements and may smooth out local topographic changes.",
+          "A single instant is evaluated; the whole descent window and the duration of operations are not checked.",
+          "LOLA uses ME/DE421 and Horizons uses MEAN_ME/DE441; the frames are not transformed into each other and the terrain alignment may have an error."
+        ],
+        "data_day": "2026-11-15"
+      },
+      "response_frame": "not reported"
+    },
+    "apollo-16": {
+      "site": {
+        "latitude_deg": -8.9734,
+        "longitude_deg": 15.5011,
+        "altitude_km": 0
+      },
+      "time_utc": "1972-04-21T02:23:35Z",
+      "query": {
+        "COMMAND": {
+          "sun": "10",
+          "earth": "399"
+        },
+        "CENTER": "coord@301",
+        "COORD_TYPE": "GEODETIC",
+        "SITE_COORD": "15.5011,-8.9734,0",
+        "TLIST": "1972-04-21 02:23:35 UT",
+        "TIME_TYPE": "UT",
+        "QUANTITIES": "4",
+        "ANG_FORMAT": "DEG",
+        "APPARENT": "AIRLESS"
+      },
+      "sun": {
+        "azimuth_deg": 86.00385,
+        "elevation_deg": 14.760764,
+        "direction_me": [
+          -0.005168709,
+          0.999626791,
+          0.026824661
+        ],
+        "above_geometric_horizon": true,
+        "terrain_visibility": "visible",
+        "source": "DE441",
+        "source_file": "data/horizons/raw/apollo-16-sun.json"
+      },
+      "earth": {
+        "azimuth_deg": 319.679596,
+        "elevation_deg": 77.127396,
+        "direction_me": [
+          0.991966384,
+          0.125520694,
+          0.015724161
+        ],
+        "above_geometric_horizon": true,
+        "terrain_visibility": "visible",
+        "source": "DE441",
+        "source_file": "data/horizons/raw/apollo-16-earth.json"
+      },
+      "landing_assessment": {
+        "status": "favorable",
+        "status_label": "Favorable",
+        "coverage": "available",
+        "source": "NASA LRO LOLA GDR · global grid 236.901 m/pixel",
+        "source_label": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/cylindrical/img/ldem_128.lbl",
+        "product": "LDEM_128",
+        "coordinate_frame": "MEAN EARTH/POLAR AXIS OF DE421",
+        "resolution_m": 236.901,
+        "data_created": "2017-09-15",
+        "max_slope_deg": 3.262,
+        "slope_limit_deg": 5.0,
+        "slope_samples": 15,
+        "landing_area_diameter_m": 500.0,
+        "profile_radius_km": 50.0,
+        "azimuth_step_deg": 5.0,
+        "sun_horizon_deg": 1.43,
+        "sun_visible_over_terrain": true,
+        "earth_horizon_deg": 0.847,
+        "earth_visible_over_terrain": true,
+        "checks": {
+          "slope_within_limit": true,
+          "sun_visible_over_terrain": true,
+          "earth_visible_over_terrain": true
+        },
+        "limitations": [
+          "The result is favorable only if the slope does not exceed 5° and the Sun and the Earth are visible above the terrain at the evaluated instant.",
+          "The assessment covers an area 500 m in diameter; the LOLA resolution is 236.901 m per pixel and may miss rocks and small craters.",
+          "The horizon is computed out to 50 km in 5° azimuth sectors; narrow relief features between sectors may go undetected.",
+          "The model interpolates the terrain between LOLA measurements and may smooth out local topographic changes.",
+          "A single instant is evaluated; the whole descent window and the duration of operations are not checked.",
+          "LOLA uses ME/DE421 and Horizons uses MEAN_ME/DE441; the frames are not transformed into each other and the terrain alignment may have an error."
+        ],
+        "data_day": "2026-11-15"
+      },
+      "response_frame": "not reported"
+    },
+    "apollo-17": {
+      "site": {
+        "latitude_deg": 20.1911,
+        "longitude_deg": 30.7723,
+        "altitude_km": 0
+      },
+      "time_utc": "1972-12-11T19:54:57Z",
+      "query": {
+        "COMMAND": {
+          "sun": "10",
+          "earth": "399"
+        },
+        "CENTER": "coord@301",
+        "COORD_TYPE": "GEODETIC",
+        "SITE_COORD": "30.7723,20.1911,0",
+        "TLIST": "1972-12-11 19:54:57 UT",
+        "TIME_TYPE": "UT",
+        "QUANTITIES": "4",
+        "ANG_FORMAT": "DEG",
+        "APPARENT": "AIRLESS"
+      },
+      "sun": {
+        "azimuth_deg": 95.853288,
+        "elevation_deg": 13.349992,
+        "direction_me": [
+          -0.279582484,
+          0.960027706,
+          -0.01343275
+        ],
+        "above_geometric_horizon": true,
+        "terrain_visibility": "visible",
+        "source": "DE441",
+        "source_file": "data/horizons/raw/apollo-17-sun.json"
+      },
+      "earth": {
+        "azimuth_deg": 240.876711,
+        "elevation_deg": 45.281095,
+        "direction_me": [
+          0.989045282,
+          -0.126453414,
+          -0.076150933
+        ],
+        "above_geometric_horizon": true,
+        "terrain_visibility": "visible",
+        "source": "DE441",
+        "source_file": "data/horizons/raw/apollo-17-earth.json"
+      },
+      "landing_assessment": {
+        "status": "favorable",
+        "status_label": "Favorable",
+        "coverage": "available",
+        "source": "NASA LRO LOLA GDR · global grid 236.901 m/pixel",
+        "source_label": "https://pds-geosciences.wustl.edu/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/cylindrical/img/ldem_128.lbl",
+        "product": "LDEM_128",
+        "coordinate_frame": "MEAN EARTH/POLAR AXIS OF DE421",
+        "resolution_m": 236.901,
+        "data_created": "2017-09-15",
+        "max_slope_deg": 1.675,
+        "slope_limit_deg": 5.0,
+        "slope_samples": 16,
+        "landing_area_diameter_m": 500.0,
+        "profile_radius_km": 50.0,
+        "azimuth_step_deg": 5.0,
+        "sun_horizon_deg": 6.433,
+        "sun_visible_over_terrain": true,
+        "earth_horizon_deg": 2.944,
+        "earth_visible_over_terrain": true,
+        "checks": {
+          "slope_within_limit": true,
+          "sun_visible_over_terrain": true,
+          "earth_visible_over_terrain": true
+        },
+        "limitations": [
+          "The result is favorable only if the slope does not exceed 5° and the Sun and the Earth are visible above the terrain at the evaluated instant.",
+          "The assessment covers an area 500 m in diameter; the LOLA resolution is 236.901 m per pixel and may miss rocks and small craters.",
+          "The horizon is computed out to 50 km in 5° azimuth sectors; narrow relief features between sectors may go undetected.",
+          "The model interpolates the terrain between LOLA measurements and may smooth out local topographic changes.",
+          "A single instant is evaluated; the whole descent window and the duration of operations are not checked.",
+          "LOLA uses ME/DE421 and Horizons uses MEAN_ME/DE441; the frames are not transformed into each other and the terrain alignment may have an error."
+        ],
+        "data_day": "2026-11-15"
+      },
+      "response_frame": "not reported"
+    }
+  }
+}
