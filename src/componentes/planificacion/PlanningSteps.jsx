@@ -1,7 +1,7 @@
 import { lazy, Suspense, useState } from 'react'
 import { Check, Lock, MapPin } from 'lucide-react'
 import visibilitySite from '../../../data/visibility-site.json'
-import { formatAngle } from './PlanningVisibility'
+import { formatAngle, PlanningLoadingState } from './PlanningVisibility'
 import missionPhoto1 from '../../foto1.jpeg'
 import missionPhoto2 from '../../foto2.jpeg'
 import missionPhoto3 from '../../foto3.jpeg'
@@ -627,7 +627,26 @@ export function SampleStep({ form, update }) {
 
 const activityLevel = { Low: 1, Moderate: 2, High: 3 }
 
-export function ForecastStep({ forecast }) {
+export function ForecastStep({ forecast, loading = false, error = '' }) {
+  if (loading) {
+    return (
+      <section aria-labelledby="forecast-title">
+        <h2 id="forecast-title">Environment and <em>risks</em></h2>
+        <PlanningLoadingState
+          title="Building environment forecast"
+          detail="Combining illumination, temperature and communications data."
+        />
+      </section>
+    )
+  }
+  if (error) {
+    return (
+      <section aria-labelledby="forecast-title">
+        <h2 id="forecast-title">Environment and <em>risks</em></h2>
+        <p className="planning-error" role="alert">{error}</p>
+      </section>
+    )
+  }
   if (!forecast) {
     return (
       <section aria-labelledby="forecast-title">
@@ -695,8 +714,12 @@ export function ForecastStep({ forecast }) {
   )
 }
 
-export function SummaryStep({ form, missionProfile, isModeledSite, selectedSample, visibilityError, demoForecast, downloadPlan, detailedPlan }) {
+export function SummaryStep({ form, missionProfile, isModeledSite, selectedSample, visibilityError, visibilityLoading = false, demoForecast, downloadPlan, detailedPlan }) {
   const [simulation, setSimulation] = useState(0)
+  const sunVisible = selectedSample?.sun.state === 'visible'
+  const earthVisible = selectedSample?.earth.state === 'visible'
+  const hasGoodVisibility = Boolean(selectedSample && sunVisible && earthVisible)
+  const hasPartialVisibility = Boolean(selectedSample && (sunVisible || earthVisible))
   return (
     <section className="summary-step" aria-labelledby="planning-title">
       <h2 id="planning-title">Mission <em>summary</em></h2>
@@ -742,6 +765,24 @@ export function SummaryStep({ form, missionProfile, isModeledSite, selectedSampl
           <p className="summary-data-note">There is no visibility calculation for custom coordinates.</p>
         )}
       </div>
+      {selectedSample && (
+        <div className={`planning-plan-verdict summary-plan-verdict ${hasGoodVisibility ? 'is-good' : hasPartialVisibility ? 'is-limited' : 'is-poor'}`} role="status">
+          <strong>{hasGoodVisibility ? 'Good plan' : hasPartialVisibility ? 'Limited plan' : 'Poor plan'}</strong>
+          <span>
+            {hasGoodVisibility
+              ? 'Sunlight and a direct Earth line of sight are both available at the selected instant, improving power and communication options.'
+              : hasPartialVisibility
+                ? `${sunVisible ? 'Sunlight is available, but Earth communication is hidden.' : 'Earth communication is available, but sunlight is hidden.'} Adjust the landing time or review the terrain before execution.`
+                : 'Both sunlight and the direct Earth line of sight are hidden at the selected instant. This plan needs another date or a protected communication strategy.'}
+          </span>
+        </div>
+      )}
+      {!selectedSample && visibilityLoading && (
+        <PlanningLoadingState
+          title="Finalizing mission assessment"
+          detail="Calculating the plan outcome from visibility and terrain data."
+        />
+      )}
       {detailedPlan ? (
         <>
           <button className="download-plan-button" type="button" onClick={downloadPlan}>
@@ -765,7 +806,7 @@ export function SummaryStep({ form, missionProfile, isModeledSite, selectedSampl
         </>
       )}
       {simulation > 0 && (
-        <Suspense fallback={<p className="planning-hint">Loading simulation…</p>}>
+        <Suspense fallback={<PlanningLoadingState title="Loading mission simulation" detail="Preparing the Earth-to-Moon scenario." />}>
           <PlanningSimulation key={simulation} form={form} missionProfile={missionProfile} onClose={() => setSimulation(0)} />
         </Suspense>
       )}

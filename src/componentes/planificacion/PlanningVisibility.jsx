@@ -85,6 +85,19 @@ export function formatAngle(value) {
   return `${value > 0 ? '+' : ''}${value.toFixed(1)}°`
 }
 
+export function PlanningLoadingState({ title = 'Calculating mission data', detail = 'Querying mission and terrain services.', compact = false }) {
+  return (
+    <div className={`planning-loading-state ${compact ? 'is-compact' : ''}`} role="status" aria-live="polite">
+      <div className="planning-loading-orbit" aria-hidden="true">
+        <i /><i /><i />
+      </div>
+      <strong>{title}</strong>
+      <span>{detail}</span>
+      <div className="planning-loading-track" aria-hidden="true"><i /></div>
+    </div>
+  )
+}
+
 // --- Gráficas y tarjetas ---
 export function SkyDiagram({ sample }) {
   const objects = [
@@ -280,25 +293,30 @@ export function VisibilityStep({ form, isModeledSite, visibilityError, visibilit
       <p className="planning-intro">Geometric position relative to the local horizon; it does not estimate power or link quality.</p>
       {!selectedSample ? (
         <div className="no-visibility-data">
-          {visibilityError ? <Info size={21} /> : <MapPin size={21} />}
-          <strong>
-            {visibilityError
-              ? 'The samples could not be loaded'
-              : visibilityLoading
-                ? 'Calculating visibility for this site'
-                : !isModeledSite
-                  ? 'There is no calculated sample for this site'
-                  : visibilitySamples === null
-                  ? 'Loading visibility samples'
-                  : 'There is no sample for this instant'}
-          </strong>
-          <span>
-            {visibilityError || (visibilityLoading
-              ? 'Querying Horizons and the LOLA topographic profile.'
-              : !isModeledSite
-                ? 'Check the coordinates, the elevation and that the lunar service is available.'
-                : 'Check the Site 04 visibility file and reopen the planning.')}
-          </span>
+          {visibilityLoading ? (
+            <PlanningLoadingState
+              title="Calculating visibility for this site"
+              detail="Querying Horizons and the LOLA topographic profile."
+            />
+          ) : (
+            <>
+              {visibilityError ? <Info size={21} /> : <MapPin size={21} />}
+              <strong>
+                {visibilityError
+                  ? 'The samples could not be loaded'
+                  : !isModeledSite
+                    ? 'There is no calculated sample for this site'
+                    : visibilitySamples === null
+                    ? 'Loading visibility samples'
+                    : 'There is no sample for this instant'}
+              </strong>
+              <span>
+                {visibilityError || (!isModeledSite
+                  ? 'Check the coordinates, the elevation and that the lunar service is available.'
+                  : 'Check the Site 04 visibility file and reopen the planning.')}
+              </span>
+            </>
+          )}
           {visibilityError && !isModeledSite && <button className="planning-choice" type="button" onClick={onRetry}>Retry calculation</button>}
         </div>
       ) : (
@@ -357,17 +375,21 @@ export function CompareStep({ form, update, isModeledSite, maxDateTime, visibili
         <article className="scenario-card" key={label}>
           <span className="scenario-label">{label}</span>
           <strong>{date ? formatUtcDate(Date.parse(`${date}T00:00:00Z`)) : 'No date selected'}</strong>
-          <p>
-            {!date
-              ? 'Select a date to query this scenario.'
-              : visibilityError || (visibilityLoading
-                ? 'Calculating ephemerides and topographic profile…'
-                : !isModeledSite
-                  ? 'No sample is available for this site and date.'
-                  : visibilitySamples === null
-                  ? 'Loading visibility samples…'
-                  : 'No sample was found for this instant.')}
-          </p>
+          {!date ? (
+            <p>Select a date to query this scenario.</p>
+          ) : visibilityLoading ? (
+            <PlanningLoadingState
+              title="Calculating scenario"
+              detail="Calculating ephemerides and topographic profile."
+              compact
+            />
+          ) : (
+            <p>{visibilityError || (!isModeledSite
+              ? 'No sample is available for this site and date.'
+              : visibilitySamples === null
+              ? 'Loading visibility samples.'
+              : 'No sample was found for this instant.')}</p>
+          )}
         </article>
       )
     }
@@ -402,6 +424,28 @@ export function CompareStep({ form, update, isModeledSite, maxDateTime, visibili
         {renderScenario(comparisonSamples[0], form.dateTime.slice(0, 10), 'SCENARIO A · ORIGINAL DATE')}
         {renderScenario(comparisonSamples[1], form.compareDate, 'SCENARIO B · ALTERNATIVE DATE')}
       </div>
+      {comparisonSamples.every(Boolean) && (
+        <div className="planning-plan-verdict" role="status">
+          {(() => {
+            const score = (sample) => Number(sample.sun.state === 'visible') + Number(sample.earth.state === 'visible')
+            const [first, second] = comparisonSamples
+            const firstScore = score(first)
+            const secondScore = score(second)
+            const winner = firstScore > secondScore ? 'SCENARIO A' : secondScore > firstScore ? 'SCENARIO B' : 'BOTH SCENARIOS'
+            const good = Math.max(firstScore, secondScore) === 2
+            return (
+              <>
+                <strong className={good ? 'verdict-good' : 'verdict-poor'}>{good ? 'Good comparison window' : 'Limited comparison window'}</strong>
+                <span>
+                  {good
+                    ? `${winner} offers favorable simultaneous Sun and Earth visibility.`
+                    : `${winner} is the stronger option, but one or both bodies are hidden at the sampled time.`}
+                </span>
+              </>
+            )
+          })()}
+        </div>
+      )}
       <p className="planning-hint">{isModeledSite ? 'The results compare the apparent center of each body with the LOLA horizon of Shackleton.' : comparisonSamples.some((sample) => sample?.horizonBasis === 'geometric') ? 'Without LOLA coverage, the states only compare against the geometric horizon; terrain obstruction is undetermined.' : 'The results compare the apparent center of each body with the LOLA horizon profile of the site.'} The samples are hourly and do not predict power or radio performance.</p>
     </section>
   )

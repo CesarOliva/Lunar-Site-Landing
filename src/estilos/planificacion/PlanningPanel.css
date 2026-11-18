@@ -350,6 +350,44 @@
 .no-visibility-data strong { color: var(--neon-green); font-size: 14px; font-weight: 500; }
 .no-visibility-data span { max-width: 420px; font-size: 12px; line-height: 1.6; }
 
+.planning-loading-state {
+  width: 100%;
+  max-width: 520px;
+  min-height: 145px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  text-align: center;
+}
+.planning-loading-state.is-compact { min-height: 112px; gap: 7px; }
+.planning-loading-state strong { color: var(--neon-green); font-size: 13px; font-weight: 500; }
+.planning-loading-state span { color: var(--muted-green); font-size: 11px; line-height: 1.5; }
+.planning-loading-orbit { width: 42px; height: 42px; position: relative; margin-bottom: 2px; animation: planning-loader-spin 1.8s linear infinite; }
+.planning-loading-orbit i { width: 7px; height: 7px; position: absolute; border: 1px solid var(--matrix-green); background: rgba(0, 255, 102, .12); transform: rotate(45deg); }
+.planning-loading-orbit i:nth-child(1) { left: 17px; top: 0; }
+.planning-loading-orbit i:nth-child(2) { right: 3px; bottom: 5px; animation: planning-loader-pulse 1.2s ease-in-out infinite; }
+.planning-loading-orbit i:nth-child(3) { left: 3px; bottom: 5px; animation: planning-loader-pulse 1.2s ease-in-out .35s infinite; }
+.planning-loading-track { width: min(260px, 82%); height: 2px; overflow: hidden; background: rgba(71, 122, 92, .28); }
+.planning-loading-track i { width: 42%; height: 100%; display: block; background: var(--matrix-green); animation: planning-loader-track 1.35s ease-in-out infinite; }
+.planning-plan-verdict { display: grid; gap: 5px; margin-top: 12px; padding: 12px 14px; border-left: 3px solid var(--matrix-green); background: rgba(0, 184, 92, .08); }
+.planning-plan-verdict strong { font-size: 12px; }
+.planning-plan-verdict span { color: var(--muted-green); font-size: 12px; line-height: 1.55; }
+.planning-plan-verdict .verdict-good { color: var(--matrix-green); }
+.planning-plan-verdict .verdict-poor { color: #ffad79; }
+.summary-plan-verdict { max-width: 100%; margin-top: 14px; }
+.summary-plan-verdict.is-good { border-left-color: var(--matrix-green); }
+.summary-plan-verdict.is-limited { border-left-color: #ffd27a; }
+.summary-plan-verdict.is-poor { border-left-color: #ff9a76; }
+.summary-plan-verdict.is-good strong { color: var(--matrix-green); }
+.summary-plan-verdict.is-limited strong { color: #ffd27a; }
+.summary-plan-verdict.is-poor strong { color: #ff9a76; }
+
+@keyframes planning-loader-spin { to { transform: rotate(360deg); } }
+@keyframes planning-loader-pulse { 50% { opacity: .25; transform: rotate(45deg) scale(.55); } }
+@keyframes planning-loader-track { 0% { transform: translateX(-110%); } 100% { transform: translateX(350%); } }
+
 .compare-date-input { display: block; max-width: 310px; margin: 18px 0; }
 .scenario-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .scenario-card { min-height: 155px; padding: 15px; }
@@ -677,6 +715,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .planning-loading-orbit,
+  .planning-loading-orbit i,
+  .planning-loading-track i {
+    animation: none;
+  }
   .summary-step > .planning-intro,
   .summary-step .summary-mission-photo,
   .summary-step .summary-heading,
