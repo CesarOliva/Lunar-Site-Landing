@@ -15,7 +15,7 @@ from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
-from urllib.parse import urlencode
+from urllib.parse import unquote, urlencode, urlsplit
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
@@ -29,6 +29,7 @@ CACHE_VERSION = 3
 MIN_TIME = datetime(1962, 1, 20, tzinfo=timezone.utc)
 CACHE_LOCK = threading.Lock()
 SEARCH_WINDOW = timedelta(days=7)
+PDS_PROXY_BASE = "https://pds-geosciences.wustl.edu"
 
 
 class RequestError(ValueError):
@@ -387,6 +388,39 @@ class NavigatorHandler(BaseHTTPRequestHandler):
     def log_message(self, format: str, *args: Any) -> None:
         print(f"{self.address_string()} - {format % args}")
 
+    def do_GET(self) -> None:
+        path = unquote(urlsplit(self.path).path)
+        pds_path = path[len("/pds"):] if path.startswith("/pds/") else ""
+        if not pds_path.startswith("/lro/lro-l-lola-3-rdr-v1/") or ".." in pds_path.split("/"):
+            self.send_json(404, {"error": "Ruta de datos no encontrada."})
+            return
+
+        range_header = self.headers.get("Range")
+        if not range_header:
+            self.send_json(400, {"error": "La solicitud de LOLA debe especificar un rango de bytes."})
+            return
+        request = Request(
+            f"{PDS_PROXY_BASE}{pds_path}",
+            headers={"Range": range_header, "Accept-Encoding": "identity", "User-Agent": "LunarSiteNavigator/0.1"},
+        )
+        try:
+            with urlopen(request, timeout=90) as upstream:
+                self.send_response(upstream.status)
+                for header in ("Content-Type", "Content-Length", "Content-Range", "Accept-Ranges"):
+                    value = upstream.headers.get(header)
+                    if value:
+                        self.send_header(header, value)
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.send_header("Access-Control-Expose-Headers", "Content-Range, Accept-Ranges")
+                self.end_headers()
+                while chunk := upstream.read(64 * 1024):
+                    self.wfile.write(chunk)
+        except HTTPError as error:
+            self.send_response(error.code)
+            self.send_header("Content-Length", "0")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+
     def send_json(self, status: int, body: dict[str, Any]) -> None:
         encoded = json.dumps(body, ensure_ascii=False).encode("utf-8")
         self.send_response(status)
@@ -394,16 +428,16 @@ class NavigatorHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(encoded)))
         self.send_header("Cache-Control", "no-store")
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Range")
         self.end_headers()
         self.wfile.write(encoded)
 
     def do_OPTIONS(self) -> None:
         self.send_response(204)
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Range")
         self.end_headers()
 
     def do_POST(self) -> None:

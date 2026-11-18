@@ -3,7 +3,8 @@
 // raster plano (fila mayor, norte arriba), así que se leen solo las filas necesarias con peticiones HTTP Range.
 import { MOON_MEAN_RADIUS_KM } from './moonTiles.js'
 
-const PDS_BASE = '/pds/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/cylindrical/img'
+const API_BASE = (import.meta.env.VITE_API_URL ?? '').replace(/\/$/, '')
+const PDS_BASE = `${API_BASE}/pds/lro/lro-l-lola-3-rdr-v1/lrolol_1xxx/data/lola_gdr/cylindrical/img`
 const PIXELS_PER_DEGREE = 1024
 const TILE_LON_DEGREES = 30
 const TILE_LAT_DEGREES = 15
