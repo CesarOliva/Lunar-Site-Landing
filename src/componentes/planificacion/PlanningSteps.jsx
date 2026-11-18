@@ -1,7 +1,7 @@
 import { lazy, Suspense, useState } from 'react'
-import { Check, Lock, MapPin } from 'lucide-react'
+import { Check, Earth, Lock, MapPin, Sun } from 'lucide-react'
 import visibilitySite from '../../../data/visibility-site.json'
-import { formatAngle, PlanningLoadingState } from './PlanningVisibility'
+import { formatAngle, formatUtcDate, formatUtcTime, MetricCard, PlanningLoadingState, VisibilityChart } from './PlanningVisibility'
 import missionPhoto1 from '../../foto1.jpeg'
 import missionPhoto2 from '../../foto2.jpeg'
 import missionPhoto3 from '../../foto3.jpeg'
@@ -90,35 +90,6 @@ export const initialForm = {
   maxSlope: '5°',
   dateTime: '2026-11-14T12:00',
   compareDate: '2026-12-10',
-}
-
-export function createDemoForecast(dateTime, latitude, longitude) {
-  const timestamp = Date.parse(`${dateTime}:00Z`)
-  if (!Number.isFinite(timestamp)) return null
-
-  const hour = Math.floor(timestamp / 3600000)
-  const locationSeed = Math.floor(Math.abs(Number(latitude) * 10 + Number(longitude)))
-  const seed = Math.abs(hour + locationSeed) % 10
-  const temperatures = [
-    [-184, -42], [-178, -36], [-191, -51], [-172, -33], [-186, -47],
-    [-179, -39], [-188, -55], [-175, -31], [-182, -44], [-190, -49],
-  ]
-  const activity = ['Low', 'Moderate', 'High']
-
-  return {
-    status: 'demo',
-    selected_at_utc: `${dateTime}:00Z`,
-    illumination_hours: Number((5.5 + (seed % 8) * 0.9).toFixed(1)),
-    surface_temperature_c: {
-      minimum: temperatures[seed][0],
-      maximum: temperatures[seed][1],
-    },
-    radiation_index_demo: 1 + (seed % 5),
-    micrometeoroid_activity_demo: activity[seed % activity.length],
-    communication_windows_demo: 1 + (seed % 4),
-    communication_hours_demo: Number((2.5 + (seed % 7) * 0.7).toFixed(1)),
-    terrain_assessment: 'Slope and obstacles not assessed',
-  }
 }
 
 // --- Duración: dato del escenario, no una recomendación NASA ---
@@ -625,96 +596,46 @@ export function SampleStep({ form, update }) {
   )
 }
 
-const activityLevel = { Low: 1, Moderate: 2, High: 3 }
-
-export function ForecastStep({ forecast, loading = false, error = '' }) {
+export function ForecastStep({ form, selectedSample, daySamples = [], loading = false, error = '' }) {
   if (loading) {
     return (
       <section aria-labelledby="forecast-title">
-        <h2 id="forecast-title">Environment and <em>risks</em></h2>
-        <PlanningLoadingState
-          title="Building environment forecast"
-          detail="Combining illumination, temperature and communications data."
-        />
+        <h2 id="forecast-title">Environment and <em>visibility</em></h2>
+        <PlanningLoadingState title="Calculating visibility" detail="Querying JPL Horizons and the LOLA terrain profile." />
       </section>
     )
   }
   if (error) {
     return (
       <section aria-labelledby="forecast-title">
-        <h2 id="forecast-title">Environment and <em>risks</em></h2>
+        <h2 id="forecast-title">Environment and <em>visibility</em></h2>
         <p className="planning-error" role="alert">{error}</p>
       </section>
     )
   }
-  if (!forecast) {
-    return (
-      <section aria-labelledby="forecast-title">
-        <h2 id="forecast-title">Environment <em>forecast</em></h2>
-        <p className="planning-intro">Select a date and time to see the simulation.</p>
-      </section>
-    )
-  }
-  const { minimum, maximum } = forecast.surface_temperature_c
-  const windows = forecast.communication_windows_demo
-  const windowWidth = Math.min(forecast.communication_hours_demo / windows / 24 * 100, 100 / windows - 2)
-
   return (
     <section aria-labelledby="forecast-title">
-      <h2 id="forecast-title">Environment and <em>risks</em></h2>
-      <p className="planning-intro">Automatic preview for the selected date. Move the date above and the bars change.</p>
-      <p className="forecast-time">Scenario: {forecast.selected_at_utc.replace('T', ' · ').replace(':00Z', ' UT')}</p>
-      <div className="forecast-warning" role="note">
-        <strong>Simulation with fictitious data</strong>
-        <span>This is not a real forecast. The Moon has no weather like Earth; these values only show the future backend experience.</span>
-      </div>
-      <div className="forecast-grid">
-        <article className="forecast-card">
-          <span>Simulated illumination</span>
-          <strong>{forecast.illumination_hours} h</strong>
-          <div className="meter" aria-hidden="true"><i className="meter-fill" style={{ left: 0, width: `${(forecast.illumination_hours / 24) * 100}%` }} /></div>
-          <small>of light in 24 h</small>
-        </article>
-        <article className="forecast-card">
-          <span>Surface temperature</span>
-          <strong>{minimum}° to {maximum}°C</strong>
-          <div className="meter" aria-hidden="true"><i className="meter-fill" style={{ left: `${((minimum + 200) / 200) * 100}%`, width: `${((maximum - minimum) / 200) * 100}%` }} /></div>
-          <small>illustrative range on a scale from -200° to 0°C</small>
-        </article>
-        <article className="forecast-card">
-          <span>Radiation · demo index</span>
-          <strong>{forecast.radiation_index_demo} / 5</strong>
-          <Gauge value={forecast.radiation_index_demo} />
-          <small>no dose or protection assessment</small>
-        </article>
-        <article className="forecast-card">
-          <span>Micrometeoroids</span>
-          <strong>{forecast.micrometeoroid_activity_demo} activity</strong>
-          <Gauge value={activityLevel[forecast.micrometeoroid_activity_demo] ?? 1} max={3} />
-          <small>no impact probability calculated</small>
-        </article>
-        <article className="forecast-card">
-          <span>Simulated communications</span>
-          <strong>{windows} {windows === 1 ? 'window' : 'windows'}</strong>
-          <div className="meter" aria-hidden="true">
-            {Array.from({ length: windows }, (_, index) => (
-              <i className="meter-block" key={index} style={{ left: `${(index * 100) / windows + 1}%`, width: `${windowWidth}%` }} />
-            ))}
-          </div>
-          <small>{forecast.communication_hours_demo} h spread over 24 h · link not validated</small>
-        </article>
-        <article className="forecast-card">
-          <span>Terrain and landing</span>
-          <strong>{forecast.terrain_assessment}</strong>
-          <small>requires topographic data for the site</small>
-        </article>
-      </div>
-      <p className="planning-note">The simulation changes with date and coordinates. Real risks require NASA/backend models and data.</p>
+      <h2 id="forecast-title">Environment and <em>visibility</em></h2>
+      <p className="planning-intro">Calculated positions of the Sun and Earth relative to the site's terrain horizon.</p>
+      {selectedSample ? <>
+        <p className="forecast-time">{formatUtcDate(selectedSample.time)} | {formatUtcTime(selectedSample.time)} UT</p>
+        <div className="metrics-stack">
+          <MetricCard Icon={Sun} label="Solar illumination" value={selectedSample.sun.state === 'visible' ? 'Visible' : 'Hidden'} detail={`Elevation ${formatAngle(selectedSample.sun.elevation)}; terrain margin ${formatAngle(selectedSample.sun.difference)}`} state={selectedSample.sun.state} />
+          <MetricCard Icon={Earth} label="Direct line of sight to Earth" value={selectedSample.earth.state === 'visible' ? 'Visible' : 'Hidden'} detail={`Elevation ${formatAngle(selectedSample.earth.elevation)}; terrain margin ${formatAngle(selectedSample.earth.difference)}`} state={selectedSample.earth.state} />
+        </div>
+        {daySamples.length > 0 && <div className="chart-card">
+          <div className="chart-heading"><span>Visibility margin during the day</span><div className="chart-legend"><span className="legend-sun"><i /> Sun</span><span className="legend-earth"><i /> Earth</span></div></div>
+          <VisibilityChart samples={daySamples} date={form.dateTime.slice(0, 10)} />
+          <p className="chart-footnote">Positive margin = visible; negative margin = terrain blocks line of sight; sampled times</p>
+        </div>}
+        {selectedSample.horizonBasis === 'geometric' && <p className="planning-hint">LOLA terrain coverage is unavailable here; states use the geometric horizon only.</p>}
+      </> : <p className="planning-intro">No visibility sample is available for the selected date and time.</p>}
+      <p className="planning-note">Sources: <a href="https://ssd.jpl.nasa.gov/horizons/" target="_blank" rel="noreferrer">NASA/JPL Horizons</a> ephemerides and the <a href="https://pgda.gsfc.nasa.gov/products/78" target="_blank" rel="noreferrer">NASA LOLA elevation model</a>. This is a visibility calculation, not a temperature, radiation, or mission safety forecast.</p>
     </section>
   )
 }
 
-export function SummaryStep({ form, missionProfile, isModeledSite, selectedSample, visibilityError, visibilityLoading = false, demoForecast, downloadPlan, detailedPlan }) {
+export function SummaryStep({ form, missionProfile, isModeledSite, selectedSample, visibilityError, visibilityLoading = false, downloadPlan, detailedPlan }) {
   const [simulation, setSimulation] = useState(0)
   const sunVisible = selectedSample?.sun.state === 'visible'
   const earthVisible = selectedSample?.earth.state === 'visible'
@@ -739,9 +660,6 @@ export function SummaryStep({ form, missionProfile, isModeledSite, selectedSampl
           <div><dt>Altitude</dt><dd>{form.elevation} m above the mean lunar radius</dd></div>
           <div><dt>Coordinates</dt><dd>{Number(form.latitude).toFixed(4)}° · {Number(form.longitude).toFixed(4)}° E</dd></div>
           <div><dt>Landing (UTC)</dt><dd>{form.dateTime.replace('T', ' · ')} UT</dd></div>
-          {demoForecast && (
-            <div><dt>Environment / risks</dt><dd>Fictitious simulation · {demoForecast.illumination_hours} h of light · micrometeoroids {demoForecast.micrometeoroid_activity_demo.toLowerCase()}</dd></div>
-          )}
           {missionProfile.conditionalSteps.includes('crew') && (
             <div><dt>Crew and support</dt><dd>{form.crewSize} · {form.evaPlan} · {form.lifeSupport}</dd></div>
           )}
@@ -758,22 +676,20 @@ export function SummaryStep({ form, missionProfile, isModeledSite, selectedSampl
             <span>Earth {selectedSample.earth.state === 'visible' ? 'visible' : 'hidden'} <b>{formatAngle(selectedSample.earth.elevation)}</b></span>
           </div>
         )}
-        {isModeledSite && visibilityError && (
+        {visibilityError && (
           <p className="planning-error summary-data-note" role="alert">{visibilityError}</p>
-        )}
-        {!isModeledSite && (
-          <p className="summary-data-note">There is no visibility calculation for custom coordinates.</p>
         )}
       </div>
       {selectedSample && (
         <div className={`planning-plan-verdict summary-plan-verdict ${hasGoodVisibility ? 'is-good' : hasPartialVisibility ? 'is-limited' : 'is-poor'}`} role="status">
-          <strong>{hasGoodVisibility ? 'Good plan' : hasPartialVisibility ? 'Limited plan' : 'Poor plan'}</strong>
+          <strong>Visibility at selected time</strong>
           <span>
             {hasGoodVisibility
-              ? 'Sunlight and a direct Earth line of sight are both available at the selected instant, improving power and communication options.'
+              ? 'The Sun and Earth are both above the terrain horizon at this instant.'
               : hasPartialVisibility
-                ? `${sunVisible ? 'Sunlight is available, but Earth communication is hidden.' : 'Earth communication is available, but sunlight is hidden.'} Adjust the landing time or review the terrain before execution.`
-                : 'Both sunlight and the direct Earth line of sight are hidden at the selected instant. This plan needs another date or a protected communication strategy.'}
+                ? `The ${sunVisible ? 'Sun is' : 'Earth is'} above the terrain horizon; the ${sunVisible ? 'Earth is' : 'Sun is'} below it at this instant.`
+                : 'The Sun and Earth are below the terrain horizon at this instant.'}
+            {' '}This does not assess mission safety, power generation, or radio performance.
           </span>
         </div>
       )}

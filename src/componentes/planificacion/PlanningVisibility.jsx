@@ -18,7 +18,7 @@ function parseVisibilityCsv(csv) {
       elevation: Number(elevation),
       terrain: Number(terrain),
       difference: Number(difference),
-      state,
+      state: state === 'visible' ? 'visible' : 'hidden',
     }
     visibilityByTime.set(sampleTime, sample)
   })

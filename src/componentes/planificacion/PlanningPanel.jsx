@@ -5,7 +5,6 @@ import '../../estilos/planificacion/PlanningPanel.css'
 const apiBase = import.meta.env.VITE_API_URL ?? ''
 import {
   CrewStep,
-  createDemoForecast,
   ForecastStep,
   getDurationIssue,
   initialForm,
@@ -312,7 +311,6 @@ function PlanningPanel({ creditsBalance, onSpendCredits }) {
   const comparisonDateIsInCoverage =
     form.compareDate >= dateTimeMin.slice(0, 10) &&
     form.compareDate <= planningDateMax.slice(0, 10)
-  const demoForecast = createDemoForecast(form.dateTime, form.latitude, form.longitude)
 
   const goNext = () => {
     if (currentStep.id === 'mission' && !form.name.trim()) {
@@ -428,7 +426,7 @@ function PlanningPanel({ creditsBalance, onSpendCredits }) {
         {currentStep.id === 'forecast' && (
           <div className="planning-group">
             <DateStep form={form} update={update} dateIsInCoverage={dateIsInCoverage} maxDateTime={planningDateMax} />
-            <ForecastStep forecast={demoForecast} loading={isModeledSite ? visibilitySamples === null && !visibilityError : Boolean(currentCustomVisibility?.loading || !currentCustomVisibility)} error={isModeledSite ? visibilityError : currentCustomVisibility?.error} />
+            <ForecastStep form={form} selectedSample={selectedSample} daySamples={daySamples} loading={activeVisibilityLoading} error={activeVisibilityError} />
           </div>
         )}
 
@@ -447,7 +445,6 @@ function PlanningPanel({ creditsBalance, onSpendCredits }) {
             selectedSample={selectedSample}
             visibilityError={activeVisibilityError}
             visibilityLoading={activeVisibilityLoading}
-            demoForecast={demoForecast}
             downloadPlan={downloadPlan}
             detailedPlan={detailedPlan}
           />

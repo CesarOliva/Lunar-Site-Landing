@@ -471,13 +471,6 @@
 .planning-group > section { min-height: 0; }
 .planning-note { margin: 10px 0 0; color: var(--fog); font-size: 11px; line-height: 1.5; }
 .forecast-time { margin: -8px 0 12px; color: var(--fog); font-size: 12px; }
-.forecast-warning { display: grid; gap: 5px; margin: 14px 0; padding: 11px 13px; border: 1px solid rgba(255, 138, 31, .55); background: rgba(255, 138, 31, .08); color: #ffc58f; font-size: 12px; line-height: 1.55; }
-.forecast-warning strong { color: var(--warning); font-size: 11px; letter-spacing: .06em; }
-.forecast-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 9px; }
-.forecast-card { min-width: 0; min-height: 91px; display: grid; align-content: start; gap: 7px; padding: 11px; border: 1px solid rgba(255, 255, 255, .18); background: rgba(3, 6, 5, .42); }
-.forecast-card > span { color: var(--fog); font-size: 11px; line-height: 1.4; }
-.forecast-card > strong { color: var(--snow); font-size: 15px; font-weight: 500; line-height: 1.4; overflow-wrap: anywhere; }
-.forecast-card > small { color: var(--fog); font-size: 10px; line-height: 1.4; }
 
 /* Blancos en la paleta (mismas variables que HomeScreen/IntroScreen; mueve a tu archivo de paleta si prefieres) */
 :root { --snow: #F4FBF6; --fog: #C9DCCF; --warning: #ff8a1f; --planning-font: 'DM Sans', sans-serif; }
@@ -654,7 +647,7 @@
 .planning-wizard.is-glitching .planning-content :is(
   .mission-type-option, .site-option, .landing-date-card, .planning-callout,
   .planning-metric, .sky-card, .chart-card, .scenario-card, .summary-card,
-  .no-visibility-data, .mission-plan-preview, .planning-warning, .polar-map-card, .propulsion-panel, .propulsion-option, .window-month, .glyph-tile, .forecast-card, .site-readout
+  .no-visibility-data, .mission-plan-preview, .planning-warning, .polar-map-card, .propulsion-panel, .propulsion-option, .window-month, .glyph-tile, .site-readout
 ) {
   animation: planning-box-glitch .65s steps(1, end) both;
 }
@@ -736,7 +729,7 @@
   .planning-wizard.is-glitching .planning-content :is(
     .mission-type-option, .site-option, .landing-date-card, .planning-callout,
     .planning-metric, .sky-card, .chart-card, .scenario-card, .summary-card,
-    .no-visibility-data, .mission-plan-preview, .planning-warning, .polar-map-card, .propulsion-panel, .propulsion-option, .window-month, .glyph-tile, .forecast-card, .site-readout,
+    .no-visibility-data, .mission-plan-preview, .planning-warning, .polar-map-card, .propulsion-panel, .propulsion-option, .window-month, .glyph-tile, .site-readout,
     h1, h2, h3, p, a, label, legend, strong, small, b, dt, dd, code, li, th, td
   ) {
     animation: none;
@@ -849,10 +842,6 @@
 .slider-ticks span { position: absolute; color: var(--fog); font-size: 12px; transform: translateX(-50%); }
 .date-presets { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0 16px; }
 .date-exact { max-width: 320px; }
-.forecast-card { min-height: 128px; align-content: start; }
-.forecast-card > span { font-size: 12px; }
-.forecast-card > strong { font-size: 17px; }
-.forecast-card > small { font-size: 12px; }
 .meter { position: relative; height: 8px; background: rgba(255, 255, 255, .12); }
 .meter-fill,
 .meter-block { position: absolute; top: 0; bottom: 0; background: var(--matrix-green); transition: left .5s ease, width .5s ease; }
@@ -862,7 +851,6 @@
   .site-explorer { grid-template-columns: minmax(0, 1fr); }
   .window-strip { flex-wrap: wrap; }
   .window-month { flex-basis: 45%; }
-  .forecast-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (prefers-reduced-motion: reduce) {
