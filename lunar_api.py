@@ -10,11 +10,13 @@ import os
 import re
 import sqlite3
 import threading
+import time
 from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlencode
+from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 from scripts.precompute_apollo_scenes import ENDPOINT, TARGETS, query_horizons, unit_spherical_direction
@@ -191,8 +193,15 @@ def query_horizons_range(target: str, site: dict[str, float], start: datetime, e
         "APPARENT": "'AIRLESS'",
     }
     request = Request(f"{ENDPOINT}?{urlencode(query)}", headers={"User-Agent": "LunarSiteNavigator/0.1"})
-    with urlopen(request, timeout=90) as response:
-        payload = json.loads(response.read())
+    for attempt in range(3):
+        try:
+            with urlopen(request, timeout=90) as response:
+                payload = json.loads(response.read())
+            break
+        except HTTPError as error:
+            if error.code not in (429, 500, 502, 503, 504) or attempt == 2:
+                raise
+            time.sleep(0.5 * (2 ** attempt))
     if payload.get("error"):
         raise ValueError(f"Horizons: {payload['error']}")
     text = payload.get("result", "")
